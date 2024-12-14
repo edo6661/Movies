@@ -1,6 +1,5 @@
 package com.example.submissionexpert1.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.submissionexpert1.application.di.IODispatcher
@@ -47,13 +46,23 @@ class HomeViewModel @Inject constructor(
         page = 1,
         isLoading = false,
         isLoadingMore = false,
-        data = null
-      )
+        error = null,
+        previousData = it.data,
+        data = null,
+
+        )
     }
     viewModelScope.launch {
       // TODO: REMOVE
       delay(1000)
       loadMovies()
+      _state.update {
+        it.copy(
+          isRefreshing = false,
+          previousData = null
+        )
+      }
+
     }
   }
 
@@ -80,7 +89,6 @@ class HomeViewModel @Inject constructor(
           }
 
           is Result.Success -> {
-            Log.d("HomeViewModel", "loadMovies: ${result.data}")
 
             // TODO: REMOVE
             delay(1000)
@@ -141,22 +149,24 @@ class HomeViewModel @Inject constructor(
   }
 
   fun handleLoading() {
-    when (isStillOnFirstPage) {
-      true  -> {
-        _state.update {
-          it.copy(
-            isLoading = true,
-            error = null
-          )
+    if (! _state.value.isRefreshing) {
+      when (isStillOnFirstPage) {
+        true  -> {
+          _state.update {
+            it.copy(
+              isLoading = true,
+              error = null
+            )
+          }
         }
-      }
 
-      false -> {
-        _state.update {
-          it.copy(
-            isLoadingMore = true,
-            error = null
-          )
+        false -> {
+          _state.update {
+            it.copy(
+              isLoadingMore = true,
+              error = null
+            )
+          }
         }
       }
     }
@@ -170,7 +180,8 @@ data class HomeState(
   val isLoadingMore : Boolean = false,
   val page : Int = 1,
   val error : ErrorState? = null,
-  val data : PaginationMovie? = null
+  val data : PaginationMovie? = null,
+  val previousData : PaginationMovie? = null
 )
 
 sealed class HomeEvent {

@@ -1,13 +1,11 @@
-package com.example.submissionexpert1.domain.model
+package com.example.submissionexpert1.data.db.entity
 
-data class PaginationMovie(
-  val page : Int,
-  val totalResults : Int,
-  val totalPages : Int,
-  val results : List<Movie>
-)
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-data class Movie(
+@Entity(tableName = "movies")
+data class MovieEntity(
+  @PrimaryKey val movieId : Int,
   val overview : String,
   val originalLanguage : String,
   val originalTitle : String,
@@ -19,8 +17,10 @@ data class Movie(
   val releaseDate : String,
   val popularity : Double,
   val voteAverage : Double,
-  val id : Int,
   val adult : Boolean,
-  val voteCount : Int
+  val voteCount : Int,
+  val favoriteUserId : Long? = null
 )
+
+
 

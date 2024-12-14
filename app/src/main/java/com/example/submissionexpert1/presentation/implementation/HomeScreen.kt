@@ -45,6 +45,7 @@ fun HomeScreen(
     }
   }
 
+
   LaunchedEffect(reachedBottom) {
     if (reachedBottom && ! state.isLoadingMore && ! state.isRefreshing) {
       viewModel.onEvent(HomeEvent.OnLoad)
@@ -67,7 +68,7 @@ fun HomeScreen(
         )
       }
 
-      ! state.error?.message.isNullOrEmpty()  -> {
+      ! state.error?.message.isNullOrEmpty() && ! state.isRefreshing -> {
         MainError(
           message = state.error?.message ?: "Error",
           description = "Ada yang salah dengan sesuatu, coba lagi nanti ya!",
@@ -75,14 +76,19 @@ fun HomeScreen(
         )
       }
 
-      else                                    -> {
+      else -> {
+        val itemsBasedOnRefresh = if (state.isRefreshing) {
+          state.previousData?.results ?: emptyList()
+        } else {
+          state.data?.results ?: emptyList()
+        }
         LazyColumn(
           state = listState,
           verticalArrangement = Arrangement.spacedBy(16.dp),
 
           ) {
           items(
-            items = state.data?.results ?: emptyList(),
+            items = itemsBasedOnRefresh,
             key = { movie -> movie.id }
           ) { movie ->
             CardMovieItem(

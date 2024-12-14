@@ -17,11 +17,11 @@ fun <T> errorResult(message : String?) : Result<T> {
   return Result.Error(message)
 }
 
-fun <T> handleException(e : Exception) : Result<T> {
+fun <T> handleException(e : Exception) : Result<T>? {
   e.printStackTrace()
-  
+
   return when (e) {
-    is UnknownHostException -> errorResult(ErrorMessages.NO_INTERNET_CONNECTION)
+    is UnknownHostException -> null
 
 
     else                    -> errorResult(e.localizedMessage ?: ErrorMessages.UNKNOWN_ERROR)

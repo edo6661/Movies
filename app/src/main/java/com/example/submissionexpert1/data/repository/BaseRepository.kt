@@ -29,7 +29,7 @@ abstract class BaseRepository {
         }
       }
     } catch (e : Exception) {
-      handleException(e)
+      handleException(e) ?: errorResult(ErrorMessages.NO_INTERNET_CONNECTION)
     }
   }
 
