@@ -33,20 +33,15 @@ abstract class BaseRepository {
     }
   }
 
-  protected fun <T, R> handleSafeApiCall(
-    result : Result<T>,
-    onMap : ((T) -> R)? = null
-  ) : Result<R> {
-    return when (result) {
-      is Result.Success -> {
-        @Suppress("UNCHECKED_CAST")
-        Result.Success(result.data.let { onMap?.invoke(it) }) as Result<R>
-      }
-
-      is Result.Error   -> Result.Error(result.message)
+  protected fun <T, R> Result<T>.map(onMap : (T) -> R) : Result<R> {
+    Result.Loading
+    return when (this) {
+      is Result.Success -> Result.Success(onMap(this.data))
+      is Result.Error   -> Result.Error(this.message)
       is Result.Loading -> Result.Loading
     }
   }
+
 
   protected suspend fun <T> safeDatabaseCall(
     databaseCall : suspend () -> T

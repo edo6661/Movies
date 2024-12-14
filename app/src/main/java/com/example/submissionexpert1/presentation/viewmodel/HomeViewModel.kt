@@ -45,21 +45,26 @@ class HomeViewModel @Inject constructor(
     }
     viewModelScope.launch {
       // TODO: REMOVE
-      delay(2000)
+      delay(1000)
       loadMovies()
     }
   }
 
   private fun loadMovies() {
+
     getPopularMovieUseCase()
       .flowOn(ioDispatcher)
+      .onStart {
+        _state.update {
+          it.copy(
+            isLoading = true,
+            error = null
+          )
+        }
+      }
       .onEach { result ->
         when (result) {
           is Result.Loading -> {
-            // TODO: REMOVE
-            delay(2000)
-
-
             _state.update {
               it.copy(
                 isLoading = true,
@@ -69,6 +74,9 @@ class HomeViewModel @Inject constructor(
           }
 
           is Result.Success -> {
+
+            // TODO: REMOVE
+            delay(1000)
             _state.update {
               it.copy(
                 isLoading = false,
