@@ -15,13 +15,10 @@ class MovieRepositoryImpl @Inject constructor(
 ) : IMovieRepository, BaseRepository() {
 
   override fun getPopularMovies() : Flow<Result<PaginationMovie>> = flow {
-    emit(Result.Loading)
-    safeApiCall { apiService.getPopularMovies() }.let {
-      if (it is Result.Success) {
-        emit(Result.Success(it.data.toDomain()))
-      }
-    }
-
+    emit(handleSafeApiCall(
+      result = safeApiCall { apiService.getPopularMovies() },
+      onMap = { it.toDomain() }
+    ))
 
   }
 

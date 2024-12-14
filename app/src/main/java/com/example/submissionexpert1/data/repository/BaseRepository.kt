@@ -4,6 +4,7 @@ import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.utils.parseErrorMessage
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.common.errorResult
+import com.example.submissionexpert1.domain.common.handleException
 import com.example.submissionexpert1.domain.common.successResult
 import retrofit2.Response
 
@@ -28,10 +29,22 @@ abstract class BaseRepository {
         }
       }
     } catch (e : Exception) {
-      e.printStackTrace()
-      errorResult(
-        e.localizedMessage ?: ErrorMessages.UNKNOWN_ERROR
-      )
+      handleException(e)
+    }
+  }
+
+  protected fun <T, R> handleSafeApiCall(
+    result : Result<T>,
+    onMap : ((T) -> R)? = null
+  ) : Result<R> {
+    return when (result) {
+      is Result.Success -> {
+        @Suppress("UNCHECKED_CAST")
+        Result.Success(result.data.let { onMap?.invoke(it) }) as Result<R>
+      }
+
+      is Result.Error   -> Result.Error(result.message)
+      is Result.Loading -> Result.Loading
     }
   }
 
