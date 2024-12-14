@@ -11,8 +11,12 @@ class GetPopularMoviesUseCaseImpl @Inject constructor(
   private val movieRepository : IMovieRepository
 ) : IGetPopularMoviesUseCase {
 
-  override operator fun invoke() : Flow<Result<PaginationMovie>> {
-    return movieRepository.getPopularMovies()
+  override operator fun invoke(
+    page : String,
+  ) : Flow<Result<PaginationMovie>> {
+    return movieRepository.getPopularMovies(
+      page,
+    )
   }
 
 

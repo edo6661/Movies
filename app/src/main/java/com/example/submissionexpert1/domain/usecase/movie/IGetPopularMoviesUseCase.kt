@@ -6,5 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface IGetPopularMoviesUseCase {
 
-  operator fun invoke() : Flow<Result<PaginationMovie>>
+  operator fun invoke(
+    page : String,
+  ) : Flow<Result<PaginationMovie>>
 }

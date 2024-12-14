@@ -26,11 +26,7 @@ fun MainError(
 ) {
   Column(
     modifier = Modifier
-      .fillMaxSize()
-
-      .padding(
-        horizontal = 16.dp
-      ),
+      .fillMaxSize(),
     verticalArrangement = Arrangement.spacedBy(
       8.dp,
       alignment = Alignment.CenterVertically

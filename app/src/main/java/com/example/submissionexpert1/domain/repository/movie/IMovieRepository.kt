@@ -6,5 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface IMovieRepository {
 
-  fun getPopularMovies() : Flow<Result<PaginationMovie>>
+  fun getPopularMovies(
+    page : String,
+  ) : Flow<Result<PaginationMovie>>
 }

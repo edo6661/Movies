@@ -14,9 +14,18 @@ class MovieRepositoryImpl @Inject constructor(
   private val apiService : ApiService,
 ) : IMovieRepository, BaseRepository() {
 
-  override fun getPopularMovies() : Flow<Result<PaginationMovie>> = flow {
-    val popularMoviesResult = safeApiCall { apiService.getPopularMovies() }
-    emit(popularMoviesResult.map { it.toDomain() })
+  override fun getPopularMovies(
+    page : String,
+  ) : Flow<Result<PaginationMovie>> = flow {
+    val popularMoviesResult = safeApiCall {
+      apiService.getPopularMovies(
+        page = page,
+        // TODO: replace dengan dynamic language (pake shared preference / data store)
+        language = "en-US",
+
+        )
+    }
+    emit(popularMoviesResult.mapSuccessResult { it.toDomain() })
   }
 
 

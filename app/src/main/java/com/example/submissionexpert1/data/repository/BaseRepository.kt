@@ -33,7 +33,7 @@ abstract class BaseRepository {
     }
   }
 
-  protected fun <T, R> Result<T>.map(onMap : (T) -> R) : Result<R> {
+  protected fun <T, R> Result<T>.mapSuccessResult(onMap : (T) -> R) : Result<R> {
     Result.Loading
     return when (this) {
       is Result.Success -> Result.Success(onMap(this.data))

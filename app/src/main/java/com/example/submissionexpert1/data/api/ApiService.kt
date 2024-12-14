@@ -11,8 +11,8 @@ interface ApiService {
   suspend fun getPopularMovies(
     @Query("page") page : String = "1",
     @Query("language") language : String = "id-ID",
-    @Query("sort_by") sortBy : String = "popularity.desc"
-  ) : Response<PaginationMovieResponse>
+
+    ) : Response<PaginationMovieResponse>
 
   @GET(ApiConfig.TOP_RATED)
   suspend fun getTopRatedMovies(
