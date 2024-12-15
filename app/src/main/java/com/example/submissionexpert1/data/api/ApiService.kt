@@ -1,6 +1,6 @@
 package com.example.submissionexpert1.data.api
 
-import com.example.submissionexpert1.data.source.remote.remote.PaginationMovieResponse
+import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

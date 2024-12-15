@@ -7,6 +7,8 @@ sealed class Result<out T> {
   data object Loading : Result<Nothing>()
   data class Success<T>(val data : T) : Result<T>()
   data class Error(val message : String?) : Result<Nothing>()
+  data class Alert(val message : String?) : Result<Nothing>()
+
 }
 
 fun <T> successResult(data : T) : Result<T> {
@@ -17,11 +19,15 @@ fun <T> errorResult(message : String?) : Result<T> {
   return Result.Error(message)
 }
 
+fun <T> alertResult(message : String?) : Result<T> {
+  return Result.Alert(message)
+}
+
 fun <T> handleException(e : Exception) : Result<T>? {
   e.printStackTrace()
 
   return when (e) {
-    is UnknownHostException -> null
+    is UnknownHostException -> errorResult(ErrorMessages.NO_INTERNET_CONNECTION)
 
 
     else                    -> errorResult(e.localizedMessage ?: ErrorMessages.UNKNOWN_ERROR)

@@ -3,6 +3,8 @@ package com.example.submissionexpert1.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.submissionexpert1.application.di.IODispatcher
+import com.example.submissionexpert1.core.constants.AlertMessages
+import com.example.submissionexpert1.data.db.EntertainmentDb
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.common.state.ErrorState
 import com.example.submissionexpert1.domain.model.PaginationMovie
@@ -18,6 +20,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
   private val getPopularMovieUseCase : IGetPopularMoviesUseCase,
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
+  private val db : EntertainmentDb
 ) : ViewModel() {
 
   private val _state = MutableStateFlow(HomeState())
@@ -28,13 +31,42 @@ class HomeViewModel @Inject constructor(
 
 
   init {
+    // TODO: untuk testing
+//    viewModelScope.launch(ioDispatcher) {
+//      db.clearDatabase()
+//    }
     onEvent(HomeEvent.OnLoad)
   }
 
   fun onEvent(event : HomeEvent) {
     when (event) {
-      is HomeEvent.OnLoad    -> loadMovies()
-      is HomeEvent.OnRefresh -> onRefresh()
+      is HomeEvent.OnLoad           -> loadMovies()
+      is HomeEvent.OnRefresh        -> onRefresh()
+
+      is HomeEvent.OnAlertDismissed -> {
+        _state.update {
+          it.copy(
+            alert = null
+          )
+        }
+
+      }
+
+      is HomeEvent.OnAlertActive    -> {
+        viewModelScope.launch {
+          _state.update {
+            it.copy(
+              alert = AlertMessages.NO_INTERNET_CONNECTION_ONLY_CACHE,
+            )
+          }
+          delay(3000)
+          _state.update {
+            it.copy(
+              alert = null
+            )
+          }
+        }
+      }
 
     }
   }
@@ -88,6 +120,24 @@ class HomeViewModel @Inject constructor(
             handleLoading()
           }
 
+          is Result.Alert   -> {
+            _state.update {
+              it.copy(
+                alert = result.message,
+                isLoading = false,
+                isRefreshing = false,
+                isLoadingMore = false,
+              )
+            }
+            delay(3000)
+            _state.update {
+              it.copy(
+                alert = null
+              )
+            }
+
+          }
+
           is Result.Success -> {
 
             // TODO: REMOVE
@@ -95,8 +145,6 @@ class HomeViewModel @Inject constructor(
             _state.update {
               val currentData = it.data
               val incomingData = result.data
-
-              // ! filter data yang masuk untuk ngindarin id duplikat [napa kali tmdb, apa w yg skill issue] (nnti ke detect error sama lazy column)
               val existingIds =
                 currentData?.results?.map { movie -> movie.id }?.toSet() ?: emptySet()
               val filteredNewResults =
@@ -128,8 +176,10 @@ class HomeViewModel @Inject constructor(
                 isLoading = false,
                 error = ErrorState(message = result.message),
                 isRefreshing = false,
-                isLoadingMore = false
-              )
+                isLoadingMore = false,
+                page = 1,
+
+                )
             }
           }
         }
@@ -140,8 +190,10 @@ class HomeViewModel @Inject constructor(
             isLoading = false,
             isRefreshing = false,
             isLoadingMore = false,
-            error = ErrorState(message = exception.message)
-          )
+            error = ErrorState(message = exception.message),
+            page = 1,
+
+            )
         }
       }
       // ! semua perubahan state dijalankan di main thread + memastikan aliran data aware terhadap lifecycle
@@ -180,6 +232,7 @@ data class HomeState(
   val isLoadingMore : Boolean = false,
   val page : Int = 1,
   val error : ErrorState? = null,
+  val alert : String? = null,
   val data : PaginationMovie? = null,
   val previousData : PaginationMovie? = null
 )
@@ -187,4 +240,6 @@ data class HomeState(
 sealed class HomeEvent {
   object OnLoad : HomeEvent()
   object OnRefresh : HomeEvent()
+  object OnAlertDismissed : HomeEvent()
+  object OnAlertActive : HomeEvent()
 }

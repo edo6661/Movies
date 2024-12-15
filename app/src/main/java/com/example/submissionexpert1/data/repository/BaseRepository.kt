@@ -1,7 +1,7 @@
 package com.example.submissionexpert1.data.repository
 
 import com.example.submissionexpert1.core.constants.ErrorMessages
-import com.example.submissionexpert1.data.utils.parseErrorMessage
+import com.example.submissionexpert1.data.utils.parseErrorBody
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.common.errorResult
 import com.example.submissionexpert1.domain.common.handleException
@@ -23,9 +23,12 @@ abstract class BaseRepository {
         }
 
         else             -> {
-          val errBody = res.errorBody()?.string()
-          val errMsg = parseErrorMessage(errBody)
-          errorResult(errMsg)
+          val errBody = parseErrorBody(
+            res.errorBody()?.string()
+          )
+
+          errorResult(errBody?.statusMessage ?: ErrorMessages.UNKNOWN_ERROR)
+
         }
       }
     } catch (e : Exception) {
@@ -39,6 +42,7 @@ abstract class BaseRepository {
       is Result.Success -> Result.Success(onMap(this.data))
       is Result.Error   -> Result.Error(this.message)
       is Result.Loading -> Result.Loading
+      is Result.Alert   -> Result.Alert(this.message)
     }
   }
 

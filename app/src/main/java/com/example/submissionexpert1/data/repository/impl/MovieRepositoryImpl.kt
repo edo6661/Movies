@@ -1,5 +1,6 @@
 package com.example.submissionexpert1.data.repository.impl
 
+import com.example.submissionexpert1.core.constants.AlertMessages
 import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.api.ApiService
 import com.example.submissionexpert1.data.db.dao.MovieDao
@@ -9,7 +10,7 @@ import com.example.submissionexpert1.data.helper.mapper.toDomain
 import com.example.submissionexpert1.data.helper.mapper.toMovieEntity
 import com.example.submissionexpert1.data.helper.mapper.toPaginationEntity
 import com.example.submissionexpert1.data.repository.BaseRepository
-import com.example.submissionexpert1.data.source.remote.remote.PaginationMovieResponse
+import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.model.PaginationMovie
 import com.example.submissionexpert1.domain.repository.movie.IMovieRepository
@@ -41,13 +42,28 @@ class MovieRepositoryImpl @Inject constructor(
       }
 
       is Result.Error   -> {
-        val data = getPaginationMovieEntity(page.toInt())
-        emit(data)
+        if (result.message == ErrorMessages.NO_INTERNET_CONNECTION) {
+          val data = getPaginationMovieEntity(page.toInt())
+          emit(data)
+          emit(
+            Result.Alert(AlertMessages.NO_INTERNET_CONNECTION_ONLY_CACHE)
+
+          )
+
+        } else {
+          emit(Result.Error(result.message))
+        }
+
       }
 
       is Result.Loading -> {
         emit(Result.Loading)
       }
+
+      is Result.Alert   -> {
+        emit(Result.Alert(result.message))
+      }
+
     }
   }
 
@@ -70,11 +86,14 @@ class MovieRepositoryImpl @Inject constructor(
     val result = safeDatabaseCall {
       paginationDao.getPaginationWithMovies(page)?.toDomain()
     }
+
     return when (result) {
       is Result.Success -> {
         result.data?.let {
           Result.Success(it)
-        } ?: Result.Error(ErrorMessages.NO_INTERNET_CONNECTION_CACHE_EMPTY)
+
+        }
+        ?: Result.Error("${ErrorMessages.EMPTY_DATA_FROM_CACHE} and ${ErrorMessages.NO_INTERNET_CONNECTION}")
       }
 
       is Result.Error   -> {
@@ -83,6 +102,10 @@ class MovieRepositoryImpl @Inject constructor(
 
       is Result.Loading -> {
         Result.Loading
+      }
+
+      is Result.Alert   -> {
+        Result.Alert(result.message)
       }
     }
   }

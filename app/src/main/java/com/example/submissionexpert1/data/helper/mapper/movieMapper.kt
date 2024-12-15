@@ -3,8 +3,8 @@ package com.example.submissionexpert1.data.helper.mapper
 import com.example.submissionexpert1.data.db.entity.MovieEntity
 import com.example.submissionexpert1.data.db.entity.PaginationEntity
 import com.example.submissionexpert1.data.db.entity.relation.PaginationWithMovies
-import com.example.submissionexpert1.data.source.remote.remote.MovieResponse
-import com.example.submissionexpert1.data.source.remote.remote.PaginationMovieResponse
+import com.example.submissionexpert1.data.source.remote.response.MovieResponse
+import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
 import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.domain.model.PaginationMovie
 

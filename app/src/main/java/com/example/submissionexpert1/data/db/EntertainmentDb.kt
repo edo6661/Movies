@@ -48,4 +48,9 @@ abstract class EntertainmentDb : RoomDatabase() {
   abstract fun movieDao() : MovieDao
   abstract fun genreDao() : GenreDao
   abstract fun paginationDao() : PaginationDao
+
+  fun clearDatabase() {
+    this.clearAllTables()
+  }
+
 }
