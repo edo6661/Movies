@@ -26,7 +26,7 @@ import com.example.submissionexpert1.presentation.viewmodel.HomeViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
-private const val LOAD_MORE_THRESHOLD = 5
+private const val LOAD_MORE_THRESHOLD = 3
 
 @Composable
 fun HomeScreen(
@@ -56,6 +56,12 @@ fun HomeScreen(
       viewModel.onEvent(HomeEvent.OnLoad)
     }
   }
+  LaunchedEffect(state.alert) {
+    if (state.alert != null) {
+      listState.scrollToItem(0)
+    }
+  }
+
 
 
 
@@ -98,14 +104,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
 
             ) {
-            item {
-              MainButton(
-                text = "Active Alert",
-                onClick = {
-                  viewModel.onEvent(HomeEvent.OnAlertActive)
-                }
-              )
-            }
+
             items(
               items = itemsBasedOnRefresh,
               key = { movie -> movie.id }

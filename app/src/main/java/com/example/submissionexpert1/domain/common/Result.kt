@@ -1,5 +1,6 @@
 package com.example.submissionexpert1.domain.common
 
+import com.example.submissionexpert1.core.constants.AlertMessages
 import com.example.submissionexpert1.core.constants.ErrorMessages
 import java.net.UnknownHostException
 
@@ -23,11 +24,11 @@ fun <T> alertResult(message : String?) : Result<T> {
   return Result.Alert(message)
 }
 
-fun <T> handleException(e : Exception) : Result<T>? {
+fun <T> handleException(e : Exception) : Result<T> {
   e.printStackTrace()
 
   return when (e) {
-    is UnknownHostException -> errorResult(ErrorMessages.NO_INTERNET_CONNECTION)
+    is UnknownHostException -> alertResult(AlertMessages.NO_INTERNET_CONNECTION_ONLY_CACHE)
 
 
     else                    -> errorResult(e.localizedMessage ?: ErrorMessages.UNKNOWN_ERROR)

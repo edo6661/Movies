@@ -1,6 +1,5 @@
 package com.example.submissionexpert1.data.repository.impl
 
-import com.example.submissionexpert1.core.constants.AlertMessages
 import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.api.ApiService
 import com.example.submissionexpert1.data.db.dao.MovieDao
@@ -42,17 +41,9 @@ class MovieRepositoryImpl @Inject constructor(
       }
 
       is Result.Error   -> {
-        if (result.message == ErrorMessages.NO_INTERNET_CONNECTION) {
-          val data = getPaginationMovieEntity(page.toInt())
-          emit(data)
-          emit(
-            Result.Alert(AlertMessages.NO_INTERNET_CONNECTION_ONLY_CACHE)
 
-          )
+        emit(Result.Error(result.message))
 
-        } else {
-          emit(Result.Error(result.message))
-        }
 
       }
 
@@ -61,7 +52,12 @@ class MovieRepositoryImpl @Inject constructor(
       }
 
       is Result.Alert   -> {
-        emit(Result.Alert(result.message))
+        val data = getPaginationMovieEntity(page.toInt())
+        emit(data)
+        if (page.toInt() == 1) {
+          emit(Result.Alert(result.message))
+
+        }
       }
 
     }
@@ -91,9 +87,8 @@ class MovieRepositoryImpl @Inject constructor(
       is Result.Success -> {
         result.data?.let {
           Result.Success(it)
-
         }
-        ?: Result.Error("${ErrorMessages.EMPTY_DATA_FROM_CACHE} and ${ErrorMessages.NO_INTERNET_CONNECTION}")
+        ?: Result.Error(ErrorMessages.NO_INTERNET_CONNECTION)
       }
 
       is Result.Error   -> {
