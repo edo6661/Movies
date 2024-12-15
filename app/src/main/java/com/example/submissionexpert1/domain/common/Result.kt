@@ -25,6 +25,7 @@ fun <T> alertResult(message : String?) : Result<T> {
 }
 
 fun <T> handleException(e : Exception) : Result<T> {
+  // TODO: nanti delete
   e.printStackTrace()
 
   return when (e) {

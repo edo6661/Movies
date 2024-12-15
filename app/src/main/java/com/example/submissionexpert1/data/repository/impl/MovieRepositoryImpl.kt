@@ -2,8 +2,8 @@ package com.example.submissionexpert1.data.repository.impl
 
 import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.api.ApiService
-import com.example.submissionexpert1.data.db.dao.MovieDao
 import com.example.submissionexpert1.data.db.dao.PaginationDao
+import com.example.submissionexpert1.data.db.dao.relation.MoviePaginationDao
 import com.example.submissionexpert1.data.db.entity.relation.PaginationMovieEntity
 import com.example.submissionexpert1.data.helper.mapper.toDomain
 import com.example.submissionexpert1.data.helper.mapper.toMovieEntity
@@ -19,8 +19,8 @@ import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
   private val apiService : ApiService,
-  private val movieDao : MovieDao,
-  private val paginationDao : PaginationDao
+  private val paginationDao : PaginationDao,
+  private val moviePaginationDao : MoviePaginationDao
 ) : IMovieRepository, BaseRepository() {
 
   override fun getPopularMovies(
@@ -53,10 +53,10 @@ class MovieRepositoryImpl @Inject constructor(
 
       is Result.Alert   -> {
         val data = getPaginationMovieEntity(page.toInt())
+        val isDataNull = data is Result.Error
         emit(data)
-        if (page.toInt() == 1) {
+        if (page.toInt() == 1 && ! isDataNull) {
           emit(Result.Alert(result.message))
-
         }
       }
 
@@ -72,9 +72,11 @@ class MovieRepositoryImpl @Inject constructor(
       PaginationMovieEntity(page = data.page, movieId = it.id)
     }
     safeDatabaseCall {
-      paginationDao.insertPagination(paginationEntity)
-      movieDao.insertMovies(movieEntities)
-      paginationDao.insertPaginationMovies(paginationMovieEntities)
+      moviePaginationDao.insertMoviesWithPagination(
+        pagination = paginationEntity,
+        movies = movieEntities,
+        paginationMovies = paginationMovieEntities
+      )
     }
   }
 
@@ -84,7 +86,9 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     return when (result) {
+
       is Result.Success -> {
+
         result.data?.let {
           Result.Success(it)
         }

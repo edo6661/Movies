@@ -36,8 +36,9 @@ abstract class BaseRepository {
     }
   }
 
-  protected fun <T, R> Result<T>.mapSuccessResult(onMap : (T) -> R) : Result<R> {
-    Result.Loading
+  protected fun <T, R> Result<T>.mapSuccessResult(
+    onMap : (T) -> R
+  ) : Result<R> {
     return when (this) {
       is Result.Success -> Result.Success(onMap(this.data))
       is Result.Error   -> Result.Error(this.message)
@@ -54,6 +55,7 @@ abstract class BaseRepository {
       val result = databaseCall.invoke()
       successResult(result)
     } catch (e : Exception) {
+      // TODO: nanti delete
       e.printStackTrace()
       errorResult(
         e.localizedMessage ?: ErrorMessages.UNKNOWN_ERROR

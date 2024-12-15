@@ -7,6 +7,7 @@ import com.example.submissionexpert1.data.db.dao.GenreDao
 import com.example.submissionexpert1.data.db.dao.MovieDao
 import com.example.submissionexpert1.data.db.dao.PaginationDao
 import com.example.submissionexpert1.data.db.dao.UserDao
+import com.example.submissionexpert1.data.db.dao.relation.MoviePaginationDao
 import com.example.submissionexpert1.data.db.entity.GenreEntity
 import com.example.submissionexpert1.data.db.entity.MovieEntity
 import com.example.submissionexpert1.data.db.entity.PaginationEntity
@@ -48,6 +49,7 @@ abstract class EntertainmentDb : RoomDatabase() {
   abstract fun movieDao() : MovieDao
   abstract fun genreDao() : GenreDao
   abstract fun paginationDao() : PaginationDao
+  abstract fun moviePaginationDao() : MoviePaginationDao
 
   fun clearDatabase() {
     this.clearAllTables()

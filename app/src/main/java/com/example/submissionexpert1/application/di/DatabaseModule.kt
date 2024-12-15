@@ -42,4 +42,8 @@ class DatabaseModule {
   @Provides
   @Singleton
   fun providePaginationDao(db : EntertainmentDb) = db.paginationDao()
+
+  @Provides
+  @Singleton
+  fun provideMoviePaginationDao(db : EntertainmentDb) = db.moviePaginationDao()
 }

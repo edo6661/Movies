@@ -1,14 +1,15 @@
 package com.example.submissionexpert1.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.submissionexpert1.application.di.IODispatcher
-import com.example.submissionexpert1.core.constants.AlertMessages
 import com.example.submissionexpert1.data.db.EntertainmentDb
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.common.state.ErrorState
 import com.example.submissionexpert1.domain.model.PaginationMovie
 import com.example.submissionexpert1.domain.usecase.movie.IGetPopularMoviesUseCase
+import com.example.submissionexpert1.presentation.utils.avoidSameMovieId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -23,11 +24,13 @@ class HomeViewModel @Inject constructor(
   private val db : EntertainmentDb
 ) : ViewModel() {
 
-  private val _state = MutableStateFlow(HomeState())
-  val state = _state.asStateFlow()
+  private val _uiState = MutableStateFlow(HomeState())
+  val uiState = _uiState.asStateFlow()
+  private val _movieState = MutableStateFlow(HomeMovieState())
+  val movieState = _movieState.asStateFlow()
 
   private val isStillOnFirstPage : Boolean
-    get() = _state.value.page == 1
+    get() = _uiState.value.page == 1
 
 
   init {
@@ -44,54 +47,45 @@ class HomeViewModel @Inject constructor(
       is HomeEvent.OnRefresh        -> onRefresh()
 
       is HomeEvent.OnAlertDismissed -> {
-        _state.update {
+        _uiState.update {
           it.copy(
             alert = null
           )
         }
 
       }
-
-      is HomeEvent.OnAlertActive    -> {
-        viewModelScope.launch {
-          _state.update {
-            it.copy(
-              alert = AlertMessages.NO_INTERNET_CONNECTION_ONLY_CACHE,
-            )
-          }
-          delay(3000)
-          _state.update {
-            it.copy(
-              alert = null
-            )
-          }
-        }
-      }
-
     }
   }
 
   private fun onRefresh() {
-    _state.update {
+    _uiState.update {
       it.copy(
         isRefreshing = true,
         page = 1,
         isLoading = false,
         isLoadingMore = false,
         error = null,
-        previousData = it.data,
-        data = null,
-
-        )
+      )
     }
+    _movieState.update {
+      it.copy(
+        data = null,
+        dataBeforeRefresh = it.data
+      )
+    }
+
     viewModelScope.launch {
       // TODO: REMOVE
       delay(1000)
       loadMovies()
-      _state.update {
+      _uiState.update {
         it.copy(
           isRefreshing = false,
-          previousData = null
+        )
+      }
+      _movieState.update {
+        it.copy(
+          dataBeforeRefresh = null
         )
       }
 
@@ -101,7 +95,7 @@ class HomeViewModel @Inject constructor(
   private fun loadMovies() {
 
     getPopularMovieUseCase(
-      page = _state.value.page.toString()
+      page = _uiState.value.page.toString()
     )
       // * rangkuman akuh
       // ! semua operasi diatas `flowOn` akan dijalankan di background thread
@@ -121,7 +115,7 @@ class HomeViewModel @Inject constructor(
           }
 
           is Result.Alert   -> {
-            _state.update {
+            _uiState.update {
               it.copy(
                 alert = result.message,
                 isLoading = false,
@@ -130,7 +124,7 @@ class HomeViewModel @Inject constructor(
               )
             }
             delay(3000)
-            _state.update {
+            _uiState.update {
               it.copy(
                 alert = null
               )
@@ -142,36 +136,33 @@ class HomeViewModel @Inject constructor(
 
             // TODO: REMOVE
             delay(1000)
-            _state.update {
-              val currentData = it.data
-              val incomingData = result.data
-              val existingIds =
-                currentData?.results?.map { movie -> movie.id }?.toSet() ?: emptySet()
-              val filteredNewResults =
-                incomingData.results.filterNot { movie -> movie.id in existingIds }
-
-              val newData = currentData?.copy(
-                results = currentData.results + filteredNewResults
-              ) ?: incomingData.copy(results = filteredNewResults)
-
-
+            val data =
+              avoidSameMovieId(
+                dispatcher = ioDispatcher,
+                currentData = _movieState.value.data,
+                incomingData = result.data
+              )
+            _uiState.update {
+              Log.d("HomeViewModel", "thread: ${Thread.currentThread().name}")
               it.copy(
                 isLoading = false,
                 isLoadingMore = false,
-                data = newData,
                 error = null,
-                isRefreshing = false
-              )
+                isRefreshing = false,
+                page = it.page + 1,
+
+                )
             }
-            _state.update {
+            _movieState.update {
               it.copy(
-                page = it.page + 1
+                data = data
               )
             }
+
           }
 
           is Result.Error   -> {
-            _state.update {
+            _uiState.update {
               it.copy(
                 isLoading = false,
                 error = ErrorState(message = result.message),
@@ -185,7 +176,7 @@ class HomeViewModel @Inject constructor(
         }
       }
       .catch { exception ->
-        _state.update {
+        _uiState.update {
           it.copy(
             isLoading = false,
             isRefreshing = false,
@@ -196,15 +187,15 @@ class HomeViewModel @Inject constructor(
             )
         }
       }
-      // ! semua perubahan state dijalankan di main thread + memastikan aliran data aware terhadap lifecycle
+      // ! semua perubahan uiState dijalankan di main thread + memastikan aliran data aware terhadap lifecycle
       .launchIn(viewModelScope)
   }
 
-  fun handleLoading() {
-    if (! _state.value.isRefreshing) {
+  private fun handleLoading() {
+    if (! _uiState.value.isRefreshing) {
       when (isStillOnFirstPage) {
         true  -> {
-          _state.update {
+          _uiState.update {
             it.copy(
               isLoading = true,
               error = null
@@ -213,7 +204,7 @@ class HomeViewModel @Inject constructor(
         }
 
         false -> {
-          _state.update {
+          _uiState.update {
             it.copy(
               isLoadingMore = true,
               error = null
@@ -233,13 +224,16 @@ data class HomeState(
   val page : Int = 1,
   val error : ErrorState? = null,
   val alert : String? = null,
-  val data : PaginationMovie? = null,
-  val previousData : PaginationMovie? = null
 )
 
+data class HomeMovieState(
+  val data : PaginationMovie? = null,
+  val dataBeforeRefresh : PaginationMovie? = null,
+)
+
+
 sealed class HomeEvent {
-  object OnLoad : HomeEvent()
-  object OnRefresh : HomeEvent()
-  object OnAlertDismissed : HomeEvent()
-  object OnAlertActive : HomeEvent()
+  data object OnLoad : HomeEvent()
+  data object OnRefresh : HomeEvent()
+  data object OnAlertDismissed : HomeEvent()
 }

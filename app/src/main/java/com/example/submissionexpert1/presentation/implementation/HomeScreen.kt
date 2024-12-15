@@ -34,7 +34,8 @@ fun HomeScreen(
   onNavigateDetail : (String) -> Unit,
   viewModel : HomeViewModel = hiltViewModel()
 ) {
-  val state by viewModel.state.collectAsState()
+  val uiState by viewModel.uiState.collectAsState()
+  val movieState by viewModel.movieState.collectAsState()
 
   val listState = rememberLazyListState()
 
@@ -52,12 +53,12 @@ fun HomeScreen(
 
 
   LaunchedEffect(reachedBottom) {
-    if (reachedBottom && ! state.isLoadingMore && ! state.isRefreshing) {
+    if (reachedBottom && ! uiState.isLoadingMore && ! uiState.isRefreshing) {
       viewModel.onEvent(HomeEvent.OnLoad)
     }
   }
-  LaunchedEffect(state.alert) {
-    if (state.alert != null) {
+  LaunchedEffect(uiState.alert) {
+    if (uiState.alert != null) {
       listState.scrollToItem(0)
     }
   }
@@ -75,29 +76,29 @@ fun HomeScreen(
 
 
     SwipeRefresh(
-      state = rememberSwipeRefreshState(isRefreshing = state.isRefreshing),
+      state = rememberSwipeRefreshState(isRefreshing = uiState.isRefreshing),
       onRefresh = { viewModel.onEvent(HomeEvent.OnRefresh) },
     ) {
 
       when {
-        state.isLoading && ! state.isRefreshing -> {
+        uiState.isLoading && ! uiState.isRefreshing -> {
           CenteredCircularLoading(
             modifier = Modifier.fillMaxSize()
           )
         }
 
-        ! state.error?.message.isNullOrEmpty() && ! state.isRefreshing -> {
+        ! uiState.error?.message.isNullOrEmpty() && ! uiState.isRefreshing -> {
           MainError(
-            message = state.error?.message ?: ErrorMessages.UNKNOWN_ERROR,
+            message = uiState.error?.message ?: ErrorMessages.UNKNOWN_ERROR,
             onRetry = { viewModel.onEvent(HomeEvent.OnLoad) }
           )
         }
 
         else -> {
-          val itemsBasedOnRefresh = if (state.isRefreshing) {
-            state.previousData?.results ?: emptyList()
+          val itemsBasedOnRefresh = if (uiState.isRefreshing) {
+            movieState.dataBeforeRefresh?.results ?: emptyList()
           } else {
-            state.data?.results ?: emptyList()
+            movieState.data?.results ?: emptyList()
           }
           LazyColumn(
             state = listState,
@@ -119,7 +120,7 @@ fun HomeScreen(
 
             item {
               AnimatedVisibility(
-                state.isLoadingMore,
+                uiState.isLoadingMore,
               ) {
                 CenteredCircularLoading(
                   modifier = Modifier.fillMaxWidth()
@@ -132,7 +133,7 @@ fun HomeScreen(
     }
 
     AnimatedVisibility(
-      visible = state.alert != null,
+      visible = uiState.alert != null,
       modifier = Modifier
         .align(Alignment.BottomCenter),
       enter = slideInVertically { it + 200 } + fadeIn(
@@ -151,7 +152,7 @@ fun HomeScreen(
           .padding(16.dp)
       ) {
         MainText(
-          text = state.alert ?: AlertMessages.NO_INTERNET_CONNECTION_ONLY_CACHE,
+          text = uiState.alert ?: AlertMessages.NO_INTERNET_CONNECTION_ONLY_CACHE,
           color = MaterialTheme.colorScheme.onPrimaryContainer
         )
         MainButton(
