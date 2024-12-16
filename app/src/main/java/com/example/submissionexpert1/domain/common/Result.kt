@@ -20,7 +20,7 @@ fun <T> errorResult(message : String?) : Result<T> {
 
 fun <T> handleException(e : Exception) : Result<T> {
   // TODO: nanti delete
-  e.printStackTrace()
+//  e.printStackTrace()
 
   return when (e) {
     is UnknownHostException -> errorResult(ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE)

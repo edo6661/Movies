@@ -2,7 +2,8 @@ package com.example.submissionexpert1.data.helper.mapper
 
 import com.example.submissionexpert1.data.db.entity.MovieEntity
 import com.example.submissionexpert1.data.db.entity.PaginationEntity
-import com.example.submissionexpert1.data.db.entity.relation.PaginationWithMovies
+import com.example.submissionexpert1.data.db.entity.relation.PaginationMovieEntity
+import com.example.submissionexpert1.data.db.entity.relation.PaginationWithMovie
 import com.example.submissionexpert1.data.source.remote.response.MovieResponse
 import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
 import com.example.submissionexpert1.domain.model.Movie
@@ -83,11 +84,27 @@ fun MovieEntity.toDomain() : Movie {
   )
 }
 
-fun PaginationWithMovies.toDomain() : PaginationMovie {
+fun List<PaginationWithMovie>.toDomain() : PaginationMovie? {
+  if (isEmpty()) return null
+
+  val paginationEntity = first().pagination
+
+  val movies = this.map { it.movie.toDomain() }
+
   return PaginationMovie(
-    page = pagination.page,
-    results = movies.map { it.toDomain() },
-    totalPages = pagination.totalPages,
-    totalResults = pagination.totalResults
+    page = paginationEntity.page,
+    results = movies,
+    totalPages = paginationEntity.totalPages,
+    totalResults = paginationEntity.totalResults
   )
 }
+
+fun PaginationMovieResponse.toDatabaseEntities() : Triple<PaginationEntity, List<MovieEntity>, List<PaginationMovieEntity>> {
+  val paginationEntity = this.toPaginationEntity()
+  val movieEntities = this.results.map { it.toMovieEntity() }
+  val paginationMovieEntities = this.results.map {
+    PaginationMovieEntity(page = this.page, movieId = it.id)
+  }
+  return Triple(paginationEntity, movieEntities, paginationMovieEntities)
+}
+
