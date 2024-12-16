@@ -36,18 +36,6 @@ abstract class BaseRepository {
     }
   }
 
-  protected fun <T, R> Result<T>.mapSuccessResult(
-    onMap : (T) -> R
-  ) : Result<R> {
-    return when (this) {
-      is Result.Success -> Result.Success(onMap(this.data))
-      is Result.Error   -> Result.Error(this.message)
-      is Result.Loading -> Result.Loading
-      is Result.Alert   -> Result.Alert(this.message)
-    }
-  }
-
-
   protected suspend fun <T> safeDatabaseCall(
     databaseCall : suspend () -> T
   ) : Result<T> {

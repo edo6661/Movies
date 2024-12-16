@@ -14,6 +14,7 @@ import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.model.PaginationMovie
 import com.example.submissionexpert1.domain.repository.movie.IMovieRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -26,6 +27,8 @@ class MovieRepositoryImpl @Inject constructor(
   override fun getPopularMovies(
     page : String,
   ) : Flow<Result<PaginationMovie>> = flow {
+
+
     val result = safeApiCall {
       apiService.getPopularMovies(
         page = page,
@@ -35,14 +38,21 @@ class MovieRepositoryImpl @Inject constructor(
     }
     when (result) {
       is Result.Success -> {
-        val data = result.data
-        insertAllToDao(data)
-        emit(Result.Success(data.toDomain()))
+        insertAllToDao(result.data)
+        val cachedData = getPaginationMovieEntity(page.toInt())
+        if (cachedData is Result.Success) {
+          emit(cachedData)
+        }
+
       }
 
       is Result.Error   -> {
-
-        emit(Result.Error(result.message))
+        val message = result.message
+        if (message == ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE) {
+          emitAll(getAndEmitCachedMovie(page, result))
+        } else {
+          emit(Result.Error(result.message))
+        }
 
 
       }
@@ -51,34 +61,21 @@ class MovieRepositoryImpl @Inject constructor(
         emit(Result.Loading)
       }
 
-      is Result.Alert   -> {
-        val data = getPaginationMovieEntity(page.toInt())
-        val isDataNull = data is Result.Error
-        emit(data)
-        if (page.toInt() == 1 && ! isDataNull) {
-          emit(Result.Alert(result.message))
-        }
-      }
-
     }
   }
 
-  private suspend fun insertAllToDao(
-    data : PaginationMovieResponse
-  ) {
-    val paginationEntity = data.toPaginationEntity()
-    val movieEntities = data.results.map { it.toMovieEntity() }
-    val paginationMovieEntities = data.results.map {
-      PaginationMovieEntity(page = data.page, movieId = it.id)
-    }
-    safeDatabaseCall {
-      moviePaginationDao.insertMoviesWithPagination(
-        pagination = paginationEntity,
-        movies = movieEntities,
-        paginationMovies = paginationMovieEntities
-      )
+  private fun getAndEmitCachedMovie(
+    page : String,
+    result : Result.Error
+  ) : Flow<Result<PaginationMovie>> = flow {
+    val data = getPaginationMovieEntity(page.toInt())
+    val isDataNull = data is Result.Error
+    emit(data)
+    if (page.toInt() == 1 && ! isDataNull) {
+      emit(Result.Error(result.message))
     }
   }
+
 
   private suspend fun getPaginationMovieEntity(page : Int) : Result<PaginationMovie> {
     val result = safeDatabaseCall {
@@ -103,9 +100,23 @@ class MovieRepositoryImpl @Inject constructor(
         Result.Loading
       }
 
-      is Result.Alert   -> {
-        Result.Alert(result.message)
-      }
+    }
+  }
+
+  private suspend fun insertAllToDao(
+    data : PaginationMovieResponse
+  ) {
+    val paginationEntity = data.toPaginationEntity()
+    val movieEntities = data.results.map { it.toMovieEntity() }
+    val paginationMovieEntities = data.results.map {
+      PaginationMovieEntity(page = data.page, movieId = it.id)
+    }
+    safeDatabaseCall {
+      moviePaginationDao.insertMoviesWithPagination(
+        pagination = paginationEntity,
+        movies = movieEntities,
+        paginationMovies = paginationMovieEntities
+      )
     }
   }
 

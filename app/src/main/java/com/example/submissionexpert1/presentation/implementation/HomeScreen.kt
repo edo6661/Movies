@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.submissionexpert1.core.constants.AlertMessages
 import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.presentation.ui.shared.MainButton
 import com.example.submissionexpert1.presentation.ui.shared.MainText
@@ -57,10 +56,12 @@ fun HomeScreen(
       viewModel.onEvent(HomeEvent.OnLoad)
     }
   }
-  LaunchedEffect(uiState.alert) {
-    if (uiState.alert != null) {
-      listState.scrollToItem(0)
-    }
+  LaunchedEffect(
+    key1 = uiState.isLoading,
+    key2 = uiState.alert != null,
+    key3 = uiState.error?.message != null,
+  ) {
+    listState.scrollToItem(0)
   }
 
 
@@ -152,7 +153,7 @@ fun HomeScreen(
           .padding(16.dp)
       ) {
         MainText(
-          text = uiState.alert ?: AlertMessages.NO_INTERNET_CONNECTION_ONLY_CACHE,
+          text = uiState.alert ?: ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE,
           color = MaterialTheme.colorScheme.onPrimaryContainer
         )
         MainButton(

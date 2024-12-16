@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.submissionexpert1.application.di.IODispatcher
+import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.db.EntertainmentDb
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.common.state.ErrorState
@@ -12,7 +13,6 @@ import com.example.submissionexpert1.domain.usecase.movie.IGetPopularMoviesUseCa
 import com.example.submissionexpert1.presentation.utils.avoidSameMovieId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -35,64 +35,30 @@ class HomeViewModel @Inject constructor(
 
   init {
     // TODO: untuk testing
-//    viewModelScope.launch(ioDispatcher) {
-//      db.clearDatabase()
-//    }
+//    deleteAllOnDb()
+
     onEvent(HomeEvent.OnLoad)
   }
 
+  private fun deleteAllOnDb() {
+    viewModelScope.launch(ioDispatcher) {
+      db.clearDatabase()
+    }
+  }
+
+
   fun onEvent(event : HomeEvent) {
     when (event) {
-      is HomeEvent.OnLoad           -> loadMovies()
+      is HomeEvent.OnLoad           -> onLoad()
       is HomeEvent.OnRefresh        -> onRefresh()
 
-      is HomeEvent.OnAlertDismissed -> {
-        _uiState.update {
-          it.copy(
-            alert = null
-          )
-        }
-
-      }
-    }
-  }
-
-  private fun onRefresh() {
-    _uiState.update {
-      it.copy(
-        isRefreshing = true,
-        page = 1,
-        isLoading = false,
-        isLoadingMore = false,
-        error = null,
-      )
-    }
-    _movieState.update {
-      it.copy(
-        data = null,
-        dataBeforeRefresh = it.data
-      )
-    }
-
-    viewModelScope.launch {
-      // TODO: REMOVE
-      delay(1000)
-      loadMovies()
-      _uiState.update {
-        it.copy(
-          isRefreshing = false,
-        )
-      }
-      _movieState.update {
-        it.copy(
-          dataBeforeRefresh = null
-        )
-      }
+      is HomeEvent.OnAlertDismissed -> onAlertDismissed()
 
     }
   }
 
-  private fun loadMovies() {
+
+  private fun onLoad() {
 
     getPopularMovieUseCase(
       page = _uiState.value.page.toString()
@@ -114,81 +80,66 @@ class HomeViewModel @Inject constructor(
             handleLoading()
           }
 
-          is Result.Alert   -> {
-            _uiState.update {
-              it.copy(
-                alert = result.message,
-                isLoading = false,
-                isRefreshing = false,
-                isLoadingMore = false,
-              )
-            }
-            delay(3000)
-            _uiState.update {
-              it.copy(
-                alert = null
-              )
-            }
-
-          }
-
           is Result.Success -> {
-
-            // TODO: REMOVE
-            delay(1000)
-            val data =
-              avoidSameMovieId(
-                dispatcher = ioDispatcher,
-                currentData = _movieState.value.data,
-                incomingData = result.data
-              )
-            _uiState.update {
-              Log.d("HomeViewModel", "thread: ${Thread.currentThread().name}")
-              it.copy(
-                isLoading = false,
-                isLoadingMore = false,
-                error = null,
-                isRefreshing = false,
-                page = it.page + 1,
-
-                )
-            }
-            _movieState.update {
-              it.copy(
-                data = data
-              )
-            }
-
+            handleSuccess(result)
           }
 
           is Result.Error   -> {
-            _uiState.update {
-              it.copy(
-                isLoading = false,
-                error = ErrorState(message = result.message),
-                isRefreshing = false,
-                isLoadingMore = false,
-                page = 1,
-
-                )
-            }
+            handleError(result.message ?: ErrorMessages.UNKNOWN_ERROR)
           }
         }
       }
-      .catch { exception ->
-        _uiState.update {
-          it.copy(
-            isLoading = false,
-            isRefreshing = false,
-            isLoadingMore = false,
-            error = ErrorState(message = exception.message),
-            page = 1,
+      .catch {
+        Log.d("HomeViewModel", "onLoad: $it")
+        handleCatch(it.localizedMessage ?: ErrorMessages.UNKNOWN_ERROR)
 
-            )
-        }
       }
       // ! semua perubahan uiState dijalankan di main thread + memastikan aliran data aware terhadap lifecycle
       .launchIn(viewModelScope)
+  }
+
+
+  private fun onRefresh() {
+    _uiState.update {
+      it.copy(
+        isRefreshing = true,
+        page = 1,
+        isLoading = false,
+        isLoadingMore = false,
+        error = null,
+      )
+    }
+    _movieState.update {
+      it.copy(
+        data = null,
+        dataBeforeRefresh = it.data
+      )
+    }
+
+    viewModelScope.launch {
+      // TODO: REMOVE
+//      delay(1000)
+      onLoad()
+      _uiState.update {
+        it.copy(
+          isRefreshing = false,
+        )
+      }
+      _movieState.update {
+        it.copy(
+          dataBeforeRefresh = null
+        )
+      }
+
+    }
+  }
+
+  private fun onAlertDismissed() {
+    _uiState.update {
+      it.copy(
+        alert = null
+      )
+    }
   }
 
   private fun handleLoading() {
@@ -212,6 +163,89 @@ class HomeViewModel @Inject constructor(
           }
         }
       }
+    }
+  }
+
+  private suspend fun handleSuccess(
+    result : Result.Success<PaginationMovie>
+  ) {
+
+    // TODO: REMOVE
+//    delay(1000)
+    val data =
+      avoidSameMovieId(
+        dispatcher = ioDispatcher,
+        currentData = _movieState.value.data,
+        incomingData = result.data
+      )
+    _uiState.update {
+      it.copy(
+        isLoading = false,
+        isLoadingMore = false,
+        error = null,
+        isRefreshing = false,
+        page = it.page + 1,
+
+        )
+    }
+    _movieState.update {
+      it.copy(
+        data = data
+      )
+    }
+
+  }
+
+  private suspend fun handleError(
+    message : String
+  ) {
+    Log.d("HomeViewModel", "handleError: $message")
+    when {
+      message == ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE -> {
+        _uiState.update {
+          it.copy(
+            alert = message,
+            isLoading = false,
+            isRefreshing = false,
+            isLoadingMore = false,
+          )
+        }
+//        delay(3000)
+        _uiState.update {
+          it.copy(
+            alert = null
+          )
+        }
+      }
+
+      else                                                       -> {
+        _uiState.update {
+          it.copy(
+            isLoading = false,
+            error = ErrorState(message = message),
+            isRefreshing = false,
+            isLoadingMore = false,
+            page = 1,
+
+            )
+        }
+      }
+    }
+
+  }
+
+  private fun handleCatch(
+    message : String
+  ) {
+    _uiState.update {
+      it.copy(
+        isLoading = false,
+        isRefreshing = false,
+        isLoadingMore = false,
+        error = ErrorState(message = message),
+        page = 1,
+
+        )
     }
   }
 
