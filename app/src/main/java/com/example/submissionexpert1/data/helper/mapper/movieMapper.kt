@@ -9,6 +9,7 @@ import com.example.submissionexpert1.data.source.remote.response.PaginationMovie
 import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.domain.model.PaginationMovie
 
+// ! RES
 fun PaginationMovieResponse.toDomain() : PaginationMovie {
   return PaginationMovie(
     page = page,
@@ -65,6 +66,19 @@ fun MovieResponse.toMovieEntity() : MovieEntity {
   )
 }
 
+
+fun PaginationMovieResponse.toDatabaseEntities() : Triple<PaginationEntity, List<MovieEntity>, List<PaginationMovieEntity>> {
+  val paginationEntity = this.toPaginationEntity()
+  val movieEntities = this.results.map { it.toMovieEntity() }
+  val paginationMovieEntities = this.results.map {
+    PaginationMovieEntity(page = this.page, movieId = it.id)
+  }
+  return Triple(paginationEntity, movieEntities, paginationMovieEntities)
+}
+
+
+// ! entity
+
 fun MovieEntity.toDomain() : Movie {
   return Movie(
     id = movieId,
@@ -98,13 +112,3 @@ fun List<PaginationWithMovie>.toDomain() : PaginationMovie? {
     totalResults = paginationEntity.totalResults
   )
 }
-
-fun PaginationMovieResponse.toDatabaseEntities() : Triple<PaginationEntity, List<MovieEntity>, List<PaginationMovieEntity>> {
-  val paginationEntity = this.toPaginationEntity()
-  val movieEntities = this.results.map { it.toMovieEntity() }
-  val paginationMovieEntities = this.results.map {
-    PaginationMovieEntity(page = this.page, movieId = it.id)
-  }
-  return Triple(paginationEntity, movieEntities, paginationMovieEntities)
-}
-

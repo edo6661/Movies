@@ -35,24 +35,29 @@ class MovieRepositoryImpl @Inject constructor(
         language = "en-US",
       )
     }
+    emitAll(handleApiResult(result, page))
+
+  }
+
+  private suspend fun handleApiResult(
+    result : Result<PaginationMovieResponse>,
+    page : String
+  ) : Flow<Result<PaginationMovie>> = flow {
     when (result) {
       is Result.Success -> {
         insertAllToDao(result.data)
         val cachedData = getCachedMovie(page.toInt())
         emit(cachedData)
-
-
       }
 
       is Result.Error   -> {
         val message = result.message
+        // ! nge handle unknown host exception
         if (message == ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE) {
-          emitAll(emitCachedMovie(page, result))
+          emitAll(getCachedMovieWhenError(page, result))
         } else {
           emit(Result.Error(result.message))
         }
-
-
       }
 
       is Result.Loading -> {
@@ -62,14 +67,14 @@ class MovieRepositoryImpl @Inject constructor(
     }
   }
 
-  private fun emitCachedMovie(
+  private fun getCachedMovieWhenError(
     page : String,
     result : Result.Error
   ) : Flow<Result<PaginationMovie>> = flow {
     val cachedData = getCachedMovie(page.toInt())
-    val isDataNull = cachedData is Result.Error
+    val isDataNotNullAndFirstPage = cachedData !is Result.Error && page.toInt() == 1
     emit(cachedData)
-    if (page.toInt() == 1 && ! isDataNull) {
+    if (isDataNotNullAndFirstPage) {
       emit(Result.Error(result.message))
     }
   }
@@ -85,6 +90,7 @@ class MovieRepositoryImpl @Inject constructor(
       is Result.Success -> {
         result.data?.let {
           Result.Success(it)
+          // ! ini case nya padahal data cache nya itu null tapi kok error nya no internet connection? karena dia nge handle UnknownHostException, jadi cuman nerusin aja
         } ?: Result.Error(ErrorMessages.NO_INTERNET_CONNECTION)
       }
 

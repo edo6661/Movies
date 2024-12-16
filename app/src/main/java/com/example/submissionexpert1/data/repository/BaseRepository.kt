@@ -1,10 +1,10 @@
 package com.example.submissionexpert1.data.repository
 
 import com.example.submissionexpert1.core.constants.ErrorMessages
+import com.example.submissionexpert1.core.utils.handleException
 import com.example.submissionexpert1.data.utils.parseErrorBody
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.common.errorResult
-import com.example.submissionexpert1.domain.common.handleException
 import com.example.submissionexpert1.domain.common.successResult
 import retrofit2.Response
 

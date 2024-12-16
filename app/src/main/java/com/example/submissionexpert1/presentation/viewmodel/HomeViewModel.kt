@@ -52,7 +52,7 @@ class HomeViewModel @Inject constructor(
       is HomeEvent.OnLoad           -> onLoad()
       is HomeEvent.OnRefresh        -> onRefresh()
 
-      is HomeEvent.OnAlertDismissed -> onAlertDismissed()
+      is HomeEvent.OnDismissedAlert -> onAlertDismissed()
 
     }
   }
@@ -267,5 +267,5 @@ data class HomeMovieState(
 sealed class HomeEvent {
   data object OnLoad : HomeEvent()
   data object OnRefresh : HomeEvent()
-  data object OnAlertDismissed : HomeEvent()
+  data object OnDismissedAlert : HomeEvent()
 }
