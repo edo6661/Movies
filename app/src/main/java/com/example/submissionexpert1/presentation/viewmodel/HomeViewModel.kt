@@ -1,6 +1,5 @@
 package com.example.submissionexpert1.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.submissionexpert1.application.di.IODispatcher
@@ -13,6 +12,7 @@ import com.example.submissionexpert1.domain.usecase.movie.IGetPopularMoviesUseCa
 import com.example.submissionexpert1.presentation.utils.avoidSameMovieId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -90,7 +90,6 @@ class HomeViewModel @Inject constructor(
         }
       }
       .catch {
-        Log.d("HomeViewModel", "onLoad: $it")
         handleCatch(it.localizedMessage ?: ErrorMessages.UNKNOWN_ERROR)
 
       }
@@ -199,7 +198,6 @@ class HomeViewModel @Inject constructor(
   private suspend fun handleError(
     message : String
   ) {
-    Log.d("HomeViewModel", "handleError: $message")
     when {
       message == ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE -> {
         _uiState.update {
@@ -210,7 +208,7 @@ class HomeViewModel @Inject constructor(
             isLoadingMore = false,
           )
         }
-//        delay(3000)
+        delay(3000)
         _uiState.update {
           it.copy(
             alert = null

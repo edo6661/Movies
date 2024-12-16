@@ -37,5 +37,12 @@ data class PaginationWithMovies(
     associateBy = Junction(PaginationMovieEntity::class)
   )
   val movies : List<MovieEntity>
+
 )
+
+data class PaginationMovieRaw(
+  @Embedded val pagination : PaginationEntity,
+  @Embedded val movie : MovieEntity
+)
+
 

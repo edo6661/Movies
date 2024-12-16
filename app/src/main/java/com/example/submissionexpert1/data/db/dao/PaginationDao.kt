@@ -3,7 +3,7 @@ package com.example.submissionexpert1.data.db.dao
 import androidx.room.*
 import com.example.submissionexpert1.data.db.entity.PaginationEntity
 import com.example.submissionexpert1.data.db.entity.relation.PaginationMovieEntity
-import com.example.submissionexpert1.data.db.entity.relation.PaginationWithMovies
+import com.example.submissionexpert1.data.db.entity.relation.PaginationMovieRaw
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -19,8 +19,17 @@ interface PaginationDao {
   fun getPagination(page : Int) : Flow<PaginationEntity?>
 
   @Transaction
-  @Query("SELECT * FROM pagination WHERE page = :page")
-  suspend fun getPaginationWithMovies(page : Int) : PaginationWithMovies?
+  @Query(
+    """
+    SELECT pagination.*, movies.* 
+    FROM pagination 
+    INNER JOIN pagination_movies ON pagination.page = pagination_movies.page
+    INNER JOIN movies ON pagination_movies.movieId = movies.movieId
+    WHERE pagination.page = :page
+    ORDER BY movies.popularity DESC
+    """
+  )
+  fun getPaginationWithMoviesRaw(page : Int) : Flow<List<PaginationMovieRaw>>
 
 
 }
