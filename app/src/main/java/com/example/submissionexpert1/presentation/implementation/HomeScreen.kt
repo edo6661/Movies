@@ -146,7 +146,6 @@ fun HomeScreen(
         targetAlpha = 0.5f
       )
     ) {
-      Log.d("HomeScreen", "Alert: ${uiState.alert}")
       Column(
         modifier = Modifier
           .fillMaxWidth()

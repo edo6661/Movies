@@ -1,6 +1,5 @@
 package com.example.submissionexpert1.data.repository.impl
 
-import android.util.Log
 import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.api.ApiService
 import com.example.submissionexpert1.data.db.dao.PaginationDao
@@ -48,7 +47,6 @@ class MovieRepositoryImpl @Inject constructor(
       is Result.Error   -> {
         val message = result.message
         if (message == ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE) {
-          Log.d("MovieRepositoryImpl", "Showing cached data only")
           emitAll(emitCachedMovie(page, result))
         } else {
           emit(Result.Error(result.message))
