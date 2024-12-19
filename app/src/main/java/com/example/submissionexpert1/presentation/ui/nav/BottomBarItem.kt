@@ -1,6 +1,7 @@
 package com.example.submissionexpert1.presentation.ui.nav
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -23,6 +24,11 @@ data class BottomBarItem(
         label = Screen.Favorite.route,
         icon = Icons.Filled.Favorite,
         route = Screen.Favorite.route
+      ),
+      BottomBarItem(
+        label = Screen.Auth.Login.route,
+        icon = Icons.AutoMirrored.Default.Login,
+        route = Screen.Auth.Login.route
       ),
     )
   }

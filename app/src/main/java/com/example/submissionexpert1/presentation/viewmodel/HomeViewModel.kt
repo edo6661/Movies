@@ -34,8 +34,9 @@ class HomeViewModel @Inject constructor(
 
 
   init {
+
     // TODO: untuk testing
-//    deleteAllOnDb()
+    deleteAllOnDb()
 
     onEvent(HomeEvent.OnLoad)
   }

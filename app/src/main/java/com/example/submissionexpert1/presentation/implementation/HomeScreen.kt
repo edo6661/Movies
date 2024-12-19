@@ -1,27 +1,12 @@
 package com.example.submissionexpert1.presentation.implementation
 
-import android.util.Log
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.submissionexpert1.core.constants.ErrorMessages
-import com.example.submissionexpert1.domain.model.Movie
-import com.example.submissionexpert1.presentation.ui.shared.movie.CardMovieItem
-import com.example.submissionexpert1.presentation.ui.state.alert.BottomAlert
-import com.example.submissionexpert1.presentation.ui.state.error.MainError
-import com.example.submissionexpert1.presentation.ui.state.loading.CenteredCircularLoading
+import com.example.submissionexpert1.presentation.ui.shared.movie.MovieList
 import com.example.submissionexpert1.presentation.viewmodel.HomeEvent
-import com.example.submissionexpert1.presentation.viewmodel.HomeState
 import com.example.submissionexpert1.presentation.viewmodel.HomeViewModel
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 private const val LOAD_MORE_THRESHOLD = 3
 
@@ -67,88 +52,83 @@ fun HomeScreen(
     listState.scrollToItem(0)
   }
 
-  Box(
-    modifier = modifier
-      .padding(horizontal = 16.dp)
-      .padding(
-        bottom = 32.dp
-      )
-  ) {
-    HomeContent(
-      uiState = uiState,
-      movies = movies,
-      listState = listState,
-      onEvent = onEvent
-    )
 
-    BottomAlert(
-      message = uiState.alert ?: ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE,
-      onDismiss = { viewModel.onEvent(HomeEvent.OnDismissedAlert) },
-      visible = uiState.alert != null,
-      modifier = Modifier.align(Alignment.BottomCenter)
-    )
+  MovieList(
+    modifier = modifier,
+    movies = movies,
+    listState = listState,
+    onNavigateDetail = onNavigateDetail,
+    alert = uiState.alert,
+    isLoading = uiState.isLoading,
+    isRefreshing = uiState.isRefreshing,
+    isLoadingMore = uiState.isLoadingMore,
+    error = uiState.error,
+    onDismissedAlert = { onEvent(HomeEvent.OnDismissedAlert) },
+    onLoad = { onEvent(HomeEvent.OnLoad) },
+    onRefresh = { onEvent(HomeEvent.OnRefresh) }
 
-
-  }
+  )
 }
-
-@Composable
-fun HomeContent(
-  uiState : HomeState,
-  movies : List<Movie>,
-  listState : LazyListState,
-  onEvent : (HomeEvent) -> Unit
-
-) {
-  SwipeRefresh(
-    state = rememberSwipeRefreshState(isRefreshing = uiState.isRefreshing),
-    onRefresh = { onEvent(HomeEvent.OnRefresh) },
-  ) {
-    when {
-      uiState.isLoading && ! uiState.isRefreshing -> {
-        CenteredCircularLoading(
-          modifier = Modifier.fillMaxSize()
-        )
-      }
-
-      ! uiState.error?.message.isNullOrEmpty() && ! uiState.isRefreshing -> {
-        MainError(
-          message = uiState.error?.message ?: ErrorMessages.UNKNOWN_ERROR,
-          onRetry = { onEvent(HomeEvent.OnLoad) }
-        )
-      }
-
-      else -> {
-
-        LazyColumn(
-          state = listState,
-          verticalArrangement = Arrangement.spacedBy(16.dp),
-
-          ) {
-
-          items(
-            items = movies,
-            key = { movie -> movie.id }
-          ) { movie ->
-            CardMovieItem(
-              movie = movie,
-              onClick = {
-                Log.d("HomeScreen", "Movie: ${movie.title}")
-              }
-            )
-          }
-
-          item {
-            // ! kalo state is loading more (sengaja ga di if)
-            // TODO: nanti apa apain
-            CenteredCircularLoading(
-              modifier = Modifier.fillMaxWidth()
-            )
-          }
-        }
-      }
-    }
-  }
-
-
-}
+//
+//@Composable
+//fun HomeContent(
+//  uiState : HomeState,
+//  movies : List<Movie>,
+//  listState : LazyListState,
+//  onEvent : (HomeEvent) -> Unit,
+//  onNavigateDetail : (String) -> Unit
+//
+//) {
+//  SwipeRefresh(
+//    state = rememberSwipeRefreshState(isRefreshing = uiState.isRefreshing),
+//    onRefresh = { onEvent(HomeEvent.OnRefresh) },
+//  ) {
+//    when {
+//      uiState.isLoading && ! uiState.isRefreshing -> {
+//        CenteredCircularLoading(
+//          modifier = Modifier.fillMaxSize()
+//        )
+//      }
+//
+//      ! uiState.error?.message.isNullOrEmpty() && ! uiState.isRefreshing -> {
+//        MainError(
+//          message = uiState.error?.message ?: ErrorMessages.UNKNOWN_ERROR,
+//          onRetry = { onEvent(HomeEvent.OnLoad) }
+//        )
+//      }
+//
+//      else -> {
+//
+//        LazyColumn(
+//          state = listState,
+//          verticalArrangement = Arrangement.spacedBy(16.dp),
+//
+//          ) {
+//
+//          items(
+//            items = movies,
+//            key = { movie -> movie.id }
+//          ) { movie ->
+//            CardMovieItem(
+//              movie = movie,
+//              onClick = {
+//                Log.d("HomeScreen", "Movie: ${movie.title}")
+//                onNavigateDetail(movie.id.toString())
+//              }
+//            )
+//          }
+//
+//          item {
+//            // ! kalo state is loading more (sengaja ga di if)
+//            // TODO: nanti apa apain
+//            CenteredCircularLoading(
+//              modifier = Modifier.fillMaxWidth()
+//            )
+//          }
+//        }
+//      }
+//    }
+//  }
+//
+//
+//}

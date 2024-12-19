@@ -14,7 +14,7 @@ fun FavoriteScreen(
     modifier = modifier,
   ) {
     Text(
-      text = "Home"
+      text = "Memek"
     )
   }
 }

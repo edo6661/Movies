@@ -7,9 +7,11 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.submissionexpert1.presentation.implementation.DetailScreen
 import com.example.submissionexpert1.presentation.implementation.FavoriteScreen
 import com.example.submissionexpert1.presentation.implementation.HomeScreen
 import com.example.submissionexpert1.presentation.navigation.Screen
+import com.example.submissionexpert1.presentation.navigation.navigateSingleTop
 
 @Composable
 fun NavGraph(
@@ -21,8 +23,12 @@ fun NavGraph(
     navController = navController,
     startDestination = startDestination,
   ) {
+    authNavGraph(
+      modifier = modifier,
+      navController = navController
+    )
     val onNavigateDetail = { id : String ->
-      navController.navigate("Detail/$id")
+      navController.navigateSingleTop("Detail/$id")
     }
     composable(
       route = Screen.Home.route
@@ -49,9 +55,9 @@ fun NavGraph(
         }
       )
     ) {
-      FavoriteScreen(
+      DetailScreen(
         modifier = modifier,
-        onNavigateDetail = onNavigateDetail
+        id = it.arguments?.getString("id") ?: "",
       )
     }
   }

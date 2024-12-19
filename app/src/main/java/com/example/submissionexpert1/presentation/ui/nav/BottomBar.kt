@@ -14,7 +14,7 @@ fun BottomBar(
   navController : NavHostController,
 ) {
   NavigationBar {
-    BottomBarItem().bottomBarItems().forEachIndexed { index, navigationItem ->
+    BottomBarItem().bottomBarItems().forEachIndexed { _, navigationItem ->
       NavigationBarItem(
         selected = isActive(navigationItem.route),
         label = {
@@ -28,7 +28,9 @@ fun BottomBar(
         },
         onClick = {
           navController.navigateSingleTop(navigationItem.route)
-        }
+        },
+        alwaysShowLabel = false,
+        enabled = ! isActive(navigationItem.route),
       )
     }
 

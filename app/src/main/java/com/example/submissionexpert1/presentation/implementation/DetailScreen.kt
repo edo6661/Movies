@@ -14,7 +14,7 @@ fun DetailScreen(
     modifier = modifier,
   ) {
     Text(
-      text = "Home"
+      text = "DEtail $id"
     )
   }
 }
