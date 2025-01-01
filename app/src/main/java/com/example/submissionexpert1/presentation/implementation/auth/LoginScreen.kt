@@ -1,10 +1,7 @@
 package com.example.submissionexpert1.presentation.implementation.auth
 
 import android.util.Log
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -12,10 +9,13 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import com.example.submissionexpert1.presentation.common.Size
 import com.example.submissionexpert1.presentation.ui.shared.MainButton
+import com.example.submissionexpert1.presentation.ui.shared.MainText
 import com.example.submissionexpert1.presentation.ui.shared.MainTextField
 
 @Composable
@@ -23,6 +23,7 @@ fun LoginScreen(
   modifier : Modifier,
   onNavigateRegister : () -> Unit
 ) {
+
   var email by remember { mutableStateOf("") }
   var emailError : String? by remember { mutableStateOf(null) }
   var password by remember { mutableStateOf("") }
@@ -75,13 +76,34 @@ fun LoginScreen(
         passwordError = passwordError
 
       )
-      MainButton(
-        text = "Login",
-        onClick = {
-          onSubmit()
-        },
-        modifier = Modifier.fillMaxWidth()
+      Spacer(
+        modifier = Modifier.height(12.dp)
       )
+      Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+      ) {
+        Box(
+          contentAlignment = Alignment.CenterEnd,
+          modifier = Modifier
+            .fillMaxWidth()
+        ) {
+
+          MainText(
+            text = "Register",
+            onClick = {
+              onNavigateRegister()
+            },
+            textSize = Size.Small
+          )
+        }
+        MainButton(
+          text = "Login",
+          onClick = {
+            onSubmit()
+          },
+          modifier = Modifier.fillMaxWidth()
+        )
+      }
 
     }
   }

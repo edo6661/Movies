@@ -44,13 +44,13 @@ fun MainTextField(
   cursorColor : Color = Color.Unspecified,
   unfocusedPlaceholderColor : Color = Color.Unspecified,
   focusedPlaceholderColor : Color = Color.Unspecified,
-  unfocusedIndicatorColor : Color = Color.Unspecified,
-  focusedIndicatorColor : Color = Color.Unspecified,
+  unfocusedIndicatorColor : Color = Color.Transparent,
+  focusedIndicatorColor : Color = Color.Transparent,
   unfocusedLeadingIconColor : Color = Color.Unspecified,
   focusedLeadingIconColor : Color = Color.Unspecified,
   unfocusedTrailingIconColor : Color = Color.Unspecified,
   focusedTrailingIconColor : Color = Color.Unspecified,
-  isPasswordVisible : Boolean = false,
+  isPasswordVisible : Boolean? = null,
 
   ) {
   Column {
@@ -69,8 +69,12 @@ fun MainTextField(
       leadingIcon = leadingIcon,
       trailingIcon = trailingIcon,
       singleLine = maxLines == 1,
-      shape = shape,
-      visualTransformation = if (isPasswordVisible) PasswordVisualTransformation() else VisualTransformation.None,
+      shape = if (error != null) RoundedCornerShape(
+        topStart = 8.dp,
+        topEnd = 8.dp
+      ) else shape,
+      visualTransformation = if (isPasswordVisible == true || isPasswordVisible == null) VisualTransformation.None else PasswordVisualTransformation(),
+
 
       colors = TextFieldDefaults.colors(
         unfocusedTextColor = unfocusedTextColor,

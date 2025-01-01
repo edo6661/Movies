@@ -14,7 +14,7 @@ fun NavGraphBuilder.authNavGraph(
   navController : NavHostController
 ) {
   navigation(
-    startDestination = Screen.Auth.Login.route,
+    startDestination = Screen.Auth.Register.route,
     route = "auth"
   ) {
     composable(Screen.Auth.Login.route) {
