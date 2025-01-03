@@ -119,4 +119,8 @@ dependencies {
   // swipe refresh
   implementation("com.google.accompanist:accompanist-swiperefresh:0.26.2-beta")
 
+  //  hash
+  implementation("org.mindrot:jbcrypt:0.4")
+
+
 }

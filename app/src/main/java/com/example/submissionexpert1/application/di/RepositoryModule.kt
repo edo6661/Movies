@@ -1,6 +1,6 @@
 package com.example.submissionexpert1.application.di
 
-import com.example.submissionexpert1.data.repository.impl.MovieRepositoryImpl
+import com.example.submissionexpert1.data.repository.impl.movie.MovieRepositoryImpl
 import com.example.submissionexpert1.domain.repository.movie.IMovieRepository
 import dagger.Binds
 import dagger.Module

@@ -17,10 +17,13 @@ interface UserDao {
   @Query("SELECT * FROM users")
   fun getAllUsers() : Flow<List<UserEntity>>
 
-  @Query("SELECT * FROM users WHERE email = :email AND password = :password LIMIT 1")
-  fun login(email : String, password : String) : Flow<UserEntity>
+  @Query("SELECT * FROM users WHERE email = :email AND password = :password")
+  fun login(email : String, password : String) : Flow<UserEntity?>
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun register(user : UserEntity)
+
+  @Query("SELECT COUNT(*) > 0 FROM users WHERE email = :email AND password = :password")
+  fun isUserExist(email : String, password : String) : Flow<Boolean>
 
 }

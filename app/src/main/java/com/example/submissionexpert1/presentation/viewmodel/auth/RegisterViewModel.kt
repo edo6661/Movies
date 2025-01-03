@@ -1,10 +1,12 @@
 package com.example.submissionexpert1.presentation.viewmodel.auth
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.submissionexpert1.core.extensions.validate3Char
 import com.example.submissionexpert1.core.extensions.validateConfirmPassword
 import com.example.submissionexpert1.core.extensions.validateEmail
+import com.example.submissionexpert1.core.utils.hashPassword
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// TODO: apply bcrypt for password hashing
 @HiltViewModel
 class RegisterViewModel @Inject constructor() : ViewModel() {
 
@@ -40,6 +43,21 @@ class RegisterViewModel @Inject constructor() : ViewModel() {
     _state.value = _state.value.update()
   }
 
+  private fun resetError() {
+    _state.value = _state.value.copy(
+      firstNameError = null,
+      lastNameError = null,
+      emailError = null,
+      passwordError = null,
+      confirmPasswordError = null
+    )
+  }
+
+  private fun resetState() {
+    _state.value = RegisterState()
+  }
+
+
   private fun validateAndRegister() {
     val currentState = _state.value
 
@@ -61,7 +79,7 @@ class RegisterViewModel @Inject constructor() : ViewModel() {
         confirmPasswordError
       ).all { it == null }
     ) {
-      _state.value = currentState.copy(message = "Registration successful!", isLoading = true)
+      resetError()
       performRegistration()
     } else {
       _state.value = currentState.copy(
@@ -75,10 +93,14 @@ class RegisterViewModel @Inject constructor() : ViewModel() {
   }
 
   private fun performRegistration() {
+    val hashedPassword = hashPassword(_state.value.password)
+    updateState { copy(isLoading = true) }
     viewModelScope.launch {
       // Simulate a network operation
       delay(2000)
-      _state.value = _state.value.copy(isLoading = false, message = "Registration Completed!")
+
+      Log.d("RegisterViewModel", "data: ${_state.value}")
+      resetState()
     }
   }
 }

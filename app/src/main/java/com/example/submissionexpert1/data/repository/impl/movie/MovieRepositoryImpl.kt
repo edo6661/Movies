@@ -1,4 +1,4 @@
-package com.example.submissionexpert1.data.repository.impl
+package com.example.submissionexpert1.data.repository.impl.movie
 
 import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.api.ApiService
