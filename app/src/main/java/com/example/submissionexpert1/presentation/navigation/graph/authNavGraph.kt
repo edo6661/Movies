@@ -14,16 +14,21 @@ fun NavGraphBuilder.authNavGraph(
   navController : NavHostController
 ) {
   navigation(
-    startDestination = Screen.Auth.Register.route,
+    startDestination = Screen.Auth.Login.route,
     route = "auth"
   ) {
     composable(Screen.Auth.Login.route) {
       val onNavigateRegister = {
         navController.navigate(Screen.Auth.Register.route)
       }
+      val onSuccessfulLogin = {
+        navController.navigate(Screen.Home.route)
+      }
       LoginScreen(
         modifier = modifier,
-        onNavigateRegister = onNavigateRegister
+        onNavigateRegister = onNavigateRegister,
+        onSuccessfulLogin = onSuccessfulLogin
+
       )
     }
     composable(Screen.Auth.Register.route) {

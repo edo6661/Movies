@@ -17,11 +17,12 @@ import com.example.submissionexpert1.presentation.navigation.navigateSingleTop
 fun NavGraph(
   modifier : Modifier = Modifier,
   startDestination : String = "auth",
-  navController : NavHostController
+  navController : NavHostController,
+  isUserLoggedIn : Boolean = false,
 ) {
   NavHost(
     navController = navController,
-    startDestination = startDestination,
+    startDestination = if (isUserLoggedIn) Screen.Home.route else startDestination,
   ) {
     authNavGraph(
       modifier = modifier,

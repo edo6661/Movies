@@ -1,6 +1,6 @@
 package com.example.submissionexpert1.data.repository.impl.user
 
-import com.example.submissionexpert1.core.constants.ErrorMessages
+import com.example.submissionexpert1.core.utils.checkPassword
 import com.example.submissionexpert1.data.db.dao.UserDao
 import com.example.submissionexpert1.data.db.entity.UserEntity
 import com.example.submissionexpert1.data.helper.mapper.toEntity
@@ -23,47 +23,57 @@ class AuthRepositoryImpl @Inject constructor(
 
   override suspend fun login(email : String, password : String) : Flow<Result<String>> = flow {
     emit(Result.Loading)
-    val result = safeDatabaseCall {
-      dao.login(email, password).firstOrNull()
+
+    val loginResult = safeDatabaseCall {
+      dao.login(email).firstOrNull()
     }
-    emit(handleLogin(result))
+    emit(handleLogin(loginResult, password))
   }
 
-  private suspend fun handleLogin(result : Result<UserEntity?>) : Result<String> {
-    when (result) {
+  private suspend fun handleLogin(
+    resultUser : Result<UserEntity?>,
+    password : String
+  ) : Result<String> {
+    return when (resultUser) {
       is Result.Success -> {
-        val user = result.data?.toUser() ?: return Result.Error("Login Failed")
-        pref.saveUserSession(user)
-        return Result.Success("Login Success")
+        checkUser(resultUser.data, password)
       }
 
       is Result.Loading -> {
-        return Result.Loading
+        Result.Loading
       }
 
       is Result.Error   -> {
-        return Result.Error("Login Failed")
+        Result.Error(resultUser.message)
       }
     }
-
   }
+
+  private suspend fun checkUser(user : UserEntity?, password : String) : Result<String> {
+    return if (user != null && checkPassword(password, user.password)) {
+      pref.saveUserSession(user.toUser())
+      Result.Success("Login Success")
+    } else {
+      Result.Error("Invalid Email or Password")
+    }
+  }
+
 
   override suspend fun register(user : User) : Flow<Result<String>> = flow {
     emit(Result.Loading)
     val isEmailExistResult = safeDatabaseCall {
       dao.isEmailExist(user.email).firstOrNull() ?: false
     }
-
     if (isEmailExistResult is Result.Success && isEmailExistResult.data) {
       emit(Result.Error("Email Already Exist"))
       return@flow
     }
-
-    val result = safeDatabaseCall {
+    val registerResult = safeDatabaseCall {
       dao.register(user.toEntity())
     }
-    emit(handleRegister(result))
+    emit(handleRegister(registerResult))
   }
+
 
   private fun handleRegister(result : Result<Unit>) : Result<String> {
     return when (result) {
@@ -76,7 +86,7 @@ class AuthRepositoryImpl @Inject constructor(
       }
 
       is Result.Error   -> {
-        Result.Error(ErrorMessages.SOMETHING_WENT_WRONG)
+        Result.Error(result.message)
       }
     }
 

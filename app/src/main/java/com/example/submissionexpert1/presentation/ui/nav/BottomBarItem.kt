@@ -13,8 +13,10 @@ data class BottomBarItem(
   val route : String = ""
 ) {
 
-  fun bottomBarItems() : List<BottomBarItem> {
-    return listOf(
+  fun bottomBarItems(
+    isUserLoggedIn : Boolean = false
+  ) : List<BottomBarItem> {
+    val items = mutableListOf(
       BottomBarItem(
         label = Screen.Home.route,
         icon = Icons.Filled.Home,
@@ -24,12 +26,19 @@ data class BottomBarItem(
         label = Screen.Favorite.route,
         icon = Icons.Filled.Favorite,
         route = Screen.Favorite.route
-      ),
-      BottomBarItem(
-        label = Screen.Auth.Login.route,
-        icon = Icons.AutoMirrored.Default.Login,
-        route = Screen.Auth.Login.route
-      ),
+      )
     )
+
+    if (! isUserLoggedIn) {
+      items.add(
+        BottomBarItem(
+          label = Screen.Auth.Login.route,
+          icon = Icons.AutoMirrored.Default.Login,
+          route = Screen.Auth.Login.route
+        )
+      )
+    }
+
+    return items
   }
 }

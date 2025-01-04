@@ -24,7 +24,6 @@ class DatabaseModule {
     EntertainmentDb::class.java,
     EntertainmentDb.Constants.DATABASE_NAME
   )
-    .fallbackToDestructiveMigration()
     .build()
 
   @Provides

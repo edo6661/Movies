@@ -21,10 +21,9 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
-// TODO: apply bcrypt for password hashing
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-  private val authUseCase : IAuthUseCase,
+  private val useCase : IAuthUseCase,
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
   @MainDispatcher private val mainDispatcher : CoroutineDispatcher
 
@@ -108,7 +107,7 @@ class RegisterViewModel @Inject constructor(
     val hashedPassword = hashPassword(_state.value.password)
     updateState { copy(isLoading = true) }
     viewModelScope.launch(ioDispatcher) {
-      authUseCase.register(
+      useCase.register(
         User(
           firstName = _state.value.firstName,
           lastName = _state.value.lastName,

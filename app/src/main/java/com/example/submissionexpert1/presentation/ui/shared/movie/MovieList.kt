@@ -36,7 +36,6 @@ fun MovieList(
   Box(
     modifier = modifier
       .padding(horizontal = 16.dp)
-      .padding(bottom = 32.dp)
   ) {
     MovieListContent(
       movies = movies,

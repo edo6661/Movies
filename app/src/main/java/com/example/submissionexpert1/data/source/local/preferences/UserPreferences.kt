@@ -35,9 +35,6 @@ class UserPreferences @Inject constructor(
     it.clear()
   }
 
-  fun isLoggedIn() : Flow<Boolean> = dataStore.data.map { preferences ->
-    preferences[USER_DATA_KEY] != null
-  }
 
   companion object {
 
