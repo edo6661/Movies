@@ -3,6 +3,7 @@ package com.example.submissionexpert1.presentation.viewmodel.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.submissionexpert1.application.di.IODispatcher
+import com.example.submissionexpert1.application.di.MainDispatcher
 import com.example.submissionexpert1.core.extensions.validate3Char
 import com.example.submissionexpert1.core.extensions.validateConfirmPassword
 import com.example.submissionexpert1.core.extensions.validateEmail
@@ -10,11 +11,13 @@ import com.example.submissionexpert1.core.utils.hashPassword
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.model.User
 import com.example.submissionexpert1.domain.usecase.user.IAuthUseCase
+import com.example.submissionexpert1.presentation.common.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -23,8 +26,9 @@ import javax.inject.Inject
 class RegisterViewModel @Inject constructor(
   private val authUseCase : IAuthUseCase,
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
+  @MainDispatcher private val mainDispatcher : CoroutineDispatcher
 
-  ) : ViewModel() {
+) : ViewModel() {
 
   private val _state = MutableStateFlow(RegisterState())
   val state : StateFlow<RegisterState> get() = _state
@@ -103,7 +107,7 @@ class RegisterViewModel @Inject constructor(
   private fun performRegistration() {
     val hashedPassword = hashPassword(_state.value.password)
     updateState { copy(isLoading = true) }
-    viewModelScope.launch {
+    viewModelScope.launch(ioDispatcher) {
       authUseCase.register(
         User(
           firstName = _state.value.firstName,
@@ -112,17 +116,25 @@ class RegisterViewModel @Inject constructor(
           password = hashedPassword
         )
       ).collect { result ->
-        when (result) {
-          is Result.Success -> {
-            updateState { copy(isLoading = false, message = result.data) }
-          }
+        withContext(mainDispatcher) {
 
-          is Result.Error   -> {
-            updateState { copy(isLoading = false, message = result.message) }
-          }
+          when (result) {
+            is Result.Success -> {
 
-          is Result.Loading -> {
-            updateState { copy(isLoading = true) }
+              updateState { copy(isLoading = false, message = Message.Success(result.data)) }
+            }
+
+            is Result.Error   -> {
+              if (result.message == "Email Already Exist") {
+                updateState { copy(isLoading = false, emailError = "Email Already Exist") }
+
+              }
+              updateState { copy(isLoading = false, message = Message.Error(result.message)) }
+            }
+
+            is Result.Loading -> {
+              updateState { copy(isLoading = true) }
+            }
           }
         }
       }
@@ -157,7 +169,7 @@ data class RegisterState(
   val emailError : String? = null,
   val passwordError : String? = null,
   val confirmPasswordError : String? = null,
-  val message : String? = null,
+  val message : Message? = null,
   val isLoading : Boolean = false,
 
   )

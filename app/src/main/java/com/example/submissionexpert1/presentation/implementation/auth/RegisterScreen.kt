@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.submissionexpert1.presentation.common.Message
 import com.example.submissionexpert1.presentation.common.Size
 import com.example.submissionexpert1.presentation.ui.shared.MainButton
 import com.example.submissionexpert1.presentation.ui.shared.MainText
@@ -38,10 +39,12 @@ fun RegisterScreen(
 
   LaunchedEffect(state.message) {
     state.message?.let {
-      if (it == "Register Success") {
+      if (it is Message.Success) {
         onNavigateLogin()
+      } else {
+        Toast.makeText(context, (it as Message.Error).message, Toast.LENGTH_SHORT).show()
       }
-      Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+
 
     }
   }
