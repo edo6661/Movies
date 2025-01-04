@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.submissionexpert1.presentation.navigation.graph.NavGraph
@@ -35,7 +36,11 @@ class MainActivity : ComponentActivity() {
           currentRoute = currentRoute
         ) {
           NavGraph(
-            modifier = Modifier.padding(it),
+            modifier = Modifier
+              .padding(it)
+              .padding(
+                vertical = 16.dp
+              ),
             navController = navController
           )
         }

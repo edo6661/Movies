@@ -1,22 +1,30 @@
 package com.example.submissionexpert1.presentation.viewmodel.auth
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.submissionexpert1.application.di.IODispatcher
 import com.example.submissionexpert1.core.extensions.validate3Char
 import com.example.submissionexpert1.core.extensions.validateConfirmPassword
 import com.example.submissionexpert1.core.extensions.validateEmail
 import com.example.submissionexpert1.core.utils.hashPassword
+import com.example.submissionexpert1.domain.common.Result
+import com.example.submissionexpert1.domain.model.User
+import com.example.submissionexpert1.domain.usecase.user.IAuthUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 // TODO: apply bcrypt for password hashing
 @HiltViewModel
-class RegisterViewModel @Inject constructor() : ViewModel() {
+class RegisterViewModel @Inject constructor(
+  private val authUseCase : IAuthUseCase,
+  @IODispatcher private val ioDispatcher : CoroutineDispatcher,
+
+  ) : ViewModel() {
 
   private val _state = MutableStateFlow(RegisterState())
   val state : StateFlow<RegisterState> get() = _state
@@ -96,11 +104,30 @@ class RegisterViewModel @Inject constructor() : ViewModel() {
     val hashedPassword = hashPassword(_state.value.password)
     updateState { copy(isLoading = true) }
     viewModelScope.launch {
-      // Simulate a network operation
-      delay(2000)
+      authUseCase.register(
+        User(
+          firstName = _state.value.firstName,
+          lastName = _state.value.lastName,
+          email = _state.value.email,
+          password = hashedPassword
+        )
+      ).collect { result ->
+        when (result) {
+          is Result.Success -> {
+            updateState { copy(isLoading = false, message = result.data) }
+          }
 
-      Log.d("RegisterViewModel", "data: ${_state.value}")
-      resetState()
+          is Result.Error   -> {
+            updateState { copy(isLoading = false, message = result.message) }
+          }
+
+          is Result.Loading -> {
+            updateState { copy(isLoading = true) }
+          }
+        }
+      }
+
+
     }
   }
 }

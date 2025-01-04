@@ -1,5 +1,6 @@
 package com.example.submissionexpert1.presentation.implementation.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -8,10 +9,12 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,6 +33,18 @@ fun RegisterScreen(
   onNavigateLogin : () -> Unit
 ) {
   val state by viewModel.state.collectAsState()
+  val context = LocalContext.current
+
+
+  LaunchedEffect(state.message) {
+    state.message?.let {
+      if (it == "Register Success") {
+        onNavigateLogin()
+      }
+      Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+
+    }
+  }
 
   Box(modifier = modifier.padding(horizontal = 16.dp)) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {

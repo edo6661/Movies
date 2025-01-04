@@ -1,5 +1,6 @@
 package com.example.submissionexpert1.data.repository.impl.user
 
+import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.db.dao.UserDao
 import com.example.submissionexpert1.data.db.entity.UserEntity
 import com.example.submissionexpert1.data.helper.mapper.toEntity
@@ -29,17 +30,35 @@ class AuthRepositoryImpl @Inject constructor(
   }
 
   private suspend fun handleLogin(result : Result<UserEntity?>) : Result<String> {
-    return if (result is Result.Success) {
-      val user = result.data?.toUser() !!
-      pref.saveUserSession(user)
-      Result.Success("Login Success")
-    } else {
-      Result.Error("Login Failed")
+    when (result) {
+      is Result.Success -> {
+        val user = result.data?.toUser() ?: return Result.Error("Login Failed")
+        pref.saveUserSession(user)
+        return Result.Success("Login Success")
+      }
+
+      is Result.Loading -> {
+        return Result.Loading
+      }
+
+      is Result.Error   -> {
+        return Result.Error("Login Failed")
+      }
     }
+
   }
 
   override suspend fun register(user : User) : Flow<Result<String>> = flow {
     emit(Result.Loading)
+    val isEmailExistResult = safeDatabaseCall {
+      dao.isEmailExist(user.email).firstOrNull() ?: false
+    }
+
+    if (isEmailExistResult is Result.Success && isEmailExistResult.data) {
+      emit(Result.Error("Email Already Exist"))
+      return@flow
+    }
+
     val result = safeDatabaseCall {
       dao.register(user.toEntity())
     }
@@ -47,15 +66,31 @@ class AuthRepositoryImpl @Inject constructor(
   }
 
   private fun handleRegister(result : Result<Unit>) : Result<String> {
-    return if (result is Result.Success) {
-      Result.Success("Register Success")
-    } else {
-      Result.Error("Register Failed")
+    return when (result) {
+      is Result.Success -> {
+        Result.Success("Register Success")
+      }
+
+      is Result.Loading -> {
+        Result.Loading
+      }
+
+      is Result.Error   -> {
+        Result.Error(ErrorMessages.SOMETHING_WENT_WRONG)
+      }
     }
+
   }
 
+
   override suspend fun logout() {
-    pref.clearUserSession()
+    try {
+      pref.clearUserSession()
+    } catch (e : Exception) {
+      e.printStackTrace()
+      throw Exception("Logout Failed")
+    }
+
   }
 
 
