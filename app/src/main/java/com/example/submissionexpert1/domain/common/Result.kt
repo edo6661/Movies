@@ -15,3 +15,4 @@ fun <T> errorResult(message : String) : Result<T> {
   return Result.Error(message)
 }
 
+

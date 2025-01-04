@@ -1,7 +1,7 @@
 package com.example.submissionexpert1.data.repository.impl.user
 
 import com.example.submissionexpert1.core.utils.checkPassword
-import com.example.submissionexpert1.data.db.dao.UserDao
+import com.example.submissionexpert1.data.db.dao.AuthDao
 import com.example.submissionexpert1.data.db.entity.UserEntity
 import com.example.submissionexpert1.data.helper.mapper.toEntity
 import com.example.submissionexpert1.data.helper.mapper.toUser
@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
-  private val dao : UserDao,
+  private val authDao : AuthDao,
   private val pref : UserPreferences
 
 ) : IAuthRepository, BaseRepository() {
@@ -25,7 +25,7 @@ class AuthRepositoryImpl @Inject constructor(
     emit(Result.Loading)
 
     val loginResult = safeDatabaseCall {
-      dao.login(email).firstOrNull()
+      authDao.login(email).firstOrNull()
     }
     emit(handleLogin(loginResult, password))
   }
@@ -62,14 +62,14 @@ class AuthRepositoryImpl @Inject constructor(
   override suspend fun register(user : User) : Flow<Result<String>> = flow {
     emit(Result.Loading)
     val isEmailExistResult = safeDatabaseCall {
-      dao.isEmailExist(user.email).firstOrNull() ?: false
+      authDao.isEmailExist(user.email).firstOrNull() ?: false
     }
     if (isEmailExistResult is Result.Success && isEmailExistResult.data) {
       emit(Result.Error("Email Already Exist"))
       return@flow
     }
     val registerResult = safeDatabaseCall {
-      dao.register(user.toEntity())
+      authDao.register(user.toEntity())
     }
     emit(handleRegister(registerResult))
   }
@@ -88,17 +88,6 @@ class AuthRepositoryImpl @Inject constructor(
       is Result.Error   -> {
         Result.Error(result.message)
       }
-    }
-
-  }
-
-
-  override suspend fun logout() {
-    try {
-      pref.clearUserSession()
-    } catch (e : Exception) {
-      e.printStackTrace()
-      throw Exception("Logout Failed")
     }
 
   }

@@ -4,10 +4,7 @@ import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.submissionexpert1.data.db.dao.GenreDao
-import com.example.submissionexpert1.data.db.dao.MovieDao
-import com.example.submissionexpert1.data.db.dao.PaginationDao
-import com.example.submissionexpert1.data.db.dao.UserDao
+import com.example.submissionexpert1.data.db.dao.*
 import com.example.submissionexpert1.data.db.dao.relation.MoviePaginationDao
 import com.example.submissionexpert1.data.db.entity.GenreEntity
 import com.example.submissionexpert1.data.db.entity.MovieEntity
@@ -62,6 +59,7 @@ abstract class EntertainmentDb : RoomDatabase() {
   abstract fun genreDao() : GenreDao
   abstract fun paginationDao() : PaginationDao
   abstract fun moviePaginationDao() : MoviePaginationDao
+  abstract fun authDao() : AuthDao
 
   fun clearDatabase() {
     this.clearAllTables()

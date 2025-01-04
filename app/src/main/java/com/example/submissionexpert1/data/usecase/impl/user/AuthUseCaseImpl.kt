@@ -19,9 +19,5 @@ class AuthUseCaseImpl @Inject constructor(
     return repository.register(user)
   }
 
-  override suspend fun logout() {
-    repository.logout()
-  }
-
 
 }
