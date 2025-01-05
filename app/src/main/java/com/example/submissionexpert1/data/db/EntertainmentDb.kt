@@ -1,10 +1,9 @@
 package com.example.submissionexpert1.data.db
 
-import androidx.room.AutoMigration
-import androidx.room.Database
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
+import androidx.room.*
+import androidx.room.migration.AutoMigrationSpec
 import com.example.submissionexpert1.data.db.dao.*
+import com.example.submissionexpert1.data.db.dao.relation.FavoriteMoviePaginationDao
 import com.example.submissionexpert1.data.db.dao.relation.MoviePaginationDao
 import com.example.submissionexpert1.data.db.entity.GenreEntity
 import com.example.submissionexpert1.data.db.entity.MovieEntity
@@ -31,12 +30,13 @@ import com.example.submissionexpert1.data.db.helper.Converters
     PaginationFavoriteMovieEntity::class
 
   ],
-  version = 3,
+  version = 4,
   exportSchema = true,
   autoMigrations = [
     AutoMigration(
-      from = 2,
-      to = 3,
+      from = 3,
+      to = 4,
+      spec = EntertainmentDb.MyAutoMigration::class
     )
   ]
 )
@@ -47,12 +47,11 @@ abstract class EntertainmentDb : RoomDatabase() {
     const val DATABASE_NAME = "entertainment_db"
   }
 
-//  @RenameColumn(
-//    tableName = "pagination_movies",
-//    fromColumnName = "movieId",
-//    toColumnName = "movie_id"
-//  )
-//  class MyAutoMigration : AutoMigrationSpec
+  @DeleteColumn(
+    tableName = "movies",
+    columnName = "favoriteUserIds"
+  )
+  class MyAutoMigration : AutoMigrationSpec
 
   abstract fun userDao() : UserDao
   abstract fun movieDao() : MovieDao
@@ -60,6 +59,7 @@ abstract class EntertainmentDb : RoomDatabase() {
   abstract fun paginationDao() : PaginationDao
   abstract fun moviePaginationDao() : MoviePaginationDao
   abstract fun authDao() : AuthDao
+  abstract fun favoriteMoviePaginationDao() : FavoriteMoviePaginationDao
 
   fun clearDatabase() {
     this.clearAllTables()

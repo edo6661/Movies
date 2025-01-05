@@ -9,4 +9,15 @@ interface IMovieRepository {
   fun getPopularMovies(
     page : String,
   ) : Flow<Result<PaginationMovie>>
+
+  fun getPopularMoviesFavorite(
+    page : String,
+    userId : Long
+  ) : Flow<Result<PaginationMovie>>
+
+  suspend fun toggleFavoriteMovie(
+    movieId : Int,
+  ) : Result<String>
+
+
 }

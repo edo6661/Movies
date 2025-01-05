@@ -18,6 +18,7 @@ interface PaginationDao {
   @Query("SELECT * FROM pagination where page = :page LIMIT 1")
   fun getPagination(page : Int) : Flow<PaginationEntity?>
 
+
   @Transaction
   @Query(
     """

@@ -16,7 +16,7 @@ import com.example.submissionexpert1.presentation.navigation.navigateSingleTop
 @Composable
 fun NavGraph(
   modifier : Modifier = Modifier,
-  startDestination : String = "auth",
+  startDestination : String = "home",
   navController : NavHostController,
   isUserLoggedIn : Boolean = false,
 ) {
@@ -34,10 +34,14 @@ fun NavGraph(
     composable(
       route = Screen.Home.route
     ) {
+      val navigateToLogin = {
+        navController.navigateSingleTop(Screen.Auth.Login.route)
+      }
 
       HomeScreen(
         modifier = modifier,
-        onNavigateDetail = onNavigateDetail
+        onNavigateDetail = onNavigateDetail,
+        navigateToLogin = navigateToLogin
       )
     }
     composable(

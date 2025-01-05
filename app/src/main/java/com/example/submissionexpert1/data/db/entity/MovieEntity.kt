@@ -22,7 +22,7 @@ data class MovieEntity(
   // ! old
 //  val favoriteUserId : Long? = null
   // ! new
-  val favoriteUserIds : List<Long>? = null
+//  val favoriteUserIds : List<Long>? = null
 )
 
 

@@ -1,10 +1,12 @@
 package com.example.submissionexpert1.application.di
 
 import com.example.submissionexpert1.data.usecase.impl.movie.GetPopularMoviesUseCaseImpl
+import com.example.submissionexpert1.data.usecase.impl.movie.ToggleFavoriteMovieUseCaseImpl
 import com.example.submissionexpert1.data.usecase.impl.user.AuthUseCaseImpl
 import com.example.submissionexpert1.domain.repository.movie.IMovieRepository
 import com.example.submissionexpert1.domain.repository.user.IAuthRepository
 import com.example.submissionexpert1.domain.usecase.movie.IGetPopularMoviesUseCase
+import com.example.submissionexpert1.domain.usecase.movie.IToggleFavoriteMovieUseCase
 import com.example.submissionexpert1.domain.usecase.user.IAuthUseCase
 import dagger.Module
 import dagger.Provides
@@ -27,6 +29,13 @@ object UseCaseModule {
     authRepository : IAuthRepository
   ) : IAuthUseCase {
     return AuthUseCaseImpl(authRepository)
+  }
+
+  @Provides
+  fun provideToggleFavoriteMovieUseCase(
+    movieRepository : IMovieRepository
+  ) : IToggleFavoriteMovieUseCase {
+    return ToggleFavoriteMovieUseCaseImpl(movieRepository)
   }
 
 }

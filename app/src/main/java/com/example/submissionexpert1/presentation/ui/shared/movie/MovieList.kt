@@ -30,7 +30,10 @@ fun MovieList(
   error : ErrorState?,
   onDismissedAlert : () -> Unit,
   onLoad : () -> Unit,
-  onRefresh : () -> Unit
+  onRefresh : () -> Unit,
+  isLoadingToggleFavorite : Boolean,
+  onToggleFavorite : (Int) -> Unit,
+  userId : Long? = null
 
 ) {
   Box(
@@ -46,7 +49,11 @@ fun MovieList(
       isLoadingMore = isLoadingMore,
       error = error,
       onRefresh = onRefresh,
-      onLoad = onLoad
+      onLoad = onLoad,
+      isLoadingToggleFavorite = isLoadingToggleFavorite,
+      onToggleFavorite = onToggleFavorite,
+      userId = userId
+
     )
 
     BottomAlert(
@@ -68,7 +75,11 @@ fun MovieListContent(
   isLoadingMore : Boolean,
   error : ErrorState?,
   onRefresh : () -> Unit,
-  onLoad : () -> Unit
+  onLoad : () -> Unit,
+  isLoadingToggleFavorite : Boolean,
+  onToggleFavorite : (Int) -> Unit,
+  userId : Long?
+
 ) {
   SwipeRefresh(
     state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
@@ -99,7 +110,10 @@ fun MovieListContent(
               movie = movie,
               onClick = {
                 onNavigateDetail(movie.id.toString())
-              }
+              },
+              isLoadingToggleFavorite = isLoadingToggleFavorite,
+              onToggleFavorite = onToggleFavorite,
+              userId = userId
             )
           }
 

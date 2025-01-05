@@ -62,8 +62,9 @@ fun MovieResponse.toMovieEntity() : MovieEntity {
     originalTitle = originalTitle,
     adult = adult,
     video = video,
-    genreIds = genreIds
-  )
+    genreIds = genreIds,
+
+    )
 }
 
 
@@ -94,7 +95,7 @@ fun MovieEntity.toDomain() : Movie {
     originalTitle = originalTitle,
     adult = adult,
     video = video,
-    genreIds = genreIds
+    genreIds = genreIds,
   )
 }
 

@@ -18,18 +18,5 @@ class Converters {
     }
   }
 
-  @TypeConverter
-  fun fromFavoriteUserIds(favoriteUserIds : List<Long>?) : String {
-    return favoriteUserIds?.joinToString(",") ?: ""
-  }
-
-  @TypeConverter
-  fun toFavoriteUserIds(data : String) : List<Long> {
-    return if (data.isEmpty()) {
-      emptyList()
-    } else {
-      data.split(",").map { it.toLong() }
-    }
-  }
 
 }

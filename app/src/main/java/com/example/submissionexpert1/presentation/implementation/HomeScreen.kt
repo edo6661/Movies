@@ -14,7 +14,8 @@ private const val LOAD_MORE_THRESHOLD = 3
 fun HomeScreen(
   modifier : Modifier = Modifier,
   onNavigateDetail : (String) -> Unit,
-  viewModel : HomeViewModel = hiltViewModel()
+  viewModel : HomeViewModel = hiltViewModel(),
+  navigateToLogin : () -> Unit
 ) {
   val uiState by viewModel.uiState.collectAsState()
   val movieState by viewModel.movieState.collectAsState()
@@ -35,7 +36,6 @@ fun HomeScreen(
         (listState.firstVisibleItemIndex + layoutInfo.visibleItemsInfo.size)
 
       totalItemsCount > 0 && lastVisibleItemIndex > (totalItemsCount - LOAD_MORE_THRESHOLD)
-
     }
   }
 
@@ -53,6 +53,10 @@ fun HomeScreen(
   }
 
 
+
+
+
+
   MovieList(
     modifier = modifier,
     movies = movies,
@@ -63,7 +67,16 @@ fun HomeScreen(
     isRefreshing = uiState.isRefreshing,
     isLoadingMore = uiState.isLoadingMore,
     error = uiState.error,
+    isLoadingToggleFavorite = uiState.isLoadingToggleFavorite,
+    onToggleFavorite = { movieId ->
+      if (uiState.userId == null) {
+        navigateToLogin()
+        return@MovieList
+      }
+      onEvent(HomeEvent.OnToggleFavorite(movieId))
+    },
     onDismissedAlert = { onEvent(HomeEvent.OnDismissedAlert) },
+    userId = uiState.userId,
     onLoad = { onEvent(HomeEvent.OnLoad) },
     onRefresh = { onEvent(HomeEvent.OnRefresh) }
 

@@ -3,24 +3,31 @@ package com.example.submissionexpert1.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.submissionexpert1.application.di.IODispatcher
+import com.example.submissionexpert1.application.di.MainDispatcher
 import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.db.EntertainmentDb
+import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.common.state.ErrorState
 import com.example.submissionexpert1.domain.model.PaginationMovie
 import com.example.submissionexpert1.domain.usecase.movie.IGetPopularMoviesUseCase
+import com.example.submissionexpert1.domain.usecase.movie.IToggleFavoriteMovieUseCase
 import com.example.submissionexpert1.presentation.utils.avoidSameMovieId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
   private val getPopularMovieUseCase : IGetPopularMoviesUseCase,
+  private val toggleFavoriteMovieUseCase : IToggleFavoriteMovieUseCase,
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
+  @MainDispatcher private val mainDispatcher : CoroutineDispatcher,
+  private val userPreferences : UserPreferences,
   private val db : EntertainmentDb
 ) : ViewModel() {
 
@@ -39,11 +46,24 @@ class HomeViewModel @Inject constructor(
 //    deleteAllOnDb()
 
     onEvent(HomeEvent.OnLoad)
+    getUserId()
   }
 
   private fun deleteAllOnDb() {
     viewModelScope.launch(ioDispatcher) {
       db.clearDatabase()
+    }
+  }
+
+  private fun getUserId() {
+    viewModelScope.launch {
+      userPreferences.getUserData().collect { user ->
+        _uiState.update {
+          it.copy(
+            userId = user?.userId
+          )
+        }
+      }
     }
   }
 
@@ -54,9 +74,97 @@ class HomeViewModel @Inject constructor(
       is HomeEvent.OnRefresh        -> onRefresh()
 
       is HomeEvent.OnDismissedAlert -> onAlertDismissed()
+      is HomeEvent.OnToggleFavorite -> onToggleFavorite(event.movieId)
 
     }
   }
+
+  private fun onToggleFavorite(movieId : Int) {
+    viewModelScope.launch(ioDispatcher) {
+      val result = toggleFavoriteMovieUseCase(movieId)
+      withContext(mainDispatcher) {
+        when (result) {
+          is Result.Success -> {
+            _uiState.update {
+              it.copy(
+                isLoadingToggleFavorite = false,
+              )
+            }
+            updateMovieFavoriteStatus(movieId)
+
+
+          }
+
+          is Result.Loading -> {
+            _uiState.update {
+              it.copy(isLoadingToggleFavorite = true)
+            }
+          }
+
+          is Result.Error   -> {
+            _uiState.update {
+              it.copy(
+                alert = result.message,
+                isLoadingToggleFavorite = false
+              )
+            }
+          }
+        }
+      }
+    }
+  }
+
+  private fun updateMovieFavoriteStatus(
+    movieId : Int
+  ) {
+    _movieState.update { currentMovieState ->
+      currentMovieState.data?.let { currentData ->
+        val updatedData = currentData.copy(
+          results = currentData.results.map { currentMovie ->
+            if (currentMovie.id == movieId) {
+              currentMovie.copy(
+                isFavorite = ! currentMovie.isFavorite
+              )
+            } else {
+              currentMovie
+            }
+          }
+        )
+        currentMovieState.copy(
+          data = updatedData
+        )
+      } ?: currentMovieState
+
+    }
+  }
+
+
+//  private fun updateFavoriteUserIds(
+//    movieId : Int,
+//  ) {
+//    _movieState.update { currentMovieState ->
+//      currentMovieState.copy(
+//        data = currentMovieState.data?.copy(
+//          results = currentMovieState.data.results.map { currentMovie ->
+//            if (currentMovie.id == movieId) {
+//              val updatedFavorites = currentMovie.favoriteUserIds?.let { favorites ->
+//                _uiState.value.userId?.let { userId ->
+//                  if (favorites.contains(userId)) {
+//                    favorites.filter { it != userId }
+//                  } else {
+//                    favorites + userId
+//                  }
+//                } ?: favorites
+//              }
+//              currentMovie.copy(favoriteUserIds = updatedFavorites)
+//            } else {
+//              currentMovie
+//            }
+//          }
+//        )
+//      )
+//    }
+//  }
 
 
   private fun onLoad() {
@@ -82,20 +190,23 @@ class HomeViewModel @Inject constructor(
           }
 
           is Result.Success -> {
+
+
             handleSuccess(result)
+
           }
 
           is Result.Error   -> {
-            handleError(result.message ?: ErrorMessages.UNKNOWN_ERROR)
+            handleError(result.message)
           }
         }
       }
-      .catch {
-        handleCatch(it.localizedMessage ?: ErrorMessages.UNKNOWN_ERROR)
-
+      .catch { e ->
+        handleCatch(e.message ?: "Unknown Error")
       }
-      // ! semua perubahan uiState dijalankan di main thread + memastikan aliran data aware terhadap lifecycle
+      .flowOn(mainDispatcher)
       .launchIn(viewModelScope)
+
   }
 
 
@@ -257,6 +368,8 @@ data class HomeState(
   val page : Int = 1,
   val error : ErrorState? = null,
   val alert : String? = null,
+  val isLoadingToggleFavorite : Boolean = false,
+  val userId : Long? = null
 )
 
 data class HomeMovieState(
@@ -269,4 +382,7 @@ sealed class HomeEvent {
   data object OnLoad : HomeEvent()
   data object OnRefresh : HomeEvent()
   data object OnDismissedAlert : HomeEvent()
+  data class OnToggleFavorite(
+    val movieId : Int
+  ) : HomeEvent()
 }

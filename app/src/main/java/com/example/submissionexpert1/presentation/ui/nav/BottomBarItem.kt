@@ -22,19 +22,23 @@ data class BottomBarItem(
         icon = Icons.Filled.Home,
         route = Screen.Home.route
       ),
-      BottomBarItem(
-        label = Screen.Favorite.route,
-        icon = Icons.Filled.Favorite,
-        route = Screen.Favorite.route
-      )
     )
 
     if (! isUserLoggedIn) {
+
       items.add(
         BottomBarItem(
           label = Screen.Auth.Login.route,
           icon = Icons.AutoMirrored.Default.Login,
           route = Screen.Auth.Login.route
+        )
+      )
+    } else {
+      items.add(
+        BottomBarItem(
+          label = Screen.Favorite.route,
+          icon = Icons.Filled.Favorite,
+          route = Screen.Favorite.route
         )
       )
     }

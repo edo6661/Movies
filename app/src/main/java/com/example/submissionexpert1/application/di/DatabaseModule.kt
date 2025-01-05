@@ -50,4 +50,8 @@ class DatabaseModule {
   @Provides
   @Singleton
   fun provideMoviePaginationDao(db : EntertainmentDb) = db.moviePaginationDao()
+
+  @Provides
+  @Singleton
+  fun provideFavoriteMoviePaginationDao(db : EntertainmentDb) = db.favoriteMoviePaginationDao()
 }

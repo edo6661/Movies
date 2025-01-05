@@ -1,6 +1,8 @@
 package com.example.submissionexpert1.data.db.entity.relation
 
-import androidx.room.*
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 import com.example.submissionexpert1.data.db.entity.MovieEntity
 import com.example.submissionexpert1.data.db.entity.PaginationEntity
 import com.example.submissionexpert1.data.db.entity.UserEntity
@@ -37,12 +39,5 @@ data class PaginationFavoriteMovieEntity(
   val movieId : Int
 )
 
-data class PaginationWithFavoriteMovies(
-  @Embedded val pagination : PaginationEntity,
-  @Relation(
-    parentColumn = "page",
-    entityColumn = "movieId",
-    associateBy = Junction(PaginationFavoriteMovieEntity::class)
-  )
-  val favoriteMovies : List<MovieEntity>
-)
+
+

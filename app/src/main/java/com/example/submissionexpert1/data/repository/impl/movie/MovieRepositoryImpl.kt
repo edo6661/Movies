@@ -3,10 +3,12 @@ package com.example.submissionexpert1.data.repository.impl.movie
 import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.api.ApiService
 import com.example.submissionexpert1.data.db.dao.PaginationDao
+import com.example.submissionexpert1.data.db.dao.relation.FavoriteMoviePaginationDao
 import com.example.submissionexpert1.data.db.dao.relation.MoviePaginationDao
 import com.example.submissionexpert1.data.helper.mapper.toDatabaseEntities
 import com.example.submissionexpert1.data.helper.mapper.toDomain
 import com.example.submissionexpert1.data.repository.BaseRepository
+import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.model.PaginationMovie
@@ -20,7 +22,9 @@ import javax.inject.Inject
 class MovieRepositoryImpl @Inject constructor(
   private val apiService : ApiService,
   private val paginationDao : PaginationDao,
-  private val moviePaginationDao : MoviePaginationDao
+  private val moviePaginationDao : MoviePaginationDao,
+  private val favoriteMovieDao : FavoriteMoviePaginationDao,
+  private val userPreferences : UserPreferences
 ) : IMovieRepository, BaseRepository() {
 
   override fun getPopularMovies(
@@ -39,13 +43,17 @@ class MovieRepositoryImpl @Inject constructor(
 
   }
 
+
   private suspend fun handleApiResult(
     result : Result<PaginationMovieResponse>,
     page : String
   ) : Flow<Result<PaginationMovie>> = flow {
     when (result) {
       is Result.Success -> {
-        insertAllToDao(result.data)
+        val isPaginationExist = paginationDao.getPagination(page.toInt()).firstOrNull() != null
+        if (! isPaginationExist) {
+          insertAllToDao(result.data)
+        }
         val cachedData = getCachedMovie(page.toInt())
         emit(cachedData)
       }
@@ -81,11 +89,24 @@ class MovieRepositoryImpl @Inject constructor(
 
 
   private suspend fun getCachedMovie(page : Int) : Result<PaginationMovie> {
-    val result = safeDatabaseCall {
-      paginationDao.getPaginationWithMovies(page)
-        .firstOrNull()
-        ?.toDomain()
+    val userId = when (val resultUserId = getUserId()) {
+      is Result.Success -> resultUserId.data
+      is Result.Error   -> return Result.Error(resultUserId.message)
+      is Result.Loading -> return Result.Loading
     }
+    val result = safeDatabaseCall {
+      val paginationData = paginationDao.getPaginationWithMovies(
+        page = page,
+      ).firstOrNull()?.toDomain()
+
+      paginationData?.copy(
+        results = paginationData.results.map { movie ->
+          val isFavorite = favoriteMovieDao.isMovieFavorite(userId, movie.id)
+          movie.copy(isFavorite = isFavorite)
+        }
+      )
+    }
+
     return when (result) {
       is Result.Success -> {
         result.data?.let {
@@ -109,6 +130,78 @@ class MovieRepositoryImpl @Inject constructor(
         paginationMovies = paginationMovieEntities
       )
     }
+  }
+
+  override fun getPopularMoviesFavorite(
+    page : String,
+    userId : Long
+  ) : Flow<Result<PaginationMovie>> = flow {
+    emit(Result.Loading)
+    val result = safeDatabaseCall {
+      favoriteMovieDao.getPaginationWithFavoriteMovies(
+        page = page.toInt(),
+        userId = userId
+      )
+        .firstOrNull()
+        ?.toDomain()
+    }
+    when (result) {
+      is Result.Success -> {
+        result.data?.let {
+          emit(Result.Success(it))
+        } ?: emit(Result.Error("Data not found"))
+      }
+
+      is Result.Error   -> {
+        emit(Result.Error(result.message))
+      }
+
+      is Result.Loading -> {
+        emit(Result.Loading)
+      }
+    }
+  }
+
+  override suspend fun toggleFavoriteMovie(movieId : Int) : Result<String> {
+    return when (val resultUserId = getUserId()) {
+      is Result.Success -> {
+        val userId = resultUserId.data
+        val result = safeDatabaseCall {
+          favoriteMovieDao.toggleFavoriteMovie(userId, movieId)
+        }
+        when (result) {
+          is Result.Success -> {
+            Result.Success("Success Toggle Favorite")
+          }
+
+          is Result.Error   -> {
+            Result.Error(result.message)
+          }
+
+          is Result.Loading -> {
+            Result.Loading
+          }
+        }
+      }
+
+      is Result.Error   -> {
+        Result.Error(resultUserId.message)
+      }
+
+      is Result.Loading -> {
+        Result.Loading
+      }
+
+
+    }
+  }
+
+
+  private suspend fun getUserId() : Result<Long> {
+    val userData = userPreferences.getUserData().firstOrNull()
+    return userData?.userId?.let {
+      Result.Success(it)
+    } ?: Result.Error("ErrorMessages.UNAUTHORIZED")
   }
 
 
