@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.submissionexpert1.presentation.navigation.graph.NavGraph
@@ -50,10 +49,7 @@ class MainActivity : ComponentActivity() {
           ) {
           NavGraph(
             modifier = Modifier
-              .padding(it)
-              .padding(
-                top = 16.dp
-              ),
+              .padding(it),
             navController = navController,
             isUserLoggedIn = state.user != null,
           )

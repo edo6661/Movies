@@ -19,11 +19,4 @@ data class MovieEntity(
   val voteAverage : Double,
   val adult : Boolean,
   val voteCount : Int,
-  // ! old
-//  val favoriteUserId : Long? = null
-  // ! new
-//  val favoriteUserIds : List<Long>? = null
 )
-
-
-

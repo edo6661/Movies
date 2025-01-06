@@ -2,8 +2,10 @@ package com.example.submissionexpert1.data.helper.mapper
 
 import com.example.submissionexpert1.data.db.entity.MovieEntity
 import com.example.submissionexpert1.data.db.entity.PaginationEntity
+import com.example.submissionexpert1.data.db.entity.relation.MovieWithFavorite
 import com.example.submissionexpert1.data.db.entity.relation.PaginationMovieEntity
 import com.example.submissionexpert1.data.db.entity.relation.PaginationWithMovie
+import com.example.submissionexpert1.data.db.entity.relation.PaginationWithMovieAndFavorite
 import com.example.submissionexpert1.data.source.remote.response.MovieResponse
 import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
 import com.example.submissionexpert1.domain.model.Movie
@@ -99,8 +101,7 @@ fun MovieEntity.toDomain() : Movie {
   )
 }
 
-fun List<PaginationWithMovie>.toDomain() : PaginationMovie? {
-  if (isEmpty()) return null
+fun List<PaginationWithMovie>.toDomain() : PaginationMovie {
 
   val paginationEntity = first().pagination
 
@@ -112,4 +113,43 @@ fun List<PaginationWithMovie>.toDomain() : PaginationMovie? {
     totalPages = paginationEntity.totalPages,
     totalResults = paginationEntity.totalResults
   )
+
 }
+
+
+fun MovieWithFavorite.toDomain() : Movie {
+  return Movie(
+    id = movie.movieId,
+    title = movie.title,
+    overview = movie.overview,
+    posterPath = movie.posterPath,
+    backdropPath = movie.backdropPath,
+    releaseDate = movie.releaseDate,
+    voteAverage = movie.voteAverage,
+    voteCount = movie.voteCount,
+    popularity = movie.popularity,
+    originalLanguage = movie.originalLanguage,
+    originalTitle = movie.originalTitle,
+    adult = movie.adult,
+    video = movie.video,
+    genreIds = movie.genreIds,
+    isFavorite = isFavorite
+  )
+}
+
+fun List<PaginationWithMovieAndFavorite>.toDomainWithFavorite() : PaginationMovie? {
+  
+  if (isEmpty()) return null
+
+  val paginationEntity = first().pagination
+  val movie = this.map { it.movie.toDomain() }
+
+  return PaginationMovie(
+    page = paginationEntity.page,
+    results = movie,
+    totalPages = paginationEntity.totalPages,
+    totalResults = paginationEntity.totalResults,
+  )
+
+}
+

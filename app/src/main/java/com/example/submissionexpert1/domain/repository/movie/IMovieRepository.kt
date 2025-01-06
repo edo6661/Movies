@@ -12,7 +12,6 @@ interface IMovieRepository {
 
   fun getPopularMoviesFavorite(
     page : String,
-    userId : Long
   ) : Flow<Result<PaginationMovie>>
 
   suspend fun toggleFavoriteMovie(

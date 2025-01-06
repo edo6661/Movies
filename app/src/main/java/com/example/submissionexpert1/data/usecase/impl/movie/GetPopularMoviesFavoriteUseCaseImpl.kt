@@ -13,11 +13,9 @@ class GetPopularMoviesFavoriteUseCaseImpl @Inject constructor(
 
   override operator fun invoke(
     page : String,
-    userId : Long
   ) : Flow<Result<PaginationMovie>> {
     return movieRepository.getPopularMoviesFavorite(
       page,
-      userId
     )
   }
 

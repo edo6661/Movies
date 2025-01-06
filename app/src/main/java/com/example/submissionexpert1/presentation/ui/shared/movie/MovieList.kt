@@ -1,9 +1,11 @@
 package com.example.submissionexpert1.presentation.ui.shared.movie
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +40,9 @@ fun MovieList(
 ) {
   Box(
     modifier = modifier
-      .padding(horizontal = 16.dp)
+      .background(MaterialTheme.colorScheme.primaryContainer)
+      .padding(16.dp)
+
   ) {
     MovieListContent(
       movies = movies,
@@ -57,7 +61,7 @@ fun MovieList(
     )
 
     BottomAlert(
-      message = alert ?: ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE,
+      message = alert ?: "",
       onDismiss = { onDismissedAlert() },
       visible = alert != null,
       modifier = Modifier.align(Alignment.BottomCenter)
@@ -101,6 +105,10 @@ fun MovieListContent(
         LazyColumn(
           state = listState,
           verticalArrangement = Arrangement.spacedBy(16.dp),
+          modifier = Modifier
+            .fillMaxHeight()
+
+
         ) {
           items(
             items = movies,

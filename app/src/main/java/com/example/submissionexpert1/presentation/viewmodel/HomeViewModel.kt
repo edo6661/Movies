@@ -138,35 +138,6 @@ class HomeViewModel @Inject constructor(
     }
   }
 
-
-//  private fun updateFavoriteUserIds(
-//    movieId : Int,
-//  ) {
-//    _movieState.update { currentMovieState ->
-//      currentMovieState.copy(
-//        data = currentMovieState.data?.copy(
-//          results = currentMovieState.data.results.map { currentMovie ->
-//            if (currentMovie.id == movieId) {
-//              val updatedFavorites = currentMovie.favoriteUserIds?.let { favorites ->
-//                _uiState.value.userId?.let { userId ->
-//                  if (favorites.contains(userId)) {
-//                    favorites.filter { it != userId }
-//                  } else {
-//                    favorites + userId
-//                  }
-//                } ?: favorites
-//              }
-//              currentMovie.copy(favoriteUserIds = updatedFavorites)
-//            } else {
-//              currentMovie
-//            }
-//          }
-//        )
-//      )
-//    }
-//  }
-
-
   private fun onLoad() {
 
     getPopularMovieUseCase(
@@ -311,7 +282,7 @@ class HomeViewModel @Inject constructor(
     message : String
   ) {
     when {
-      message == ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE -> {
+      message == ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE || message == ErrorMessages.CANT_FETCH_MORE -> {
         _uiState.update {
           it.copy(
             alert = message,
@@ -328,7 +299,7 @@ class HomeViewModel @Inject constructor(
         }
       }
 
-      else                                                       -> {
+      else                                                                                                   -> {
         _uiState.update {
           it.copy(
             isLoading = false,

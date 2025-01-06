@@ -8,6 +8,5 @@ interface IGetPopularMoviesFavoriteUseCase {
 
   operator fun invoke(
     page : String,
-    userId : Long
   ) : Flow<Result<PaginationMovie>>
 }

@@ -1,5 +1,6 @@
 package com.example.submissionexpert1.data.db.entity.relation
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -36,8 +37,11 @@ import com.example.submissionexpert1.data.db.entity.UserEntity
 data class PaginationFavoriteMovieEntity(
   val page : Int,
   val userId : Long,
-  val movieId : Int
+  val movieId : Int,
+  @ColumnInfo(name = "created_at")
+  val createdAt : Long? = null
 )
+
 
 
 

@@ -36,14 +36,14 @@ fun CardMovieItem(
       disabledContentColor = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.5f),
     ),
     shape = MaterialTheme.shapes.medium,
-    elevation = CardDefaults.cardElevation(
-      defaultElevation = 16.dp,
-      pressedElevation = 8.dp,
-      disabledElevation = 0.dp,
-      focusedElevation = 16.dp,
-      hoveredElevation = 16.dp,
-      draggedElevation = 16.dp,
-    ),
+//    elevation = CardDefaults.cardElevation(
+//      defaultElevation = 16.dp,
+//      pressedElevation = 8.dp,
+//      disabledElevation = 0.dp,
+//      focusedElevation = 16.dp,
+//      hoveredElevation = 16.dp,
+//      draggedElevation = 16.dp,
+//    ),
     border = BorderStroke(
       width = 2.dp,
       color = MaterialTheme.colorScheme.onSecondary.copy(

@@ -2,32 +2,44 @@ package com.example.submissionexpert1.data.db.dao.relation
 
 import androidx.room.*
 import com.example.submissionexpert1.data.db.entity.relation.PaginationFavoriteMovieEntity
-import com.example.submissionexpert1.data.db.entity.relation.PaginationWithMovie
+import com.example.submissionexpert1.data.db.entity.relation.PaginationWithMovieAndFavorite
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FavoriteMoviePaginationDao {
 
-  @Transaction
   @Query(
     """
-    SELECT pagination.*, movies.* 
-    FROM pagination 
-    INNER JOIN pagination_movies AS pm ON pagination.page = pm.page
-    INNER JOIN movies ON pm.movieId = movies.movieId
-    WHERE pagination.page = :page 
-    AND movies.movieId IN (
-      SELECT movieId 
-      FROM pagination_favorite_movies 
-      WHERE userId = :userId
-    )
-    ORDER BY movies.popularity DESC
-    """
+  SELECT 
+      p.*,
+      m.*,
+      CASE 
+          WHEN EXISTS(
+              SELECT 1 
+              FROM pagination_favorite_movies as pfm
+              WHERE pfm.movieId = m.movieId 
+              AND pfm.userId = :userId
+          ) THEN 1 
+          ELSE 0 
+      END AS isFavorite
+  FROM pagination as p
+  INNER JOIN pagination_movies as pm ON p.page = pm.page
+  INNER JOIN movies as m ON pm.movieId = m.movieId
+  AND EXISTS(
+      SELECT 1 
+      FROM pagination_favorite_movies as pfm
+      WHERE pfm.movieId = m.movieId 
+      AND pfm.userId = :userId
+      AND pfm.page = :page
   )
-  fun getPaginationWithFavoriteMovies(
+  ORDER BY m.popularity DESC
+  """
+  )
+  fun getFavoriteMoviesByUser(
     page : Int,
     userId : Long
-  ) : Flow<List<PaginationWithMovie>>
+  ) : Flow<List<PaginationWithMovieAndFavorite>>
+
 
   @Transaction
   suspend fun toggleFavoriteMovie(
@@ -53,7 +65,8 @@ interface FavoriteMoviePaginationDao {
         PaginationFavoriteMovieEntity(
           page = targetPage,
           userId = userId,
-          movieId = movieId
+          movieId = movieId,
+          createdAt = System.currentTimeMillis()
         )
       )
     }

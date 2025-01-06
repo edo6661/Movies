@@ -6,7 +6,7 @@ import com.example.submissionexpert1.data.db.dao.PaginationDao
 import com.example.submissionexpert1.data.db.dao.relation.FavoriteMoviePaginationDao
 import com.example.submissionexpert1.data.db.dao.relation.MoviePaginationDao
 import com.example.submissionexpert1.data.helper.mapper.toDatabaseEntities
-import com.example.submissionexpert1.data.helper.mapper.toDomain
+import com.example.submissionexpert1.data.helper.mapper.toDomainWithFavorite
 import com.example.submissionexpert1.data.repository.BaseRepository
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
@@ -95,16 +95,9 @@ class MovieRepositoryImpl @Inject constructor(
       is Result.Loading -> return Result.Loading
     }
     val result = safeDatabaseCall {
-      val paginationData = paginationDao.getPaginationWithMovies(
-        page = page,
-      ).firstOrNull()?.toDomain()
-
-      paginationData?.copy(
-        results = paginationData.results.map { movie ->
-          val isFavorite = favoriteMovieDao.isMovieFavorite(userId, movie.id)
-          movie.copy(isFavorite = isFavorite)
-        }
-      )
+      paginationDao.getPaginationWithMovies(page, userId)
+        .firstOrNull()
+        ?.toDomainWithFavorite()
     }
 
     return when (result) {
@@ -134,22 +127,32 @@ class MovieRepositoryImpl @Inject constructor(
 
   override fun getPopularMoviesFavorite(
     page : String,
-    userId : Long
   ) : Flow<Result<PaginationMovie>> = flow {
     emit(Result.Loading)
-    val result = safeDatabaseCall {
-      favoriteMovieDao.getPaginationWithFavoriteMovies(
-        page = page.toInt(),
-        userId = userId
-      )
-        .firstOrNull()
-        ?.toDomain()
+    val userId = when (val resultUserId = getUserId()) {
+      is Result.Success -> resultUserId.data
+
+      is Result.Error   -> {
+        emit(Result.Error(resultUserId.message))
+        return@flow
+      }
+
+      is Result.Loading -> {
+        emit(Result.Loading)
+        return@flow
+      }
     }
+    val result = safeDatabaseCall {
+      favoriteMovieDao.getFavoriteMoviesByUser(page.toInt(), userId)
+        .firstOrNull()
+        ?.toDomainWithFavorite()
+    }
+
     when (result) {
       is Result.Success -> {
         result.data?.let {
           emit(Result.Success(it))
-        } ?: emit(Result.Error("Data not found"))
+        } ?: emit(Result.Error(ErrorMessages.CANT_FETCH_MORE))
       }
 
       is Result.Error   -> {

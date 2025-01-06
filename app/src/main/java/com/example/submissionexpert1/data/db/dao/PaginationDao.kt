@@ -1,9 +1,12 @@
 package com.example.submissionexpert1.data.db.dao
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.example.submissionexpert1.data.db.entity.PaginationEntity
 import com.example.submissionexpert1.data.db.entity.relation.PaginationMovieEntity
-import com.example.submissionexpert1.data.db.entity.relation.PaginationWithMovie
+import com.example.submissionexpert1.data.db.entity.relation.PaginationWithMovieAndFavorite
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -19,18 +22,31 @@ interface PaginationDao {
   fun getPagination(page : Int) : Flow<PaginationEntity?>
 
 
-  @Transaction
   @Query(
     """
-    SELECT pagination.*, movies.* 
-    FROM pagination 
-    INNER JOIN pagination_movies as pm ON pagination.page = pm.page
-    INNER JOIN movies ON pm.movieId = movies.movieId
-    WHERE pagination.page = :page
-    ORDER BY movies.popularity DESC
+    SELECT 
+        p.*,
+        m.*,
+        CASE 
+            WHEN EXISTS(
+                SELECT 1 
+                FROM pagination_favorite_movies as pfm
+                WHERE pfm.movieId = m.movieId 
+                AND pfm.userId = :userId
+            ) THEN 1 
+            ELSE 0 
+        END AS isFavorite
+    FROM pagination  as p
+    INNER JOIN pagination_movies as pm ON p.page = pm.page
+    INNER JOIN movies as m ON pm.movieId = m.movieId
+    WHERE p.page = :page
+    ORDER BY m.popularity DESC
     """
   )
-  fun getPaginationWithMovies(page : Int) : Flow<List<PaginationWithMovie>>
+  fun getPaginationWithMovies(
+    page : Int,
+    userId : Long
+  ) : Flow<List<PaginationWithMovieAndFavorite>>
 
 
 }

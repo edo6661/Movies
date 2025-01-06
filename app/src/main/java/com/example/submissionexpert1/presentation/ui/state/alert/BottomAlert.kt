@@ -23,7 +23,7 @@ fun BottomAlert(
 ) {
   AnimatedVisibility(
     visible = visible,
-    modifier = modifier,
+    modifier = modifier.padding(bottom = 16.dp),
     enter = slideInVertically { it + 200 } + fadeIn(
       initialAlpha = 0.5f,
       animationSpec = tween(durationMillis = 300)
@@ -37,12 +37,12 @@ fun BottomAlert(
     Column(
       modifier = Modifier
         .fillMaxWidth()
-        .background(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.shapes.medium)
+        .background(MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.shapes.medium)
         .padding(16.dp)
     ) {
       MainText(
         text = message,
-        color = MaterialTheme.colorScheme.onPrimaryContainer
+        color = MaterialTheme.colorScheme.onSecondaryContainer,
       )
       MainButton(
         text = "Dismiss",
