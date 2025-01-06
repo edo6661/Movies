@@ -1,11 +1,13 @@
 package com.example.submissionexpert1.application.di
 
+import com.example.submissionexpert1.data.usecase.impl.movie.GetMovieUseCaseImpl
 import com.example.submissionexpert1.data.usecase.impl.movie.GetPopularMoviesFavoriteUseCaseImpl
 import com.example.submissionexpert1.data.usecase.impl.movie.GetPopularMoviesUseCaseImpl
 import com.example.submissionexpert1.data.usecase.impl.movie.ToggleFavoriteMovieUseCaseImpl
 import com.example.submissionexpert1.data.usecase.impl.user.AuthUseCaseImpl
 import com.example.submissionexpert1.domain.repository.movie.IMovieRepository
 import com.example.submissionexpert1.domain.repository.user.IAuthRepository
+import com.example.submissionexpert1.domain.usecase.movie.IGetMovieUseCase
 import com.example.submissionexpert1.domain.usecase.movie.IGetPopularMoviesFavoriteUseCase
 import com.example.submissionexpert1.domain.usecase.movie.IGetPopularMoviesUseCase
 import com.example.submissionexpert1.domain.usecase.movie.IToggleFavoriteMovieUseCase
@@ -46,6 +48,13 @@ object UseCaseModule {
     movieRepository : IMovieRepository
   ) : IGetPopularMoviesFavoriteUseCase {
     return GetPopularMoviesFavoriteUseCaseImpl(movieRepository)
+  }
+
+  @Provides
+  fun provideGetMovieUseCase(
+    movieRepository : IMovieRepository
+  ) : IGetMovieUseCase {
+    return GetMovieUseCaseImpl(movieRepository)
   }
 
 }

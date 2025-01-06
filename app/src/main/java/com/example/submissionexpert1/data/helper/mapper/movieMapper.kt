@@ -138,7 +138,7 @@ fun MovieWithFavorite.toDomain() : Movie {
 }
 
 fun List<PaginationWithMovieAndFavorite>.toDomainWithFavorite() : PaginationMovie? {
-  
+
   if (isEmpty()) return null
 
   val paginationEntity = first().pagination
@@ -150,6 +150,7 @@ fun List<PaginationWithMovieAndFavorite>.toDomainWithFavorite() : PaginationMovi
     totalPages = paginationEntity.totalPages,
     totalResults = paginationEntity.totalResults,
   )
+
 
 }
 

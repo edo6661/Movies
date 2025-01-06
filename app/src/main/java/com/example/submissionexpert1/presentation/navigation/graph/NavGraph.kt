@@ -62,7 +62,6 @@ fun NavGraph(
     ) {
       DetailScreen(
         modifier = modifier,
-        id = it.arguments?.getString("id") ?: "",
       )
     }
   }

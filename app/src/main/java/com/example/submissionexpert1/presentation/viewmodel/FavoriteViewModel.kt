@@ -90,7 +90,7 @@ class FavoriteViewModel @Inject constructor(
                 isLoadingToggleFavorite = false,
               )
             }
-            updateMovieFavoriteStatus(movieId)
+            updateMovie(movieId)
 
 
           }
@@ -114,20 +114,14 @@ class FavoriteViewModel @Inject constructor(
     }
   }
 
-  private fun updateMovieFavoriteStatus(
+  private fun updateMovie(
     movieId : Int
   ) {
     _movieState.update { currentMovieState ->
       currentMovieState.data?.let { currentData ->
         val updatedData = currentData.copy(
-          results = currentData.results.map { currentMovie ->
-            if (currentMovie.id == movieId) {
-              currentMovie.copy(
-                isFavorite = ! currentMovie.isFavorite,
-              )
-            } else {
-              currentMovie
-            }
+          results = currentData.results.filter {
+            it.id != movieId
           }
         )
         currentMovieState.copy(

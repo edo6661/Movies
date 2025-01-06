@@ -2,13 +2,12 @@ package com.example.submissionexpert1.presentation.ui.shared.movie
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.presentation.ui.shared.MainText
@@ -64,22 +63,12 @@ fun CardMovieItem(
           text = movie.title,
         )
         Spacer(modifier = Modifier.weight(1f))
-        IconButton(
-          onClick = {
-            onToggleFavorite(movie.id)
-          },
-          enabled = ! isLoadingToggleFavorite
-        ) {
-          Icon(
-            imageVector = Icons.Default.Favorite,
-            contentDescription = "Favorite",
-            tint = if (movie.isFavorite) {
-              Color.Red
-            } else {
-              Color.Blue
-            }
-          )
-        }
+        ToggleButtonFavorite(
+          isFavorite = movie.isFavorite,
+          isLoadingToggleFavorite = isLoadingToggleFavorite,
+          onToggleFavorite = onToggleFavorite,
+          id = movie.id
+        )
       }
 
     }

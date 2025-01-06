@@ -8,6 +8,7 @@ import androidx.navigation.navigation
 import com.example.submissionexpert1.presentation.implementation.auth.LoginScreen
 import com.example.submissionexpert1.presentation.implementation.auth.RegisterScreen
 import com.example.submissionexpert1.presentation.navigation.Screen
+import com.example.submissionexpert1.presentation.navigation.navigateClearStack
 
 fun NavGraphBuilder.authNavGraph(
   modifier : Modifier,
@@ -22,7 +23,7 @@ fun NavGraphBuilder.authNavGraph(
         navController.navigate(Screen.Auth.Register.route)
       }
       val onSuccessfulLogin = {
-        navController.navigate(Screen.Home.route)
+        navController.navigateClearStack(Screen.Home.route)
       }
       LoginScreen(
         modifier = modifier,

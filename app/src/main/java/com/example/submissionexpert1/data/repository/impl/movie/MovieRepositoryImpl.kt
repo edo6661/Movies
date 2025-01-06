@@ -2,15 +2,18 @@ package com.example.submissionexpert1.data.repository.impl.movie
 
 import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.api.ApiService
+import com.example.submissionexpert1.data.db.dao.MovieDao
 import com.example.submissionexpert1.data.db.dao.PaginationDao
 import com.example.submissionexpert1.data.db.dao.relation.FavoriteMoviePaginationDao
 import com.example.submissionexpert1.data.db.dao.relation.MoviePaginationDao
 import com.example.submissionexpert1.data.helper.mapper.toDatabaseEntities
+import com.example.submissionexpert1.data.helper.mapper.toDomain
 import com.example.submissionexpert1.data.helper.mapper.toDomainWithFavorite
 import com.example.submissionexpert1.data.repository.BaseRepository
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
 import com.example.submissionexpert1.domain.common.Result
+import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.domain.model.PaginationMovie
 import com.example.submissionexpert1.domain.repository.movie.IMovieRepository
 import kotlinx.coroutines.flow.Flow
@@ -24,6 +27,7 @@ class MovieRepositoryImpl @Inject constructor(
   private val paginationDao : PaginationDao,
   private val moviePaginationDao : MoviePaginationDao,
   private val favoriteMovieDao : FavoriteMoviePaginationDao,
+  private val movieDao : MovieDao,
   private val userPreferences : UserPreferences
 ) : IMovieRepository, BaseRepository() {
 
@@ -153,6 +157,59 @@ class MovieRepositoryImpl @Inject constructor(
         result.data?.let {
           emit(Result.Success(it))
         } ?: emit(Result.Error(ErrorMessages.CANT_FETCH_MORE))
+      }
+
+      is Result.Error   -> {
+        emit(Result.Error(result.message))
+      }
+
+      is Result.Loading -> {
+        emit(Result.Loading)
+      }
+    }
+  }
+
+  override fun getMovie(id : Int) : Flow<Result<Movie>> = flow {
+    emit(Result.Loading)
+    val userId = when (val resultUserId = getUserId()) {
+      is Result.Success -> resultUserId.data
+
+      is Result.Error   -> {
+        emit(Result.Error(resultUserId.message))
+        return@flow
+      }
+
+      is Result.Loading -> {
+        emit(Result.Loading)
+        return@flow
+      }
+    }
+    
+    val isMovieFavorite = when (safeDatabaseCall {
+      favoriteMovieDao.isMovieFavorite(
+        userId = userId,
+        movieId = id
+      )
+    }) {
+      is Result.Success -> true
+      is Result.Error   -> false
+      is Result.Loading -> false
+    }
+    val result = safeDatabaseCall {
+      movieDao.getMovieById(id)
+        .firstOrNull()
+        ?.toDomain()
+        ?.copy(
+          isFavorite = isMovieFavorite
+        )
+
+    }
+
+    when (result) {
+      is Result.Success -> {
+        result.data?.let {
+          emit(Result.Success(it))
+        } ?: emit(Result.Error(ErrorMessages.DATA_NOT_FOUND))
       }
 
       is Result.Error   -> {
