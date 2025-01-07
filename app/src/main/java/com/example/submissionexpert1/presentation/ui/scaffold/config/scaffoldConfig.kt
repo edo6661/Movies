@@ -8,7 +8,7 @@ data class ScaffoldConfig(
 fun scaffoldConfig(currentRoute : String?)
   : ScaffoldConfig {
   return when (currentRoute) {
-    "detail/{id}" -> ScaffoldConfig(
+    "Detail/{id}" -> ScaffoldConfig(
       showMainNav = false,
       showBackNav = true
     )

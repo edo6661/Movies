@@ -7,9 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.submissionexpert1.presentation.implementation.DetailScreen
-import com.example.submissionexpert1.presentation.implementation.FavoriteScreen
-import com.example.submissionexpert1.presentation.implementation.HomeScreen
+import com.example.submissionexpert1.presentation.implementation.*
 import com.example.submissionexpert1.presentation.navigation.Screen
 import com.example.submissionexpert1.presentation.navigation.navigateSingleTop
 
@@ -48,6 +46,21 @@ fun NavGraph(
       route = Screen.Favorite.route
     ) {
       FavoriteScreen(
+        modifier = modifier,
+        onNavigateDetail = onNavigateDetail
+      )
+    }
+    composable(
+      route = Screen.Settings.route
+    ) {
+      SettingsScreen(
+        modifier = modifier,
+      )
+    }
+    composable(
+      route = Screen.Search.route
+    ) {
+      SearchScreen(
         modifier = modifier,
         onNavigateDetail = onNavigateDetail
       )

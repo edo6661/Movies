@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Login
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.submissionexpert1.presentation.navigation.Screen
 
@@ -22,6 +23,11 @@ data class BottomBarItem(
         icon = Icons.Filled.Home,
         route = Screen.Home.route
       ),
+      BottomBarItem(
+        label = Screen.Settings.route,
+        icon = Icons.Filled.Settings,
+        route = Screen.Settings.route
+      ),
     )
 
     if (! isUserLoggedIn) {
@@ -35,6 +41,7 @@ data class BottomBarItem(
       )
     } else {
       items.add(
+        index = 1,
         BottomBarItem(
           label = Screen.Favorite.route,
           icon = Icons.Filled.Favorite,
