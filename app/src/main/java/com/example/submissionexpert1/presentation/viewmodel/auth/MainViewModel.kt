@@ -14,8 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-  @IODispatcher private val ioDispatcher : CoroutineDispatcher,
-  @MainDispatcher private val mainDispatcher : CoroutineDispatcher,
+  
   private val userPreferences : UserPreferences,
 ) : ViewModel() {
 

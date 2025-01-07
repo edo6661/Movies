@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.submissionexpert1.data.source.local.preferences.ThemePreferences
 import com.example.submissionexpert1.presentation.navigation.graph.NavGraph
 import com.example.submissionexpert1.presentation.ui.scaffold.MainScaffold
 import com.example.submissionexpert1.presentation.ui.scaffold.config.scaffoldConfig
@@ -18,16 +19,24 @@ import com.example.submissionexpert1.presentation.ui.theme.SubmissionExpert1Them
 import com.example.submissionexpert1.presentation.viewmodel.auth.MainEvent
 import com.example.submissionexpert1.presentation.viewmodel.auth.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
   private val vm : MainViewModel by viewModels()
+
+  @Inject
+  lateinit var themePreferences : ThemePreferences
+
   override fun onCreate(savedInstanceState : Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
     setContent {
-      SubmissionExpert1Theme {
+      SubmissionExpert1Theme(
+        themePreferences = themePreferences,
+      ) {
+
         val state by vm.state.collectAsState()
 
         val navController = rememberNavController()

@@ -1,15 +1,13 @@
 package com.example.submissionexpert1.presentation.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import com.example.submissionexpert1.data.source.local.preferences.ThemePreferences
 
 private val DarkColorScheme = darkColorScheme(
   primary = Purple80,
@@ -35,18 +33,24 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun SubmissionExpert1Theme(
-  darkTheme : Boolean = isSystemInDarkTheme(),
-  // Dynamic color is available on Android 12+
   dynamicColor : Boolean = true,
+  themePreferences : ThemePreferences,
   content : @Composable () -> Unit
 ) {
+  val themeMode by themePreferences.getThemeMode()
+    .collectAsState(initial = ThemePreferences.THEME_SYSTEM)
+  val isDarkTheme = when (themeMode) {
+    ThemePreferences.THEME_DARK  -> true
+    ThemePreferences.THEME_LIGHT -> false
+    else                         -> isSystemInDarkTheme()
+  }
   val colorScheme = when {
     dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
       val context = LocalContext.current
-      if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+      if (isDarkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
     }
 
-    darkTheme                                                      -> DarkColorScheme
+    isDarkTheme                                                    -> DarkColorScheme
     else                                                           -> LightColorScheme
   }
 
