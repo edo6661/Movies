@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -19,6 +20,7 @@ import com.example.submissionexpert1.presentation.ui.state.loading.CenteredCircu
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieList(
   modifier : Modifier = Modifier,
@@ -57,9 +59,7 @@ fun MovieList(
       isLoadingToggleFavorite = isLoadingToggleFavorite,
       onToggleFavorite = onToggleFavorite,
       userId = userId
-
     )
-
     BottomAlert(
       message = alert ?: "",
       onDismiss = { onDismissedAlert() },

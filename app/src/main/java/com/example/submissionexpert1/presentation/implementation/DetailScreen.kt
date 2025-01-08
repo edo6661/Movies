@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,6 +22,7 @@ import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.presentation.ui.shared.MainText
 import com.example.submissionexpert1.presentation.ui.shared.movie.ToggleButtonFavorite
 import com.example.submissionexpert1.presentation.ui.state.error.MainError
+import com.example.submissionexpert1.presentation.ui.state.loading.CenteredCircularLoading
 import com.example.submissionexpert1.presentation.viewmodel.DetailEvent
 import com.example.submissionexpert1.presentation.viewmodel.DetailViewModel
 
@@ -38,11 +38,13 @@ fun DetailScreen(
 
 
   Column(
-    modifier = modifier,
+    modifier = modifier.fillMaxSize(),
   ) {
     when {
       state.isLoading -> {
-        CircularProgressIndicator()
+        CenteredCircularLoading(
+          modifier = Modifier.fillMaxSize()
+        )
       }
 
       state.error != null -> {

@@ -15,8 +15,9 @@ fun HomeScreen(
   modifier : Modifier = Modifier,
   onNavigateDetail : (String) -> Unit,
   viewModel : HomeViewModel = hiltViewModel(),
-  navigateToLogin : () -> Unit
-) {
+  navigateToLogin : () -> Unit,
+
+  ) {
   val uiState by viewModel.uiState.collectAsState()
   val movieState by viewModel.movieState.collectAsState()
   val onEvent = { event : HomeEvent -> viewModel.onEvent(event) }
@@ -52,11 +53,6 @@ fun HomeScreen(
     listState.scrollToItem(0)
   }
 
-
-
-
-
-
   MovieList(
     modifier = modifier,
     movies = movies,
@@ -78,8 +74,7 @@ fun HomeScreen(
     onDismissedAlert = { onEvent(HomeEvent.OnDismissedAlert) },
     userId = uiState.userId,
     onLoad = { onEvent(HomeEvent.OnLoad) },
-    onRefresh = { onEvent(HomeEvent.OnRefresh) }
-
+    onRefresh = { onEvent(HomeEvent.OnRefresh) },
   )
 }
 //

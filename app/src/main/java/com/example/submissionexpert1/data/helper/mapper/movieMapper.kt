@@ -36,6 +36,26 @@ fun MovieResponse.toDomain() : Movie {
     originalTitle = originalTitle,
     adult = adult,
     video = video,
+    // TODO: benerin nanti
+    genreIds = emptyList()
+  )
+}
+
+fun Movie.toEntity() : MovieEntity {
+  return MovieEntity(
+    movieId = id,
+    title = title,
+    overview = overview,
+    posterPath = posterPath,
+    backdropPath = backdropPath,
+    releaseDate = releaseDate,
+    voteAverage = voteAverage,
+    voteCount = voteCount,
+    popularity = popularity,
+    originalLanguage = originalLanguage,
+    originalTitle = originalTitle,
+    adult = adult,
+    video = video,
     genreIds = genreIds
   )
 }

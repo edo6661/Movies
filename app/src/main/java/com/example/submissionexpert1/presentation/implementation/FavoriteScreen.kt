@@ -16,7 +16,8 @@ fun FavoriteScreen(
   modifier : Modifier = Modifier,
   onNavigateDetail : (String) -> Unit,
   viewModel : FavoriteViewModel = hiltViewModel(),
-) {
+
+  ) {
   val uiState by viewModel.uiState.collectAsState()
   val movieState by viewModel.movieState.collectAsState()
   val onEvent = { event : FavoriteEvent -> viewModel.onEvent(event) }

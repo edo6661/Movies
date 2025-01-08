@@ -9,6 +9,7 @@ import com.example.submissionexpert1.data.db.dao.relation.MoviePaginationDao
 import com.example.submissionexpert1.data.helper.mapper.toDatabaseEntities
 import com.example.submissionexpert1.data.helper.mapper.toDomain
 import com.example.submissionexpert1.data.helper.mapper.toDomainWithFavorite
+import com.example.submissionexpert1.data.helper.mapper.toEntity
 import com.example.submissionexpert1.data.repository.BaseRepository
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
@@ -184,7 +185,7 @@ class MovieRepositoryImpl @Inject constructor(
         return@flow
       }
     }
-    
+
     val isMovieFavorite = when (safeDatabaseCall {
       favoriteMovieDao.isMovieFavorite(
         userId = userId,
@@ -209,7 +210,33 @@ class MovieRepositoryImpl @Inject constructor(
       is Result.Success -> {
         result.data?.let {
           emit(Result.Success(it))
-        } ?: emit(Result.Error(ErrorMessages.DATA_NOT_FOUND))
+        } ?: emitAll(getMovieFromApi(id))
+      }
+
+      is Result.Error   -> {
+        emit(Result.Error(result.message))
+      }
+
+      is Result.Loading -> {
+        emit(Result.Loading)
+      }
+    }
+  }
+
+  private fun getMovieFromApi(id : Int) : Flow<Result<Movie>> = flow {
+    val result = safeApiCall {
+      apiService.getDetailMovie(id)
+    }
+    when (result) {
+      is Result.Success -> {
+        // TODO: benerin nanti toDomain nya, soalnya beda response
+        val movie = result.data.toDomain().copy(
+          isFavorite = false
+        )
+        safeDatabaseCall {
+          movieDao.insertMovie(movie.toEntity())
+        }
+        emit(Result.Success(movie))
       }
 
       is Result.Error   -> {

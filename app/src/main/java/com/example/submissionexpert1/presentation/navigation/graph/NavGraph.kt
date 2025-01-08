@@ -14,13 +14,13 @@ import com.example.submissionexpert1.presentation.navigation.navigateSingleTop
 @Composable
 fun NavGraph(
   modifier : Modifier = Modifier,
-  startDestination : String = "favorite",
+  startDestination : String = Screen.Home.route,
   navController : NavHostController,
   isUserLoggedIn : Boolean = false,
 ) {
   NavHost(
     navController = navController,
-    startDestination = if (isUserLoggedIn) Screen.Favorite.route else startDestination,
+    startDestination = if (isUserLoggedIn) Screen.Home.route else startDestination,
   ) {
     authNavGraph(
       modifier = modifier,
@@ -35,6 +35,7 @@ fun NavGraph(
       val navigateToLogin = {
         navController.navigateSingleTop(Screen.Auth.Login.route)
       }
+
 
       HomeScreen(
         modifier = modifier,
@@ -58,11 +59,14 @@ fun NavGraph(
       )
     }
     composable(
-      route = Screen.Search.route
+      route = Screen.Search.route,
     ) {
       SearchScreen(
         modifier = modifier,
-        onNavigateDetail = onNavigateDetail
+        onNavigateDetail = onNavigateDetail,
+        onNavigateBack = {
+          navController.popBackStack()
+        }
       )
     }
     composable(
