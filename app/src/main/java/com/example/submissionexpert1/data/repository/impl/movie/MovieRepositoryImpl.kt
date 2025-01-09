@@ -37,19 +37,19 @@ class MovieRepositoryImpl @Inject constructor(
   ) : Flow<Result<PaginationMovie>> = flow {
 
 
-    val result = safeApiCall {
+    val apiResult = safeApiCall {
       apiService.getPopularMovies(
         page = page,
         // TODO: replace dengan dynamic language (pake shared preference / data store)
         language = "en-US",
       )
     }
-    emitAll(handleApiResult(result, page))
+    emitAll(handleApiResultPopularMovies(apiResult, page))
 
   }
 
 
-  private suspend fun handleApiResult(
+  private suspend fun handleApiResultPopularMovies(
     result : Result<PaginationMovieResponse>,
     page : String
   ) : Flow<Result<PaginationMovie>> = flow {
@@ -59,7 +59,7 @@ class MovieRepositoryImpl @Inject constructor(
         if (! isPaginationExist) {
           insertAllToDao(result.data)
         }
-        val cachedData = getCachedMovie(page.toInt())
+        val cachedData = getCachedPopularMovies(page.toInt())
         emit(cachedData)
       }
 
@@ -67,7 +67,7 @@ class MovieRepositoryImpl @Inject constructor(
         val message = result.message
         // ! nge handle unknown host exception
         if (message == ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE) {
-          emitAll(getCachedMovieWhenError(page, result))
+          emitAll(getCachedPopularMoviesWhenError(page, result))
         } else {
           emit(Result.Error(result.message))
         }
@@ -80,11 +80,11 @@ class MovieRepositoryImpl @Inject constructor(
     }
   }
 
-  private fun getCachedMovieWhenError(
+  private fun getCachedPopularMoviesWhenError(
     page : String,
     result : Result.Error
   ) : Flow<Result<PaginationMovie>> = flow {
-    val cachedData = getCachedMovie(page.toInt())
+    val cachedData = getCachedPopularMovies(page.toInt())
     val isDataNotNullAndFirstPage = cachedData !is Result.Error && page.toInt() == 1
     emit(cachedData)
     if (isDataNotNullAndFirstPage) {
@@ -93,14 +93,15 @@ class MovieRepositoryImpl @Inject constructor(
   }
 
 
-  private suspend fun getCachedMovie(page : Int) : Result<PaginationMovie> {
+  private suspend fun getCachedPopularMovies(page : Int) : Result<PaginationMovie> {
     val userId = when (val resultUserId = getUserId()) {
       is Result.Success -> resultUserId.data
       is Result.Error   -> return Result.Error(resultUserId.message)
       is Result.Loading -> return Result.Loading
+      null              -> null
     }
     val result = safeDatabaseCall {
-      paginationDao.getPaginationWithMovies(page, userId)
+      paginationDao.getPaginationWithMovies(page, userId ?: 0)
         .firstOrNull()
         ?.toDomainWithFavorite()
     }
@@ -146,6 +147,11 @@ class MovieRepositoryImpl @Inject constructor(
         emit(Result.Loading)
         return@flow
       }
+
+      null              -> {
+        emit(Result.Error(ErrorMessages.UNAUTHORIZED))
+        return@flow
+      }
     }
     val result = safeDatabaseCall {
       favoriteMovieDao.getFavoriteMoviesByUser(page.toInt(), userId)
@@ -170,6 +176,34 @@ class MovieRepositoryImpl @Inject constructor(
     }
   }
 
+  override fun getMoviesWithQuery(page : String, query : String) : Flow<Result<PaginationMovie>> =
+    flow {
+      val apiResult = safeApiCall {
+        apiService.getMoviesWithQuery(
+          page = page,
+          query = query,
+        )
+      }
+      when (apiResult) {
+        is Result.Success -> {
+          safeDatabaseCall {
+            movieDao.insertMovies(apiResult.data.results.map { it.toEntity() })
+          }
+          emit(Result.Success(apiResult.data.toDomain()))
+
+        }
+
+        is Result.Error   -> {
+          emit(Result.Error(apiResult.message))
+        }
+
+        is Result.Loading -> {
+          emit(Result.Loading)
+        }
+      }
+
+    }
+
   override fun getMovie(id : Int) : Flow<Result<Movie>> = flow {
     emit(Result.Loading)
     val userId = when (val resultUserId = getUserId()) {
@@ -184,8 +218,13 @@ class MovieRepositoryImpl @Inject constructor(
         emit(Result.Loading)
         return@flow
       }
+
+      null              -> null
     }
 
+    if (userId == null) {
+      return@flow
+    }
     val isMovieFavorite = when (safeDatabaseCall {
       favoriteMovieDao.isMovieFavorite(
         userId = userId,
@@ -279,16 +318,17 @@ class MovieRepositoryImpl @Inject constructor(
         Result.Loading
       }
 
-
+      null              -> Result.Error(ErrorMessages.UNAUTHORIZED)
     }
   }
 
 
-  private suspend fun getUserId() : Result<Long> {
+  private suspend fun getUserId() : Result<Long>? {
+
     val userData = userPreferences.getUserData().firstOrNull()
     return userData?.userId?.let {
       Result.Success(it)
-    } ?: Result.Error("ErrorMessages.UNAUTHORIZED")
+    }
   }
 
 

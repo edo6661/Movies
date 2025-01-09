@@ -16,10 +16,19 @@ interface ApiService {
 
     ) : Response<PaginationMovieResponse>
 
+  @GET(ApiConfig.SEARCH_MOVIE)
+  suspend fun getMoviesWithQuery(
+    @Query("page") page : String = "1",
+    @Query("language") language : String = "id-ID",
+    @Query("query") query : String,
+  ) : Response<PaginationMovieResponse>
+
   @GET(ApiConfig.DETAIL_MOVIE)
   suspend fun getDetailMovie(
     @Path("id") id : Int,
   ) : Response<MovieResponse>
+
+  // TODO: tambahin endpoint untuk search
 
 
 }

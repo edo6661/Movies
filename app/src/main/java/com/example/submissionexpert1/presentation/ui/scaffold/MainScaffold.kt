@@ -21,50 +21,46 @@ fun MainScaffold(
   logout : () -> Unit,
   content : @Composable (PaddingValues) -> Unit,
 ) {
-  if (scaffoldConfig.showMainNav || scaffoldConfig.showBackNav) {
-    Scaffold(
-      topBar = {
-        when {
-          scaffoldConfig.showBackNav -> {
-            TopBackNav(
-              title = "Temporary",
-              onNavigateBack = { navController.popBackStack() }
-            )
-          }
-
-          scaffoldConfig.showMainNav -> {
-            TopNav(
-              currentRoute = currentRoute,
-              user = user,
-              logout = logout,
-              navigateToSearch = {
-                navController.navigate(Screen.Search.route)
-              }
-            )
-          }
-
-          else                       -> {
-          }
-        }
-      },
-      bottomBar = {
-        when {
-          scaffoldConfig.showMainNav -> {
-            BottomBar(
-              isActive = isActive,
-              navController = navController,
-              user = user,
-
-              )
-          }
+  Scaffold(
+    topBar = {
+      when {
+        scaffoldConfig.showBackNav -> {
+          TopBackNav(
+            title = "Temporary",
+            onNavigateBack = { navController.popBackStack() }
+          )
         }
 
+        scaffoldConfig.showMainNav -> {
+          TopNav(
+            currentRoute = currentRoute,
+            user = user,
+            logout = logout,
+            navigateToSearch = {
+              navController.navigate(Screen.Search.route)
+            }
+          )
+        }
+
+        else                       -> {
+        }
       }
-    ) { innerPadding ->
-      content(innerPadding)
+    },
+    bottomBar = {
+      when {
+        scaffoldConfig.showMainNav -> {
+          BottomBar(
+            isActive = isActive,
+            navController = navController,
+            user = user,
+
+            )
+        }
+      }
+
     }
-  } else {
-    content(PaddingValues())
+  ) { innerPadding ->
+    content(innerPadding)
   }
 
 }

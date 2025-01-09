@@ -15,9 +15,15 @@ interface IMovieRepository {
     page : String,
   ) : Flow<Result<PaginationMovie>>
 
+  fun getMoviesWithQuery(
+    page : String,
+    query : String,
+  ) : Flow<Result<PaginationMovie>>
+
   fun getMovie(
     id : Int,
   ) : Flow<Result<Movie>>
+
 
   suspend fun toggleFavoriteMovie(
     movieId : Int,

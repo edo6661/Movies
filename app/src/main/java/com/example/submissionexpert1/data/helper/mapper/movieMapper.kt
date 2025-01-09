@@ -69,7 +69,7 @@ fun PaginationMovieResponse.toPaginationEntity() : PaginationEntity {
   )
 }
 
-fun MovieResponse.toMovieEntity() : MovieEntity {
+fun MovieResponse.toEntity() : MovieEntity {
   return MovieEntity(
     movieId = id,
     title = title,
@@ -92,7 +92,7 @@ fun MovieResponse.toMovieEntity() : MovieEntity {
 
 fun PaginationMovieResponse.toDatabaseEntities() : Triple<PaginationEntity, List<MovieEntity>, List<PaginationMovieEntity>> {
   val paginationEntity = this.toPaginationEntity()
-  val movieEntities = this.results.map { it.toMovieEntity() }
+  val movieEntities = this.results.map { it.toEntity() }
   val paginationMovieEntities = this.results.map {
     PaginationMovieEntity(page = this.page, movieId = it.id)
   }
