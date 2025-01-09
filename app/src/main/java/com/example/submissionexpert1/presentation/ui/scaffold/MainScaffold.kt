@@ -26,7 +26,7 @@ fun MainScaffold(
       when {
         scaffoldConfig.showBackNav -> {
           TopBackNav(
-            title = "Temporary",
+            title = if (currentRoute == "Detail/{id}") "Detail" else currentRoute ?: "",
             onNavigateBack = { navController.popBackStack() }
           )
         }

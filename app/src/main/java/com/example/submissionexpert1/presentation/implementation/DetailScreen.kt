@@ -1,16 +1,11 @@
 package com.example.submissionexpert1.presentation.implementation
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -20,7 +15,6 @@ import com.example.submissionexpert1.R
 import com.example.submissionexpert1.core.constants.Prefix
 import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.presentation.ui.shared.MainText
-import com.example.submissionexpert1.presentation.ui.shared.movie.ToggleButtonFavorite
 import com.example.submissionexpert1.presentation.ui.state.error.MainError
 import com.example.submissionexpert1.presentation.ui.state.loading.CenteredCircularLoading
 import com.example.submissionexpert1.presentation.viewmodel.DetailEvent
@@ -103,21 +97,21 @@ private fun TopSection(
       modifier = Modifier
         .fillMaxWidth()
     )
-    ToggleButtonFavorite(
-      isFavorite = movie.isFavorite,
-      isLoadingToggleFavorite = false,
-      onToggleFavorite = onToggleFavorite,
-      id = movie.id,
-      modifier = Modifier
-        .align(Alignment.BottomEnd)
-        .clip(
-          RoundedCornerShape(
-            topStart = 4.dp,
-          )
-        )
-        .background(MaterialTheme.colorScheme.secondaryContainer)
-
-    )
+//    ToggleButtonFavorite(
+//      isFavorite = movie.isFavorite,
+//      isLoadingToggleFavorite = false,
+//      onToggleFavorite = onToggleFavorite,
+//      id = movie.id,
+//      modifier = Modifier
+//        .align(Alignment.BottomEnd)
+//        .clip(
+//          RoundedCornerShape(
+//            topStart = 4.dp,
+//          )
+//        )
+//        .background(MaterialTheme.colorScheme.secondaryContainer)
+//
+//    )
   }
 }
 

@@ -18,7 +18,7 @@ fun MainText(
   modifier : Modifier = Modifier,
   style : TextStyle = TextStyle.Default,
   text : String,
-  textSize : Size = Size.Medium,
+  textSize : Size = Size.Small,
   color : Color = MaterialTheme.colorScheme.onSurface,
   fontWeight : FontWeight = FontWeight.Normal,
   isEllipsis : Boolean = false,
@@ -29,10 +29,10 @@ fun MainText(
 
 ) {
   val textSizeValue = when (textSize) {
-    Size.Small      -> MaterialTheme.typography.bodyMedium
-    Size.Medium     -> MaterialTheme.typography.titleMedium
-    Size.Large      -> MaterialTheme.typography.headlineMedium
-    Size.ExtraLarge -> MaterialTheme.typography.displayMedium
+    Size.Small      -> MaterialTheme.typography.bodySmall
+    Size.Medium     -> MaterialTheme.typography.titleSmall
+    Size.Large      -> MaterialTheme.typography.headlineSmall
+    Size.ExtraLarge -> MaterialTheme.typography.displaySmall
   }
   val textStyle = style.copy(
     color = color,

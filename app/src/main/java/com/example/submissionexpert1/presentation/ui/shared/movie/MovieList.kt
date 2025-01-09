@@ -1,12 +1,10 @@
 package com.example.submissionexpert1.presentation.ui.shared.movie
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +40,6 @@ fun MovieList(
 ) {
   Box(
     modifier = modifier
-      .background(MaterialTheme.colorScheme.primaryContainer)
       .padding(16.dp)
 
   ) {

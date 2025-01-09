@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.submissionexpert1.R
 import com.example.submissionexpert1.domain.model.User
+import com.example.submissionexpert1.presentation.ui.shared.MainText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,7 +29,10 @@ fun TopNav(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
       ) {
-        Text(text = currentRoute ?: R.string.app_name.toString())
+        MainText(
+          text = currentRoute ?: R.string.app_name.toString(),
+
+          )
 
       }
     },
