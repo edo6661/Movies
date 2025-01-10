@@ -53,6 +53,12 @@ val Typography = Typography(
     fontSize = 20.sp,
     lineHeight = 24.sp,
   ),
+  headlineSmall = TextStyle(
+    fontFamily = Poppins,
+    fontWeight = FontWeight.W600,
+    fontSize = 16.sp,
+    lineHeight = 19.2.sp,
+  ),
   bodyMedium = TextStyle(
     fontFamily = Poppins,
     fontWeight = FontWeight.W500,
@@ -71,17 +77,30 @@ val Typography = Typography(
     fontSize = 20.sp,
     lineHeight = 24.sp,
   ),
-  headlineSmall = TextStyle(
-    fontFamily = Poppins,
-    fontWeight = FontWeight.W600,
-    fontSize = 16.sp,
-    lineHeight = 19.2.sp,
-  ),
+
   headlineMedium = TextStyle(
     fontFamily = Poppins,
     fontWeight = FontWeight.W600,
     fontSize = 18.sp,
     lineHeight = 21.6.sp,
+  ),
+  labelSmall = TextStyle(
+    fontFamily = Poppins,
+    fontWeight = FontWeight.W500,
+    fontSize = 12.sp,
+    lineHeight = 14.4.sp,
+  ),
+  labelMedium = TextStyle(
+    fontFamily = Poppins,
+    fontWeight = FontWeight.W500,
+    fontSize = 14.sp,
+    lineHeight = 16.8.sp,
+  ),
+  labelLarge = TextStyle(
+    fontFamily = Poppins,
+    fontWeight = FontWeight.W500,
+    fontSize = 16.sp,
+    lineHeight = 19.2.sp,
   ),
 
 

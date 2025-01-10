@@ -10,11 +10,13 @@ import androidx.compose.ui.platform.LocalContext
 import com.example.submissionexpert1.data.source.local.preferences.ThemePreferences
 
 private val DarkColorScheme = darkColorScheme(
-  primary = Purple80,
-  secondary = PurpleGrey80,
-  tertiary = Pink80,
-
-  )
+  background = Charcoal,
+  onBackground = White,
+  primary = GrayishGreen,
+  secondary = GrayishGreen,
+  tertiary = CharcoalGray,
+  surfaceDim = CoolGray,
+)
 
 private val LightColorScheme = lightColorScheme(
   primary = Purple40,

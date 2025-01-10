@@ -38,7 +38,7 @@ fun TopBackNav(
 
         MainText(
           text = title,
-          textSize = Size.Medium,
+          textSize = Size.Large,
 
           )
         Icon(

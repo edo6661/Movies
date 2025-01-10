@@ -29,10 +29,10 @@ fun MainText(
 
 ) {
   val textSizeValue = when (textSize) {
-    Size.Small      -> MaterialTheme.typography.bodySmall
-    Size.Medium     -> MaterialTheme.typography.titleSmall
+    Size.Small      -> MaterialTheme.typography.displaySmall
+    Size.Medium     -> MaterialTheme.typography.bodySmall
     Size.Large      -> MaterialTheme.typography.headlineSmall
-    Size.ExtraLarge -> MaterialTheme.typography.displaySmall
+    Size.ExtraLarge -> MaterialTheme.typography.titleSmall
   }
   val textStyle = style.copy(
     color = color,

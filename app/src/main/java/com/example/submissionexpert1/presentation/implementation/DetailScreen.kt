@@ -2,10 +2,13 @@ package com.example.submissionexpert1.presentation.implementation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -14,7 +17,9 @@ import coil3.compose.rememberAsyncImagePainter
 import com.example.submissionexpert1.R
 import com.example.submissionexpert1.core.constants.Prefix
 import com.example.submissionexpert1.domain.model.Movie
+import com.example.submissionexpert1.presentation.common.Size
 import com.example.submissionexpert1.presentation.ui.shared.MainText
+import com.example.submissionexpert1.presentation.ui.shared.movie.DetailRating
 import com.example.submissionexpert1.presentation.ui.state.error.MainError
 import com.example.submissionexpert1.presentation.ui.state.loading.CenteredCircularLoading
 import com.example.submissionexpert1.presentation.viewmodel.DetailEvent
@@ -86,17 +91,32 @@ private fun TopSection(
     modifier = Modifier
   ) {
 
-    Image(
-      painter = rememberAsyncImagePainter(
-        model = Prefix.PREFIX_IMAGE_URL + movie.backdropPath,
-        placeholder = painterResource(id = R.drawable.user_placeholder),
-        error = painterResource(id = R.drawable.error_image)
-      ),
-      contentDescription = movie.title,
-      contentScale = ContentScale.Inside,
-      modifier = Modifier
-        .fillMaxWidth()
-    )
+    Box() {
+      Image(
+        painter = rememberAsyncImagePainter(
+          model = Prefix.PREFIX_IMAGE_URL + movie.backdropPath,
+          placeholder = painterResource(id = R.drawable.user_placeholder),
+          error = painterResource(id = R.drawable.error_image)
+        ),
+        contentDescription = movie.title,
+        contentScale = ContentScale.Fit,
+        modifier = Modifier
+          .fillMaxWidth()
+          .clip(
+            RoundedCornerShape(
+              bottomEnd = 24.dp,
+              bottomStart = 24.dp
+            )
+          )
+      )
+      DetailRating(
+        modifier = Modifier
+          .align(Alignment.BottomEnd),
+        rating = movie.voteAverage
+      )
+
+    }
+
 //    ToggleButtonFavorite(
 //      isFavorite = movie.isFavorite,
 //      isLoadingToggleFavorite = false,
@@ -125,6 +145,7 @@ private fun MiddleSection(
   ) {
     MainText(
       text = movie.title,
+      textSize = Size.Medium
     )
 
   }
