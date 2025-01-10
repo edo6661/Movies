@@ -1,6 +1,7 @@
 package com.example.submissionexpert1.application.di
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -15,6 +16,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -24,8 +26,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class DatabaseModule {
 
-  private lateinit var INSTANCE : EntertainmentDb
-
+  @OptIn(DelicateCoroutinesApi::class)
   @Provides
   @Singleton
   fun provideDatabase(
@@ -33,17 +34,15 @@ class DatabaseModule {
   ) : EntertainmentDb {
     val sharedPreferencesHelper = SharedPreferencesHelper(context)
 
-    // Reset shared preferences untuk memaksa import ulang
     if (BuildConfig.DEBUG) {
       sharedPreferencesHelper.clearDataImportedFlag()
     }
 
-    return Room.databaseBuilder(
+    val db = Room.databaseBuilder(
       context,
       EntertainmentDb::class.java,
       EntertainmentDb.Constants.DATABASE_NAME
     )
-      .fallbackToDestructiveMigration() // Ini akan menghapus database lama
       .addCallback(object : RoomDatabase.Callback() {
         override fun onCreate(db : SupportSQLiteDatabase) {
           super.onCreate(db)
@@ -53,32 +52,36 @@ class DatabaseModule {
               if (! sharedPreferencesHelper.isDataImported()) {
                 val genres = loadGenresFromJson(context)
 
-                INSTANCE.genreDao().insertGenres(genres)
+                val entertainmentDb = Room.databaseBuilder(
+                  context,
+                  EntertainmentDb::class.java,
+                  EntertainmentDb.Constants.DATABASE_NAME
+                ).build()
 
+                entertainmentDb.genreDao().insertGenres(genres)
                 sharedPreferencesHelper.setDataImported()
               }
             } catch (e : Exception) {
+              Log.e("DatabaseModule", "Error: ${e.message}")
               e.printStackTrace()
             }
           }
         }
       })
       .build()
-  }
 
+    return db
+  }
 
   private fun loadGenresFromJson(context : Context) : List<GenreEntity> {
     return try {
       val jsonString = context.assets.open("genres.json").bufferedReader().use { it.readText() }
-
       val genreResponse = Gson().fromJson(jsonString, GenreResponse::class.java)
-
       genreResponse.genres
     } catch (e : Exception) {
       throw e
     }
   }
-
 
   @Provides
   @Singleton
@@ -107,6 +110,4 @@ class DatabaseModule {
   @Provides
   @Singleton
   fun provideFavoriteMoviePaginationDao(db : EntertainmentDb) = db.favoriteMoviePaginationDao()
-
-
 }

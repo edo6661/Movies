@@ -1,5 +1,7 @@
 package com.example.submissionexpert1.presentation.implementation
 
+import android.util.Log
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -121,6 +123,40 @@ fun DetailContent(
 }
 
 @Composable
+private fun BottomAction(
+  modifier : Modifier,
+  onClick : () -> Unit,
+  title : String,
+  isActive : Boolean
+) {
+  val animatedColor by animateColorAsState(
+    targetValue = if (isActive) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground.copy(
+      alpha = 0.5f
+    ),
+    label = "color",
+  )
+
+  Box(
+    modifier = modifier
+      .height(48.dp)
+      .clickable {
+        if (isActive) return@clickable
+        Log.d("BottomAction", "onClick: $title")
+        onClick()
+      },
+    contentAlignment = Alignment.Center
+
+  ) {
+    MainText(
+      text = title,
+      textSize = Size.Large,
+      textAlign = TextAlign.Center,
+      color = animatedColor
+    )
+  }
+}
+
+@Composable
 private fun BottomSection(
   movie : Movie,
   currentTab : Int,
@@ -133,73 +169,76 @@ private fun BottomSection(
         vertical = 32.dp
       )
   ) {
-    Column(
-      verticalArrangement = Arrangement.spacedBy(12.dp),
-
-      ) {
-
-
-      Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround,
-        modifier = Modifier.fillMaxWidth()
-      ) {
-
-        MainText(
-          text = "Overview",
-          textSize = Size.Large,
-          modifier = Modifier
-
-            .weight(0.5f)
-            .clickable { onTabSelected(0) },
-          textAlign = TextAlign.Center,
-          color = if (currentTab == 0)
-            MaterialTheme.colorScheme.primary
-          else
-            MaterialTheme.colorScheme.onSurface
-        )
-
-        MainText(
-          text = "Genre",
-          textSize = Size.Large,
-          modifier = Modifier
-            .weight(0.5f)
-            .clickable { onTabSelected(1) },
-          textAlign = TextAlign.Center,
-          color = if (currentTab == 1)
-            MaterialTheme.colorScheme.primary
-          else
-            MaterialTheme.colorScheme.onSurface
-        )
-      }
-      val indicatorOffset by animateFloatAsState(
-        targetValue = currentTab * 0.5f,
-        label = "indicator"
-      )
-      val screenWithDp = LocalConfiguration.current.screenWidthDp
-
-      Box(
-        modifier = Modifier
-          .padding()
-          .fillMaxWidth(0.5f)
-          .height(4.dp)
-          .offset {
-            IntOffset(
-              // ! 32 nih: padding horizontal
-              x = (indicatorOffset * (screenWithDp - 32).dp.toPx()).toInt(),
-              y = 0
-            )
-          }
-          .background(
-            color = MaterialTheme.colorScheme.primary,
-            shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)
-          )
-      )
-
-    }
+    CustomBottomTab(
+      currentTab = currentTab,
+      onTabSelected = onTabSelected
+    )
 
 
   }
+}
+
+@Composable
+private fun CustomBottomTab(
+  currentTab : Int,
+  onTabSelected : (Int) -> Unit
+
+) {
+  val indicatorOffset by animateFloatAsState(
+    targetValue = currentTab * 0.5f,
+    label = "indicator"
+  )
+  val screenWithDp = LocalConfiguration.current.screenWidthDp
+
+  Column(
+
+  ) {
+
+    Row(
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.SpaceAround,
+      modifier = Modifier.fillMaxWidth()
+    ) {
+      BottomAction(
+        modifier = Modifier
+          .weight(0.5f),
+        onClick = {
+          onTabSelected(0)
+        },
+        title = "Overview",
+        isActive = currentTab == 0
+      )
+      BottomAction(
+        modifier = Modifier
+          .weight(0.5f),
+        onClick = {
+          onTabSelected(1)
+        },
+        title = "Genre",
+        isActive = currentTab == 1
+
+      )
+    }
+
+    Box(
+      modifier = Modifier
+        .padding()
+        .fillMaxWidth(0.5f)
+        .height(8.dp)
+        .offset {
+          IntOffset(
+            // ! 32 nih: padding horizontal
+            x = (indicatorOffset * (screenWithDp - 32).dp.toPx()).toInt(),
+            y = 0
+          )
+        }
+        .background(
+          color = MaterialTheme.colorScheme.tertiary,
+        )
+    )
+
+  }
+
 }
 
 @Composable
@@ -210,6 +249,7 @@ private fun TopSection(
   navigateToLogin : () -> Unit
 
 ) {
+  Log.d("TopSection", "TopSection: ${movie}")
   Box(
     modifier = Modifier
   ) {

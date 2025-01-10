@@ -4,9 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,6 +20,13 @@ fun TopBackNav(
 ) {
 
   TopAppBar(
+    colors = TopAppBarColors(
+      containerColor = MaterialTheme.colorScheme.background,
+      actionIconContentColor = MaterialTheme.colorScheme.onBackground,
+      navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
+      scrolledContainerColor = MaterialTheme.colorScheme.background,
+      titleContentColor = MaterialTheme.colorScheme.onBackground,
+    ),
     title = {
       Row(
         modifier = Modifier.fillMaxWidth(),

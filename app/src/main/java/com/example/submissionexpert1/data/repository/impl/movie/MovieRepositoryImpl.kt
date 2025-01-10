@@ -1,5 +1,6 @@
 package com.example.submissionexpert1.data.repository.impl.movie
 
+import android.util.Log
 import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.api.ApiService
 import com.example.submissionexpert1.data.db.dao.MovieDao
@@ -243,6 +244,7 @@ class MovieRepositoryImpl @Inject constructor(
     when (result) {
       is Result.Success -> {
         result.data?.let {
+          Log.d("MovieRepositoryImpl", "getMovie: $it")
           emit(Result.Success(it))
         } ?: emitAll(getMovieFromApi(id))
       }

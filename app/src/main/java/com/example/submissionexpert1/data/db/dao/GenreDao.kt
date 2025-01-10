@@ -24,4 +24,5 @@ interface GenreDao {
   @Query("SELECT * FROM genres WHERE genreId = :genreId")
   fun getGenreWithMovies(genreId : Int) : Flow<GenreWithMovies>
 
+
 }
