@@ -26,3 +26,8 @@ data class Movie(
 
 )
 
+
+data class MovieWithGenres(
+  val movie : Movie,
+  val genres : List<Genre>
+)

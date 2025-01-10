@@ -1,12 +1,13 @@
 package com.example.submissionexpert1.data.repository.impl.movie
 
-import android.util.Log
 import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.api.ApiService
 import com.example.submissionexpert1.data.db.dao.MovieDao
 import com.example.submissionexpert1.data.db.dao.PaginationDao
 import com.example.submissionexpert1.data.db.dao.relation.FavoriteMoviePaginationDao
+import com.example.submissionexpert1.data.db.dao.relation.MovieGenreDao
 import com.example.submissionexpert1.data.db.dao.relation.MoviePaginationDao
+import com.example.submissionexpert1.data.db.entity.relation.MovieGenreCrossRef
 import com.example.submissionexpert1.data.helper.mapper.toDatabaseEntities
 import com.example.submissionexpert1.data.helper.mapper.toDomain
 import com.example.submissionexpert1.data.helper.mapper.toDomainWithFavorite
@@ -16,6 +17,7 @@ import com.example.submissionexpert1.data.source.local.preferences.UserPreferenc
 import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.model.Movie
+import com.example.submissionexpert1.domain.model.MovieWithGenres
 import com.example.submissionexpert1.domain.model.PaginationMovie
 import com.example.submissionexpert1.domain.repository.movie.IMovieRepository
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +32,8 @@ class MovieRepositoryImpl @Inject constructor(
   private val moviePaginationDao : MoviePaginationDao,
   private val favoriteMovieDao : FavoriteMoviePaginationDao,
   private val movieDao : MovieDao,
-  private val userPreferences : UserPreferences
+  private val userPreferences : UserPreferences,
+  private val movieGenreDao : MovieGenreDao
 ) : IMovieRepository, BaseRepository() {
 
   override fun getPopularMovies(
@@ -110,6 +113,14 @@ class MovieRepositoryImpl @Inject constructor(
     return when (result) {
       is Result.Success -> {
         result.data?.let {
+          insertGenresMoviesCrossRef(it.results.flatMap { movie ->
+            movie.genreIds.map { genreId ->
+              MovieGenreCrossRef(
+                movieId = movie.id,
+                genreId = genreId
+              )
+            }
+          })
           Result.Success(it)
           // ! ini case nya padahal data cache nya itu null tapi kok error nya no internet connection? karena dia nge handle UnknownHostException, jadi cuman nerusin aja
         } ?: Result.Error(ErrorMessages.NO_INTERNET_CONNECTION)
@@ -206,7 +217,7 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
   // TODO: bug kalo user null, bakal loading terus
-  override fun getMovie(id : Int) : Flow<Result<Movie>> = flow {
+  override fun getMovie(id : Int) : Flow<Result<MovieWithGenres>> = flow {
     emit(Result.Loading)
     val userId = when (val resultUserId = getUserId()) {
       is Result.Success -> resultUserId.data
@@ -232,21 +243,35 @@ class MovieRepositoryImpl @Inject constructor(
       movieId = id
     )
     val result = safeDatabaseCall {
-      movieDao.getMovieById(id)
+      movieGenreDao.getMovieWithGenresById(id)
         .firstOrNull()
         ?.toDomain()
-        ?.copy(
-          isFavorite = isMovieFavorite
-        )
 
     }
 
     when (result) {
       is Result.Success -> {
         result.data?.let {
-          Log.d("MovieRepositoryImpl", "getMovie: $it")
-          emit(Result.Success(it))
-        } ?: emitAll(getMovieFromApi(id))
+          it.movie.genreIds.map { genreId ->
+            insertGenreMovieCrossRef(
+              MovieGenreCrossRef(
+                movieId = it.movie.id,
+                genreId = genreId
+              )
+            )
+          }
+          emit(
+            Result.Success(
+              it.copy(
+                movie = it.movie.copy(
+                  isFavorite = isMovieFavorite
+                )
+              )
+            )
+          )
+        }
+        // TODO: handle nanti
+//        ?: emitAll(getMovieFromApi(id))
       }
 
       is Result.Error   -> {
@@ -325,6 +350,18 @@ class MovieRepositoryImpl @Inject constructor(
     val userData = userPreferences.getUserData().firstOrNull()
     return userData?.userId?.let {
       Result.Success(it)
+    }
+  }
+
+  private suspend fun insertGenresMoviesCrossRef(genreMoviesCrossRef : List<MovieGenreCrossRef>) {
+    safeDatabaseCall {
+      movieGenreDao.insertGenresMoviesCrossRef(genreMoviesCrossRef)
+    }
+  }
+
+  private suspend fun insertGenreMovieCrossRef(genreMovieCrossRef : MovieGenreCrossRef) {
+    safeDatabaseCall {
+      movieGenreDao.insertGenreMovieCrossRef(genreMovieCrossRef)
     }
   }
 

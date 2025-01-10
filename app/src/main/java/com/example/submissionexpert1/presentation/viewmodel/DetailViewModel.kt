@@ -7,7 +7,7 @@ import com.example.submissionexpert1.application.di.IODispatcher
 import com.example.submissionexpert1.application.di.MainDispatcher
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.submissionexpert1.domain.common.Result
-import com.example.submissionexpert1.domain.model.Movie
+import com.example.submissionexpert1.domain.model.MovieWithGenres
 import com.example.submissionexpert1.domain.usecase.movie.IGetMovieUseCase
 import com.example.submissionexpert1.domain.usecase.movie.IToggleFavoriteMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -55,7 +55,7 @@ class DetailViewModel @Inject constructor(
 
   fun onEvent(event : DetailEvent) {
     when (event) {
-      is DetailEvent.OnMovieLoaded    -> onMovieLoaded(event.id)
+      is DetailEvent.OnMovieLoaded -> onMovieLoaded(event.id)
       is DetailEvent.OnToggleFavorite -> onToggleFavorite(event.id)
     }
   }
@@ -68,9 +68,13 @@ class DetailViewModel @Inject constructor(
           is Result.Success -> {
             _state.value = _state.value.copy(
               isLoadingToggleFavorite = false,
-              movie = _state.value.movie?.copy(
-                isFavorite = ! _state.value.movie?.isFavorite !!
-              )
+              movie = _state.value.movie?.movie?.copy(
+                isFavorite = ! _state.value.movie?.movie?.isFavorite !!
+              )?.let {
+                _state.value.movie?.copy(
+                  movie = it
+                )
+              }
             )
           }
 
@@ -133,7 +137,7 @@ class DetailViewModel @Inject constructor(
 }
 
 data class DetailState(
-  val movie : Movie? = null,
+  val movie : MovieWithGenres? = null,
   val isLoading : Boolean = false,
   val isLoadingToggleFavorite : Boolean = false,
   val error : String? = null,

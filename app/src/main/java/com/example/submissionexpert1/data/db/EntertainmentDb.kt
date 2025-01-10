@@ -6,6 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.submissionexpert1.data.db.dao.*
 import com.example.submissionexpert1.data.db.dao.relation.FavoriteMoviePaginationDao
+import com.example.submissionexpert1.data.db.dao.relation.MovieGenreDao
 import com.example.submissionexpert1.data.db.dao.relation.MoviePaginationDao
 import com.example.submissionexpert1.data.db.entity.GenreEntity
 import com.example.submissionexpert1.data.db.entity.MovieEntity
@@ -63,6 +64,7 @@ abstract class EntertainmentDb : RoomDatabase() {
   abstract fun moviePaginationDao() : MoviePaginationDao
   abstract fun authDao() : AuthDao
   abstract fun favoriteMoviePaginationDao() : FavoriteMoviePaginationDao
+  abstract fun movieGenreDao() : MovieGenreDao
 
   fun clearDatabase() {
     this.clearAllTables()

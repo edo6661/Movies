@@ -1,14 +1,14 @@
 package com.example.submissionexpert1.data.helper.mapper
 
+import com.example.submissionexpert1.data.db.entity.GenreEntity
 import com.example.submissionexpert1.data.db.entity.MovieEntity
 import com.example.submissionexpert1.data.db.entity.PaginationEntity
-import com.example.submissionexpert1.data.db.entity.relation.MovieWithFavorite
-import com.example.submissionexpert1.data.db.entity.relation.PaginationMovieEntity
-import com.example.submissionexpert1.data.db.entity.relation.PaginationWithMovie
-import com.example.submissionexpert1.data.db.entity.relation.PaginationWithMovieAndFavorite
+import com.example.submissionexpert1.data.db.entity.relation.*
 import com.example.submissionexpert1.data.source.remote.response.MovieResponse
 import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
+import com.example.submissionexpert1.domain.model.Genre
 import com.example.submissionexpert1.domain.model.Movie
+import com.example.submissionexpert1.domain.model.MovieWithGenres
 import com.example.submissionexpert1.domain.model.PaginationMovie
 
 // ! RES
@@ -118,6 +118,18 @@ fun MovieEntity.toDomain() : Movie {
     adult = adult,
     video = video,
     genreIds = genreIds,
+  )
+}
+
+fun MovieWithGenresEntity.toDomain() : MovieWithGenres = MovieWithGenres(
+  movie = movie.toDomain(),
+  genres = genres.map { it.toDomain() }
+)
+
+fun GenreEntity.toDomain() : Genre {
+  return Genre(
+    genreId = genreId,
+    name = name
   )
 }
 

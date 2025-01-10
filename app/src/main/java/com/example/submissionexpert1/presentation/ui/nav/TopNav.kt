@@ -1,7 +1,9 @@
 package com.example.submissionexpert1.presentation.ui.nav
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
@@ -23,7 +25,6 @@ fun TopNav(
   navigateToSearch : () -> Unit,
 ) {
   TopAppBar(
-    windowInsets = WindowInsets.systemBars,
     title = {
       Row(
         verticalAlignment = Alignment.CenterVertically,

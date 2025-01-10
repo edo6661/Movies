@@ -1,8 +1,9 @@
 package com.example.submissionexpert1.presentation.implementation
 
 import android.util.Log
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,6 +32,7 @@ import coil3.compose.rememberAsyncImagePainter
 import com.example.submissionexpert1.R
 import com.example.submissionexpert1.core.constants.Prefix
 import com.example.submissionexpert1.domain.model.Movie
+import com.example.submissionexpert1.domain.model.MovieWithGenres
 import com.example.submissionexpert1.presentation.common.Size
 import com.example.submissionexpert1.presentation.ui.shared.MainText
 import com.example.submissionexpert1.presentation.ui.shared.movie.DetailRating
@@ -79,7 +81,7 @@ fun DetailScreen(
 
       state.movie != null -> {
         DetailContent(
-          movie = state.movie as Movie,
+          movie = state.movie as MovieWithGenres,
           onToggleFavorite = { id -> onEvent(DetailEvent.OnToggleFavorite(id)) },
           userId = state.userId,
           navigateToLogin = navigateToLogin
@@ -92,24 +94,26 @@ fun DetailScreen(
 
 @Composable
 fun DetailContent(
-  movie : Movie,
+  movie : MovieWithGenres,
   onToggleFavorite : (Int) -> Unit,
   userId : Long? = null,
   navigateToLogin : () -> Unit
 ) {
   var currentTab by remember { mutableIntStateOf(0) }
 
+  val onlyMovie = movie.movie
+
   Column(
-    verticalArrangement = Arrangement.spacedBy(16.dp),
+    verticalArrangement = Arrangement.spacedBy(8.dp)
   ) {
     TopSection(
-      movie = movie,
+      movie = onlyMovie,
       onToggleFavorite = onToggleFavorite,
       userId = userId,
       navigateToLogin = navigateToLogin
     )
     MiddleSection(
-      movie = movie
+      movie = onlyMovie
     )
     BottomSection(
       movie = movie,
@@ -158,7 +162,7 @@ private fun BottomAction(
 
 @Composable
 private fun BottomSection(
-  movie : Movie,
+  movie : MovieWithGenres,
   currentTab : Int,
   onTabSelected : (Int) -> Unit
 ) {
@@ -166,17 +170,75 @@ private fun BottomSection(
     modifier = Modifier
       .padding(
         horizontal = 16.dp,
-        vertical = 32.dp
       )
   ) {
     CustomBottomTab(
       currentTab = currentTab,
       onTabSelected = onTabSelected
     )
+    ContentBottomTab(
+      currentTab = currentTab
+    )
 
 
   }
 }
+
+@Composable
+private fun ContentBottomTab(
+  currentTab : Int,
+) {
+  fun spec(
+    targetState : Int,
+    initialState : Int
+  ) : ContentTransform {
+    return if (targetState > initialState) {
+      slideInHorizontally(
+        initialOffsetX = { 1000 },
+        animationSpec = tween(800)
+      ) togetherWith slideOutHorizontally(
+        targetOffsetX = { - 1000 },
+        animationSpec = tween(800)
+      )
+    } else {
+      slideInHorizontally(
+        initialOffsetX = { - 1000 },
+        animationSpec = tween(800)
+      ) togetherWith slideOutHorizontally(
+        targetOffsetX = { 1000 },
+        animationSpec = tween(800)
+      )
+    }
+  }
+  AnimatedContent(
+    targetState = currentTab,
+    transitionSpec = {
+      spec(targetState, 0)
+    },
+    label = "content"
+  ) {
+    when (it) {
+      0 -> {
+        MainText(
+          text = "Overview",
+          modifier = Modifier.padding(
+            top = 16.dp
+          )
+        )
+      }
+
+      1 -> {
+        MainText(
+          text = "Genre",
+          modifier = Modifier.padding(
+            top = 16.dp
+          )
+        )
+      }
+    }
+  }
+}
+
 
 @Composable
 private fun CustomBottomTab(
@@ -249,7 +311,6 @@ private fun TopSection(
   navigateToLogin : () -> Unit
 
 ) {
-  Log.d("TopSection", "TopSection: ${movie}")
   Box(
     modifier = Modifier
   ) {

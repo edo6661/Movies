@@ -14,13 +14,13 @@ import com.example.submissionexpert1.presentation.navigation.navigateSingleTop
 @Composable
 fun NavGraph(
   modifier : Modifier = Modifier,
-  startDestination : String = Screen.Home.route,
+  startDestination : String = "Detail/558449",
   navController : NavHostController,
   isUserLoggedIn : Boolean = false,
 ) {
   NavHost(
     navController = navController,
-    startDestination = if (isUserLoggedIn) Screen.Home.route else startDestination,
+    startDestination = if (isUserLoggedIn) "Detail/558449" else startDestination,
   ) {
     authNavGraph(
       modifier = modifier,

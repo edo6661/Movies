@@ -25,7 +25,7 @@ data class MovieGenreCrossRef(
   val genreId : Int
 )
 
-data class MovieWithGenres(
+data class MovieWithGenresEntity(
   @Embedded val movie : MovieEntity,
   @Relation(
     parentColumn = "movieId",

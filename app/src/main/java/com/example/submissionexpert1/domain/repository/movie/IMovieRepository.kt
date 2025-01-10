@@ -1,7 +1,7 @@
 package com.example.submissionexpert1.domain.repository.movie
 
 import com.example.submissionexpert1.domain.common.Result
-import com.example.submissionexpert1.domain.model.Movie
+import com.example.submissionexpert1.domain.model.MovieWithGenres
 import com.example.submissionexpert1.domain.model.PaginationMovie
 import kotlinx.coroutines.flow.Flow
 
@@ -22,7 +22,7 @@ interface IMovieRepository {
 
   fun getMovie(
     id : Int,
-  ) : Flow<Result<Movie>>
+  ) : Flow<Result<MovieWithGenres>>
 
 
   suspend fun toggleFavoriteMovie(

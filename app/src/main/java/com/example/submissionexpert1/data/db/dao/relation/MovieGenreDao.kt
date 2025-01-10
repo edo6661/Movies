@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.submissionexpert1.data.db.entity.relation.MovieGenreCrossRef
-import com.example.submissionexpert1.data.db.entity.relation.MovieWithGenres
+import com.example.submissionexpert1.data.db.entity.relation.MovieWithGenresEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -26,6 +26,6 @@ interface MovieGenreDao {
   WHERE movies.movieId = :id
 """
   )
-  fun getMovieById(id : Int) : Flow<MovieWithGenres?>
+  fun getMovieWithGenresById(id : Int) : Flow<MovieWithGenresEntity?>
 
 }
