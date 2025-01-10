@@ -81,7 +81,7 @@ interface FavoriteMoviePaginationDao {
         )
         """
   )
-  suspend fun isMovieFavorite(userId : Long, movieId : Int) : Boolean
+  suspend fun isMovieFavorite(userId : Long?, movieId : Int) : Boolean
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   suspend fun insertFavoriteMovie(favoriteMovie : PaginationFavoriteMovieEntity)

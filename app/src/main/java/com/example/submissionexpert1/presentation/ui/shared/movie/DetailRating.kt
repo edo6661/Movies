@@ -33,7 +33,7 @@ fun DetailRating(
       .graphicsLayer {
 
         clip = true
-        renderEffect = BlurEffect(radiusX = 1f, radiusY = 1f)
+        renderEffect = BlurEffect(radiusX = 2f, radiusY = 2f)
       }
       .background(
         MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.8f),

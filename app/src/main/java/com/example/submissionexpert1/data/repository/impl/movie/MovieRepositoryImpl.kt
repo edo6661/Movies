@@ -204,6 +204,7 @@ class MovieRepositoryImpl @Inject constructor(
 
     }
 
+  // TODO: bug kalo user null, bakal loading terus
   override fun getMovie(id : Int) : Flow<Result<Movie>> = flow {
     emit(Result.Loading)
     val userId = when (val resultUserId = getUserId()) {
@@ -219,22 +220,16 @@ class MovieRepositoryImpl @Inject constructor(
         return@flow
       }
 
-      null              -> null
+      null              -> {
+        null
+      }
     }
 
-    if (userId == null) {
-      return@flow
-    }
-    val isMovieFavorite = when (safeDatabaseCall {
-      favoriteMovieDao.isMovieFavorite(
-        userId = userId,
-        movieId = id
-      )
-    }) {
-      is Result.Success -> true
-      is Result.Error   -> false
-      is Result.Loading -> false
-    }
+
+    val isMovieFavorite = favoriteMovieDao.isMovieFavorite(
+      userId = userId ?: 0,
+      movieId = id
+    )
     val result = safeDatabaseCall {
       movieDao.getMovieById(id)
         .firstOrNull()

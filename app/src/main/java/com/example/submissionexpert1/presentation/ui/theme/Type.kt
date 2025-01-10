@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.sp
 import com.example.submissionexpert1.R
 
 val Poppins = FontFamily(
-  Font(R.font.poppins_regular, FontWeight.Normal),
+  Font(R.font.poppins_regular, FontWeight.W400),
   Font(R.font.poppins_medium, FontWeight.W500),
   Font(R.font.poppins_semibold, FontWeight.W600),
   Font(R.font.poppins_bold, FontWeight.W700)

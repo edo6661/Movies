@@ -14,13 +14,13 @@ import com.example.submissionexpert1.presentation.navigation.navigateSingleTop
 @Composable
 fun NavGraph(
   modifier : Modifier = Modifier,
-  startDestination : String = "Detail/558449",
+  startDestination : String = "Detail/1924",
   navController : NavHostController,
   isUserLoggedIn : Boolean = false,
 ) {
   NavHost(
     navController = navController,
-    startDestination = if (isUserLoggedIn) "Detail/558449" else startDestination,
+    startDestination = if (isUserLoggedIn) "Detail/1924" else startDestination,
   ) {
     authNavGraph(
       modifier = modifier,
@@ -79,6 +79,10 @@ fun NavGraph(
     ) {
       DetailScreen(
         modifier = modifier,
+        id = it.arguments?.getString("id")?.toIntOrNull() ?: 0,
+        navigateToLogin = {
+          navController.navigateSingleTop(Screen.Auth.Login.route)
+        }
       )
     }
   }

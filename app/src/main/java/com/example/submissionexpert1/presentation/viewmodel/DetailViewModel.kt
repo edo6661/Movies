@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.submissionexpert1.application.di.IODispatcher
 import com.example.submissionexpert1.application.di.MainDispatcher
+import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.domain.usecase.movie.IGetMovieUseCase
@@ -14,6 +15,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -24,7 +26,8 @@ class DetailViewModel @Inject constructor(
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
   @MainDispatcher private val mainDispatcher : CoroutineDispatcher,
   private val getMovieUseCase : IGetMovieUseCase,
-  private val toggleMovieUseCase : IToggleFavoriteMovieUseCase
+  private val toggleMovieUseCase : IToggleFavoriteMovieUseCase,
+  private val userPreferences : UserPreferences
 ) : ViewModel() {
 
   val id : String = savedStateHandle["id"] ?: ""
@@ -33,7 +36,22 @@ class DetailViewModel @Inject constructor(
 
   init {
     onEvent(DetailEvent.OnMovieLoaded(id.toInt()))
+    getUserId()
+
   }
+
+  private fun getUserId() {
+    viewModelScope.launch {
+      userPreferences.getUserData().collect { user ->
+        _state.update {
+          it.copy(
+            userId = user?.userId
+          )
+        }
+      }
+    }
+  }
+
 
   fun onEvent(event : DetailEvent) {
     when (event) {
@@ -119,6 +137,7 @@ data class DetailState(
   val isLoading : Boolean = false,
   val isLoadingToggleFavorite : Boolean = false,
   val error : String? = null,
+  val userId : Long? = null
 )
 
 sealed class DetailEvent {

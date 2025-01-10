@@ -26,10 +26,9 @@ fun MainText(
   textAlign : TextAlign = TextAlign.Start,
   textDecoration : TextDecoration = TextDecoration.None,
   onClick : (() -> Unit)? = null
-
 ) {
   val textSizeValue = when (textSize) {
-    Size.Small      -> MaterialTheme.typography.displaySmall
+    Size.Small      -> MaterialTheme.typography.labelSmall
     Size.Medium     -> MaterialTheme.typography.bodySmall
     Size.Large      -> MaterialTheme.typography.headlineSmall
     Size.ExtraLarge -> MaterialTheme.typography.titleSmall
@@ -39,17 +38,20 @@ fun MainText(
     fontWeight = fontWeight
   )
   val finalStyle = textStyle.merge(textSizeValue)
+
+  val finalModifier = if (onClick != null) {
+    modifier.clickable { onClick() }
+  } else {
+    modifier
+  }
+
   Text(
     text = text,
     style = finalStyle,
-    modifier = modifier.then(
-      if (onClick != null) modifier.clickable { onClick() } else modifier
-    ),
+    modifier = finalModifier,
     maxLines = maxLines,
     overflow = if (isEllipsis) TextOverflow.Ellipsis else TextOverflow.Clip,
     textAlign = textAlign,
     textDecoration = textDecoration,
-
-    )
-
+  )
 }
