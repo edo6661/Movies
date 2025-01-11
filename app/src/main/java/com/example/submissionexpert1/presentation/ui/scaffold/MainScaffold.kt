@@ -48,7 +48,7 @@ fun MainScaffold(
     },
     bottomBar = {
       when {
-        scaffoldConfig.showMainNav -> {
+        scaffoldConfig.showBottomBar -> {
           BottomBar(
             isActive = isActive,
             navController = navController,

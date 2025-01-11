@@ -13,7 +13,7 @@ private val DarkColorScheme = darkColorScheme(
   background = Charcoal,
   onBackground = White,
   primary = GrayishGreen,
-  secondary = GrayishGreen,
+  secondary = LightBlue,
   tertiary = CharcoalGray,
   surfaceDim = CoolGray,
 )

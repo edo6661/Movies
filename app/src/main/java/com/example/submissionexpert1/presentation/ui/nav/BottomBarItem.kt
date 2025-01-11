@@ -22,12 +22,7 @@ data class BottomBarItem(
         label = Screen.Home.route,
         icon = Icons.Filled.Home,
         route = Screen.Home.route
-      ),
-      BottomBarItem(
-        label = Screen.Settings.route,
-        icon = Icons.Filled.Settings,
-        route = Screen.Settings.route
-      ),
+      )
     )
 
     if (! isUserLoggedIn) {
@@ -49,6 +44,15 @@ data class BottomBarItem(
         )
       )
     }
+
+    items.add(
+
+      BottomBarItem(
+        label = Screen.Settings.route,
+        icon = Icons.Filled.Settings,
+        route = Screen.Settings.route
+      ),
+    )
 
     return items
   }

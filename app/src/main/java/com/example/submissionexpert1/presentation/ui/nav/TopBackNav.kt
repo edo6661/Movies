@@ -1,5 +1,6 @@
 package com.example.submissionexpert1.presentation.ui.nav
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -37,6 +38,9 @@ fun TopBackNav(
           Icons.AutoMirrored.Filled.ArrowBack,
           contentDescription = "Back",
           modifier = Modifier
+            .clickable {
+              onNavigateBack()
+            }
             .padding(16.dp)
             .size(24.dp)
         )

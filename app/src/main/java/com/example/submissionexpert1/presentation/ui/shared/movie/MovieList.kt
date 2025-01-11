@@ -21,7 +21,6 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieList(
-  modifier : Modifier = Modifier,
   movies : List<Movie>,
   listState : LazyListState,
   onNavigateDetail : (String) -> Unit,
@@ -39,8 +38,7 @@ fun MovieList(
 
 ) {
   Box(
-    modifier = modifier
-      .padding(16.dp)
+
 
   ) {
     MovieListContent(

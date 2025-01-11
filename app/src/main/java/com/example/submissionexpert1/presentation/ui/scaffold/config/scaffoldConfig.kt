@@ -5,6 +5,7 @@ import com.example.submissionexpert1.presentation.navigation.Screen
 data class ScaffoldConfig(
   val showMainNav : Boolean = true,
   val showBackNav : Boolean = false,
+  val showBottomBar : Boolean = true
 )
 
 fun scaffoldConfig(currentRoute : String?)
@@ -12,12 +13,21 @@ fun scaffoldConfig(currentRoute : String?)
   return when (currentRoute) {
     "Detail/{id}"       -> ScaffoldConfig(
       showMainNav = false,
-      showBackNav = true
+      showBackNav = true,
+      showBottomBar = false
     )
 
     Screen.Search.route -> ScaffoldConfig(
       showMainNav = false,
-      showBackNav = false
+      showBackNav = true,
+      showBottomBar = false
+
+    )
+
+    Screen.Home.route   -> ScaffoldConfig(
+      showMainNav = false,
+      showBackNav = false,
+      showBottomBar = true
     )
 
     else                -> ScaffoldConfig()

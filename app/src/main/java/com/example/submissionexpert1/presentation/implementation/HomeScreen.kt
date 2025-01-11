@@ -1,9 +1,20 @@
 package com.example.submissionexpert1.presentation.implementation
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.submissionexpert1.presentation.common.Size
+import com.example.submissionexpert1.presentation.ui.shared.MainText
+import com.example.submissionexpert1.presentation.ui.shared.MainTextField
 import com.example.submissionexpert1.presentation.ui.shared.movie.MovieList
 import com.example.submissionexpert1.presentation.viewmodel.HomeEvent
 import com.example.submissionexpert1.presentation.viewmodel.HomeViewModel
@@ -53,29 +64,54 @@ fun HomeScreen(
     listState.scrollToItem(0)
   }
 
-  MovieList(
-    modifier = modifier,
-    movies = movies,
-    listState = listState,
-    onNavigateDetail = onNavigateDetail,
-    alert = uiState.alert,
-    isLoading = uiState.isLoading,
-    isRefreshing = uiState.isRefreshing,
-    isLoadingMore = uiState.isLoadingMore,
-    error = uiState.error,
-    isLoadingToggleFavorite = uiState.isLoadingToggleFavorite,
-    onToggleFavorite = { movieId ->
-      if (uiState.userId == null) {
-        navigateToLogin()
-        return@MovieList
-      }
-      onEvent(HomeEvent.OnToggleFavorite(movieId))
-    },
-    onDismissedAlert = { onEvent(HomeEvent.OnDismissedAlert) },
-    userId = uiState.userId,
-    onLoad = { onEvent(HomeEvent.OnLoad) },
-    onRefresh = { onEvent(HomeEvent.OnRefresh) },
-  )
+  Column(
+    modifier = modifier.padding(
+      16.dp
+    ),
+    verticalArrangement = Arrangement.spacedBy(24.dp)
+  ) {
+    MainText(
+      text = "What do you want to watch?",
+      textSize = Size.ExtraLarge
+    )
+    MainTextField(
+      value = "",
+      onValueChange = {},
+      label = "Search",
+      trailingIcon = {
+        Icon(
+          imageVector = Icons.Default.Search,
+          contentDescription = "Search",
+          tint = MaterialTheme.colorScheme.onSurface,
+        )
+      },
+      readOnly = true,
+      unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+    )
+
+    MovieList(
+      movies = movies,
+      listState = listState,
+      onNavigateDetail = onNavigateDetail,
+      alert = uiState.alert,
+      isLoading = uiState.isLoading,
+      isRefreshing = uiState.isRefreshing,
+      isLoadingMore = uiState.isLoadingMore,
+      error = uiState.error,
+      isLoadingToggleFavorite = uiState.isLoadingToggleFavorite,
+      onToggleFavorite = { movieId ->
+        if (uiState.userId == null) {
+          navigateToLogin()
+          return@MovieList
+        }
+        onEvent(HomeEvent.OnToggleFavorite(movieId))
+      },
+      onDismissedAlert = { onEvent(HomeEvent.OnDismissedAlert) },
+      userId = uiState.userId,
+      onLoad = { onEvent(HomeEvent.OnLoad) },
+      onRefresh = { onEvent(HomeEvent.OnRefresh) },
+    )
+  }
 }
 //
 //@Composable

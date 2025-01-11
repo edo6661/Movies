@@ -59,7 +59,6 @@ fun FavoriteScreen(
 
 
   MovieList(
-    modifier = modifier,
     movies = movies,
     listState = listState,
     onNavigateDetail = onNavigateDetail,
