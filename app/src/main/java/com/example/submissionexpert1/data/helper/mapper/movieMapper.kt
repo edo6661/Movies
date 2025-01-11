@@ -46,7 +46,7 @@ fun Movie.toEntity() : MovieEntity {
     movieId = id,
     title = title,
     overview = overview,
-    posterPath = posterPath,
+    posterPath = posterPath ?: "",
     backdropPath = backdropPath,
     releaseDate = releaseDate,
     voteAverage = voteAverage,

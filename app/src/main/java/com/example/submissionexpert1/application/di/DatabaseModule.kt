@@ -68,6 +68,7 @@ class DatabaseModule {
           }
         }
       })
+      .fallbackToDestructiveMigration()
       .build()
 
     return db

@@ -97,6 +97,7 @@ fun MovieListContent(
       }
 
       else -> {
+
         LazyColumn(
           state = listState,
           verticalArrangement = Arrangement.spacedBy(16.dp),

@@ -35,12 +35,16 @@ fun NavGraph(
       val navigateToLogin = {
         navController.navigateSingleTop(Screen.Auth.Login.route)
       }
+      val navigateToSearch = {
+        navController.navigateSingleTop(Screen.Search.route)
+      }
 
 
       HomeScreen(
         modifier = modifier,
         onNavigateDetail = onNavigateDetail,
-        navigateToLogin = navigateToLogin
+        navigateToLogin = navigateToLogin,
+        navigateToSearch = navigateToSearch
       )
     }
     composable(

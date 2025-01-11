@@ -15,6 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.submissionexpert1.presentation.common.Size
 import com.example.submissionexpert1.presentation.ui.shared.MainText
 import com.example.submissionexpert1.presentation.ui.shared.MainTextField
+import com.example.submissionexpert1.presentation.ui.shared.SearchClickableTextField
 import com.example.submissionexpert1.presentation.ui.shared.movie.MovieList
 import com.example.submissionexpert1.presentation.viewmodel.HomeEvent
 import com.example.submissionexpert1.presentation.viewmodel.HomeViewModel
@@ -27,8 +28,9 @@ fun HomeScreen(
   onNavigateDetail : (String) -> Unit,
   viewModel : HomeViewModel = hiltViewModel(),
   navigateToLogin : () -> Unit,
+  navigateToSearch : () -> Unit
 
-  ) {
+) {
   val uiState by viewModel.uiState.collectAsState()
   val movieState by viewModel.movieState.collectAsState()
   val onEvent = { event : HomeEvent -> viewModel.onEvent(event) }
@@ -74,20 +76,14 @@ fun HomeScreen(
       text = "What do you want to watch?",
       textSize = Size.ExtraLarge
     )
-    MainTextField(
-      value = "",
-      onValueChange = {},
-      label = "Search",
-      trailingIcon = {
-        Icon(
-          imageVector = Icons.Default.Search,
-          contentDescription = "Search",
-          tint = MaterialTheme.colorScheme.onSurface,
-        )
-      },
-      readOnly = true,
-      unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+    
+    SearchClickableTextField(
+      onSearchClick = {
+        navigateToSearch()
+
+      }
     )
+
 
     MovieList(
       movies = movies,

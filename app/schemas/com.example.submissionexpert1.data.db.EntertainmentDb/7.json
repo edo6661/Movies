@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 5,
-    "identityHash": "c6c7bc14cee25dafb175c47983eba722",
+    "version": 7,
+    "identityHash": "02ca1756b67da4bfae48a48752c18b6b",
     "entities": [
       {
         "tableName": "users",
@@ -174,7 +174,7 @@
       },
       {
         "tableName": "movie_genre_cross_ref",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`movieId` INTEGER NOT NULL, `genreId` INTEGER NOT NULL, PRIMARY KEY(`movieId`, `genreId`), FOREIGN KEY(`movieId`) REFERENCES `movies`(`movieId`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`genreId`) REFERENCES `genres`(`genreId`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`movieId` INTEGER NOT NULL, `genreId` INTEGER NOT NULL, PRIMARY KEY(`movieId`, `genreId`), FOREIGN KEY(`movieId`) REFERENCES `movies`(`movieId`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`genreId`) REFERENCES `genres`(`genreId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "movieId",
@@ -219,7 +219,7 @@
         "foreignKeys": [
           {
             "table": "movies",
-            "onDelete": "NO ACTION",
+            "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
               "movieId"
@@ -230,7 +230,7 @@
           },
           {
             "table": "genres",
-            "onDelete": "NO ACTION",
+            "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
               "genreId"
@@ -448,7 +448,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c6c7bc14cee25dafb175c47983eba722')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '02ca1756b67da4bfae48a48752c18b6b')"
     ]
   }
 }

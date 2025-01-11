@@ -201,6 +201,14 @@ class MovieRepositoryImpl @Inject constructor(
           safeDatabaseCall {
             movieDao.insertMovies(apiResult.data.results.map { it.toEntity() })
           }
+          insertGenresMoviesCrossRef(apiResult.data.results.flatMap { movie ->
+            movie.genreIds.map { genreId ->
+              MovieGenreCrossRef(
+                movieId = movie.id,
+                genreId = genreId
+              )
+            }
+          })
           emit(Result.Success(apiResult.data.toDomain()))
 
         }
@@ -269,9 +277,9 @@ class MovieRepositoryImpl @Inject constructor(
               )
             )
           )
-        }
-        // TODO: handle nanti
-//        ?: emitAll(getMovieFromApi(id))
+        } ?: emit(
+          Result.Error("Data tidak ada di database local")
+        )
       }
 
       is Result.Error   -> {

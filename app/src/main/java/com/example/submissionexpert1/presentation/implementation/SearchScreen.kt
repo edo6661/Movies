@@ -2,12 +2,17 @@ package com.example.submissionexpert1.presentation.implementation
 
 import android.util.Log
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.submissionexpert1.presentation.ui.shared.MainSearchBar
+import com.example.submissionexpert1.presentation.ui.shared.MainTextField
 import com.example.submissionexpert1.presentation.ui.shared.movie.MovieList
 import com.example.submissionexpert1.presentation.viewmodel.SearchEvent
 import com.example.submissionexpert1.presentation.viewmodel.SearchViewModel
@@ -30,12 +35,9 @@ fun SearchScreen(
 
   LaunchedEffect(uiState) {
     Log.d("SearchScreen", "uiState: $uiState")
+    Log.d("SearchScreen", "movieState: $movieState")
   }
-  LaunchedEffect(uiState.active) {
-    if (! uiState.active) {
-      onNavigateBack()
-    }
-  }
+
 
   val movies = if (uiState.isRefreshing) {
     movieState.dataBeforeRefresh?.results ?: emptyList()
@@ -58,7 +60,7 @@ fun SearchScreen(
 
 
   LaunchedEffect(reachedBottom) {
-    if (reachedBottom && ! uiState.isLoadingMore && ! uiState.isRefreshing) {
+    if (reachedBottom && ! uiState.isLoadingMore && ! uiState.isRefreshing && uiState.query.isNotEmpty()) {
       vm.onEvent(SearchEvent.OnSearch)
     }
   }
@@ -73,60 +75,52 @@ fun SearchScreen(
 
 
   Column(
-    modifier = modifier
+    modifier = modifier.padding(horizontal = 16.dp)
   ) {
-    MainSearchBar(
-      query = uiState.query,
-      onQueryChange = {
+    MainTextField(
+      value = uiState.query,
+      onValueChange = {
         vm.onEvent(SearchEvent.OnQueryChanged(it))
       },
-      onSearch = {
+      label = "Search",
+      trailingIcon = {
+        Icon(
+          imageVector = Icons.Default.Search,
+          contentDescription = "Search",
+          tint = MaterialTheme.colorScheme.onSurface,
+        )
+      },
+      unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+      focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+    )
+
+
+    MovieList(
+      movies = movies,
+      listState = listState,
+      onNavigateDetail = onNavigateDetail,
+      alert = uiState.alert,
+      isLoading = uiState.isLoading,
+      isRefreshing = uiState.isRefreshing,
+      isLoadingMore = uiState.isLoadingMore,
+      error = uiState.error,
+      isLoadingToggleFavorite = uiState.isLoadingToggleFavorite,
+      onToggleFavorite = { movieId ->
+        vm.onEvent(SearchEvent.OnToggleFavorite(movieId))
+
+      },
+      onDismissedAlert = {
+        vm.onEvent(SearchEvent.OnDismissedAlert)
+      },
+      userId = uiState.userId,
+      onLoad = {
         vm.onEvent(SearchEvent.OnSearch)
       },
-      active = uiState.active,
-      onActiveChange = {
-        vm.onEvent(SearchEvent.OnActiveChanged(it))
-      },
-      enabled = (uiState.isLoading || uiState.isLoadingMore || uiState.isRefreshing),
-      allowKeyboard = true,
-      modifier = Modifier.fillMaxWidth(),
-      callbackTrailingIcon = {
-        if (uiState.query.isNotEmpty()) {
-          vm.onEvent(SearchEvent.OnQueryChanged(""))
-        } else {
-          onNavigateBack()
-        }
+      onRefresh = {
+        vm.onEvent(SearchEvent.OnRefresh)
       }
 
-    ) {
-      MovieList(
-        movies = movies,
-        listState = listState,
-        onNavigateDetail = onNavigateDetail,
-        alert = uiState.alert,
-        isLoading = uiState.isLoading,
-        isRefreshing = uiState.isRefreshing,
-        isLoadingMore = uiState.isLoadingMore,
-        error = uiState.error,
-        isLoadingToggleFavorite = uiState.isLoadingToggleFavorite,
-        onToggleFavorite = { movieId ->
-          vm.onEvent(SearchEvent.OnToggleFavorite(movieId))
-
-        },
-        onDismissedAlert = {
-          vm.onEvent(SearchEvent.OnDismissedAlert)
-        },
-        userId = uiState.userId,
-        onLoad = {
-          vm.onEvent(SearchEvent.OnSearch)
-        },
-        onRefresh = {
-          vm.onEvent(SearchEvent.OnRefresh)
-        }
-
-      )
-
-    }
+    )
 
 
   }

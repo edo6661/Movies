@@ -17,7 +17,7 @@ import com.example.submissionexpert1.presentation.ui.shared.MainText
 @Composable
 fun TopBackNav(
   title : String,
-  onNavigateBack : () -> Unit
+  onNavigateBack : () -> Unit,
 ) {
 
   TopAppBar(

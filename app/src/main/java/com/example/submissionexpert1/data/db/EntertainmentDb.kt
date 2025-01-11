@@ -33,12 +33,12 @@ import com.example.submissionexpert1.data.db.helper.Converters
     PaginationFavoriteMovieEntity::class
 
   ],
-  version = 5,
+  version = 8,
   exportSchema = true,
   autoMigrations = [
     AutoMigration(
-      from = 4,
-      to = 5,
+      from = 7,
+      to = 8,
 //      spec = EntertainmentDb.MyAutoMigration::class
     )
   ]
@@ -51,9 +51,9 @@ abstract class EntertainmentDb : RoomDatabase() {
   }
 
 //  @RenameColumn(
-//    tableName = "pagination_favorite_movies",
-//    fromColumnName = "",
-//    toColumnName = "createdAt"
+//    tableName = "movies",
+//    fromColumnName = "posterPath",
+//    toColumnName = "posterPath"
 //  )
 //  class MyAutoMigration : AutoMigrationSpec
 

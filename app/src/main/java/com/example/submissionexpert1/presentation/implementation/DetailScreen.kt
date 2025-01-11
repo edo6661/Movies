@@ -56,12 +56,14 @@ fun DetailScreen(
     vm.onEvent(event)
   }
 
+  
+
 
   Column(
     modifier = modifier.fillMaxSize(),
   ) {
     when {
-      state.isLoading -> {
+      state.isLoading     -> {
         CenteredCircularLoading(
           modifier = Modifier.fillMaxSize()
         )
@@ -382,7 +384,12 @@ private fun ContentBottomTab(
   onToggleShowAllOverview : () -> Unit,
   showAllOverview : Boolean
 ) {
-  val overviewBasedOnShowAll = if (showAllOverview) overview else overview.substring(0, 200)
+  val overviewBasedOnShowAll = when {
+    showAllOverview       -> overview
+    overview.length > 200 -> overview.substring(0, 200)
+    else                  -> overview
+
+  }
 
   AnimatedContent(
     targetState = currentTab,

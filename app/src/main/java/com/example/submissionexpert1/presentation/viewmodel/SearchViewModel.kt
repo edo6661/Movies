@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.submissionexpert1.application.di.IODispatcher
 import com.example.submissionexpert1.application.di.MainDispatcher
 import com.example.submissionexpert1.core.constants.ErrorMessages
-import com.example.submissionexpert1.data.db.EntertainmentDb
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.common.state.ErrorState
@@ -14,13 +13,11 @@ import com.example.submissionexpert1.domain.usecase.movie.IGetMoviesWithQueryUse
 import com.example.submissionexpert1.domain.usecase.movie.IToggleFavoriteMovieUseCase
 import com.example.submissionexpert1.presentation.utils.avoidSameMovieId
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
+@OptIn(FlowPreview::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
   private val getMoviesWithQuery : IGetMoviesWithQueryUseCase,
@@ -28,7 +25,6 @@ class SearchViewModel @Inject constructor(
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
   @MainDispatcher private val mainDispatcher : CoroutineDispatcher,
   private val userPreferences : UserPreferences,
-  private val db : EntertainmentDb
 ) : ViewModel() {
 
   private val _uiState = MutableStateFlow(SearchState())
@@ -39,11 +35,43 @@ class SearchViewModel @Inject constructor(
   private val isStillOnFirstPage : Boolean
     get() = _uiState.value.page == 1
 
+  private var searchJob : Job? = null
+
 
   init {
     getUserId()
+    viewModelScope.launch {
+      _uiState
+        .map { it.query }
+        .distinctUntilChanged()
+        .debounce(300)
+        .collect { query ->
+          if (query.isNotEmpty()) {
+            resetStates()
+            onSearch()
+          }
+        }
+    }
+  }
 
-
+  private fun resetStates() {
+    _uiState.update {
+      it.copy(
+        page = 1,
+        isLoading = false,
+        isLoadingMore = false,
+        isRefreshing = false,
+        error = null,
+        alert = null
+      )
+    }
+    // Reset movie state
+    _movieState.update {
+      SearchMovieState(
+        data = null,
+        dataBeforeRefresh = null
+      )
+    }
   }
 
 
@@ -68,20 +96,10 @@ class SearchViewModel @Inject constructor(
       is SearchEvent.OnDismissedAlert -> onAlertDismissed()
       is SearchEvent.OnToggleFavorite -> onToggleFavorite(event.movieId)
       is SearchEvent.OnQueryChanged   -> onQueryChanged(event.query)
-      is SearchEvent.OnActiveChanged  -> onActiveChanged(event.active)
 
     }
   }
 
-  private fun onActiveChanged(
-    active : Boolean
-  ) {
-    _uiState.update {
-      it.copy(
-        active = active
-      )
-    }
-  }
 
   private fun onQueryChanged(
     query : String
@@ -154,22 +172,20 @@ class SearchViewModel @Inject constructor(
 
   private fun onSearch() {
 
+    searchJob?.cancel()
+
+
     if (_uiState.value.query.isNotEmpty()) {
       getMoviesWithQuery(
         page = _uiState.value.page.toString(),
         query = _uiState.value.query
       )
-        // * rangkuman akuh
-        // ! semua operasi diatas `flowOn` akan dijalankan di background thread
         .flowOn(ioDispatcher)
-        // ! semua operasi dibawah `flowOn` akan dijalankan di main thread
 
-        // ! di jalanin sebelum data pertama kali di alirkan
         .onStart {
           handleLoading()
         }
 
-        // ! dijalanin saat data pertama kali di alirkan
         .onEach { result ->
           when (result) {
             is Result.Loading -> {
@@ -177,11 +193,30 @@ class SearchViewModel @Inject constructor(
             }
 
             is Result.Success -> {
-
-
-              handleSuccess(result)
-
+              if (_uiState.value.page == 1) {
+                _movieState.update {
+                  it.copy(data = result.data)
+                }
+              } else {
+                val currentResults = _movieState.value.data?.results ?: emptyList()
+                val newResults = currentResults + (result.data.results)
+                _movieState.update {
+                  it.copy(
+                    data = result.data.copy(
+                      results = newResults
+                    )
+                  )
+                }
+              }
+              _uiState.update {
+                it.copy(
+                  isLoading = false,
+                  isLoadingMore = false,
+                  page = it.page + 1
+                )
+              }
             }
+
 
             is Result.Error   -> {
               handleError(result.message)
@@ -216,8 +251,6 @@ class SearchViewModel @Inject constructor(
     }
 
     viewModelScope.launch {
-      // TODO: REMOVE
-//      delay(1000)
       onSearch()
       _uiState.update {
         it.copy(
@@ -269,8 +302,6 @@ class SearchViewModel @Inject constructor(
     result : Result.Success<PaginationMovie>
   ) {
 
-    // TODO: REMOVE
-//    delay(1000)
     val data =
       avoidSameMovieId(
         dispatcher = ioDispatcher,
@@ -358,7 +389,6 @@ data class SearchState(
   val alert : String? = null,
   val isLoadingToggleFavorite : Boolean = false,
   val userId : Long? = null,
-  val active : Boolean = true,
   val query : String = ""
 )
 
@@ -380,7 +410,4 @@ sealed class SearchEvent {
     val query : String
   ) : SearchEvent()
 
-  data class OnActiveChanged(
-    val active : Boolean
-  ) : SearchEvent()
 }
