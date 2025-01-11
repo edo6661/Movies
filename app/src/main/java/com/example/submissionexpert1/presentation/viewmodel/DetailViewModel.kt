@@ -55,8 +55,11 @@ class DetailViewModel @Inject constructor(
 
   fun onEvent(event : DetailEvent) {
     when (event) {
-      is DetailEvent.OnMovieLoaded -> onMovieLoaded(event.id)
-      is DetailEvent.OnToggleFavorite -> onToggleFavorite(event.id)
+      is DetailEvent.OnMovieLoaded           -> onMovieLoaded(event.id)
+      is DetailEvent.OnToggleFavorite        -> onToggleFavorite(event.id)
+      is DetailEvent.OnToggleShowAllOverview -> _state.value = _state.value.copy(
+        showAllOverview = ! _state.value.showAllOverview
+      )
     }
   }
 
@@ -141,10 +144,12 @@ data class DetailState(
   val isLoading : Boolean = false,
   val isLoadingToggleFavorite : Boolean = false,
   val error : String? = null,
-  val userId : Long? = null
+  val userId : Long? = null,
+  val showAllOverview : Boolean = false
 )
 
 sealed class DetailEvent {
   data class OnMovieLoaded(val id : Int) : DetailEvent()
   data class OnToggleFavorite(val id : Int) : DetailEvent()
+  data object OnToggleShowAllOverview : DetailEvent()
 }

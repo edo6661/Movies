@@ -36,7 +36,7 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun SubmissionExpert1Theme(
-  dynamicColor : Boolean = true,
+  dynamicColor : Boolean = false,
   themePreferences : ThemePreferences,
   content : @Composable () -> Unit
 ) {

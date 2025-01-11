@@ -9,7 +9,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -18,6 +17,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import com.example.submissionexpert1.presentation.ui.shared.MainText
 import com.example.submissionexpert1.presentation.ui.theme.Orange
+import com.example.submissionexpert1.presentation.ui.theme.SlateGray
 
 @Composable
 fun DetailRating(
@@ -36,7 +36,9 @@ fun DetailRating(
         renderEffect = BlurEffect(radiusX = 2f, radiusY = 2f)
       }
       .background(
-        MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.8f),
+        SlateGray.copy(
+          alpha = 0.8f
+        ),
         shape = RoundedCornerShape(
           16.dp
         )
@@ -55,6 +57,7 @@ fun DetailRating(
     )
     MainText(
       text = DecimalFormat("#.#").format(rating),
+      color = Orange
     )
 
 

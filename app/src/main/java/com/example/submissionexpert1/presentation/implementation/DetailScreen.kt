@@ -1,9 +1,7 @@
 package com.example.submissionexpert1.presentation.implementation
 
-import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,9 +29,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.example.submissionexpert1.R
 import com.example.submissionexpert1.core.constants.Prefix
+import com.example.submissionexpert1.domain.model.Genre
 import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.domain.model.MovieWithGenres
 import com.example.submissionexpert1.presentation.common.Size
+import com.example.submissionexpert1.presentation.ui.animation.TabsSpec
+import com.example.submissionexpert1.presentation.ui.shared.MainButton
 import com.example.submissionexpert1.presentation.ui.shared.MainText
 import com.example.submissionexpert1.presentation.ui.shared.movie.DetailRating
 import com.example.submissionexpert1.presentation.ui.state.error.MainError
@@ -84,7 +85,9 @@ fun DetailScreen(
           movie = state.movie as MovieWithGenres,
           onToggleFavorite = { id -> onEvent(DetailEvent.OnToggleFavorite(id)) },
           userId = state.userId,
-          navigateToLogin = navigateToLogin
+          navigateToLogin = navigateToLogin,
+          onToggleShowAllOverview = { onEvent(DetailEvent.OnToggleShowAllOverview) },
+          showAllOverview = state.showAllOverview
         )
       }
     }
@@ -97,14 +100,16 @@ fun DetailContent(
   movie : MovieWithGenres,
   onToggleFavorite : (Int) -> Unit,
   userId : Long? = null,
-  navigateToLogin : () -> Unit
+  navigateToLogin : () -> Unit,
+  onToggleShowAllOverview : () -> Unit,
+  showAllOverview : Boolean
 ) {
   var currentTab by remember { mutableIntStateOf(0) }
 
   val onlyMovie = movie.movie
 
   Column(
-    verticalArrangement = Arrangement.spacedBy(8.dp)
+    verticalArrangement = Arrangement.spacedBy(16.dp)
   ) {
     TopSection(
       movie = onlyMovie,
@@ -120,188 +125,14 @@ fun DetailContent(
       currentTab = currentTab,
       onTabSelected = { tabIndex ->
         currentTab = tabIndex
-      }
-
-    )
-  }
-}
-
-@Composable
-private fun BottomAction(
-  modifier : Modifier,
-  onClick : () -> Unit,
-  title : String,
-  isActive : Boolean
-) {
-  val animatedColor by animateColorAsState(
-    targetValue = if (isActive) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground.copy(
-      alpha = 0.5f
-    ),
-    label = "color",
-  )
-
-  Box(
-    modifier = modifier
-      .height(48.dp)
-      .clickable {
-        if (isActive) return@clickable
-        Log.d("BottomAction", "onClick: $title")
-        onClick()
       },
-    contentAlignment = Alignment.Center
+      onToggleShowAllOverview = onToggleShowAllOverview,
+      showAllOverview = showAllOverview
 
-  ) {
-    MainText(
-      text = title,
-      textSize = Size.Large,
-      textAlign = TextAlign.Center,
-      color = animatedColor
     )
   }
 }
 
-@Composable
-private fun BottomSection(
-  movie : MovieWithGenres,
-  currentTab : Int,
-  onTabSelected : (Int) -> Unit
-) {
-  Column(
-    modifier = Modifier
-      .padding(
-        horizontal = 16.dp,
-      )
-  ) {
-    CustomBottomTab(
-      currentTab = currentTab,
-      onTabSelected = onTabSelected
-    )
-    ContentBottomTab(
-      currentTab = currentTab
-    )
-
-
-  }
-}
-
-@Composable
-private fun ContentBottomTab(
-  currentTab : Int,
-) {
-  fun spec(
-    targetState : Int,
-    initialState : Int
-  ) : ContentTransform {
-    return if (targetState > initialState) {
-      slideInHorizontally(
-        initialOffsetX = { 1000 },
-        animationSpec = tween(800)
-      ) togetherWith slideOutHorizontally(
-        targetOffsetX = { - 1000 },
-        animationSpec = tween(800)
-      )
-    } else {
-      slideInHorizontally(
-        initialOffsetX = { - 1000 },
-        animationSpec = tween(800)
-      ) togetherWith slideOutHorizontally(
-        targetOffsetX = { 1000 },
-        animationSpec = tween(800)
-      )
-    }
-  }
-  AnimatedContent(
-    targetState = currentTab,
-    transitionSpec = {
-      spec(targetState, 0)
-    },
-    label = "content"
-  ) {
-    when (it) {
-      0 -> {
-        MainText(
-          text = "Overview",
-          modifier = Modifier.padding(
-            top = 16.dp
-          )
-        )
-      }
-
-      1 -> {
-        MainText(
-          text = "Genre",
-          modifier = Modifier.padding(
-            top = 16.dp
-          )
-        )
-      }
-    }
-  }
-}
-
-
-@Composable
-private fun CustomBottomTab(
-  currentTab : Int,
-  onTabSelected : (Int) -> Unit
-
-) {
-  val indicatorOffset by animateFloatAsState(
-    targetValue = currentTab * 0.5f,
-    label = "indicator"
-  )
-  val screenWithDp = LocalConfiguration.current.screenWidthDp
-
-  Column(
-
-  ) {
-
-    Row(
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.SpaceAround,
-      modifier = Modifier.fillMaxWidth()
-    ) {
-      BottomAction(
-        modifier = Modifier
-          .weight(0.5f),
-        onClick = {
-          onTabSelected(0)
-        },
-        title = "Overview",
-        isActive = currentTab == 0
-      )
-      BottomAction(
-        modifier = Modifier
-          .weight(0.5f),
-        onClick = {
-          onTabSelected(1)
-        },
-        title = "Genre",
-        isActive = currentTab == 1
-
-      )
-    }
-
-    Box(
-      modifier = Modifier
-        .padding()
-        .fillMaxWidth(0.5f)
-        .height(8.dp)
-        .offset {
-          IntOffset(
-            // ! 32 nih: padding horizontal
-            x = (indicatorOffset * (screenWithDp - 32).dp.toPx()).toInt(),
-            y = 0
-          )
-        }
-        .background(
-          color = MaterialTheme.colorScheme.tertiary,
-        )
-    )
-
-  }
-
-}
 
 @Composable
 private fun TopSection(
@@ -365,7 +196,7 @@ private fun TopSection(
         MainText(
           text = movie.title,
           modifier = Modifier.padding(
-            top = 40.dp
+            top = 60.dp
           ),
           textSize = Size.ExtraLarge
         )
@@ -426,17 +257,17 @@ private fun MiddleSection(
       horizontalArrangement = Arrangement.spacedBy(16.dp),
       verticalAlignment = Alignment.CenterVertically
     ) {
-      KeyValueIcon(
+      IconMiddleValue(
         icon = Icons.Default.Star,
         key = "Popularity",
-        value = movie.popularity.toString()
+        value = movie.popularity.toInt().toString(),
       )
-      KeyValueIcon(
+      IconMiddleValue(
         icon = Icons.Default.NoPhotography,
         key = "Adult",
         value = if (movie.adult) "Yes" else "No"
       )
-      KeyValueIcon(
+      IconMiddleValue(
         icon = Icons.Default.DateRange,
         key = "Release Date",
         value = movie.releaseDate.substring(0, 4),
@@ -450,7 +281,7 @@ private fun MiddleSection(
 }
 
 @Composable
-private fun KeyValueIcon(
+private fun IconMiddleValue(
   key : String,
   value : String,
   icon : ImageVector,
@@ -475,4 +306,203 @@ private fun KeyValueIcon(
       modifier = Modifier.height(24.dp),
     )
   }
+}
+
+
+@Composable
+private fun BottomAction(
+  modifier : Modifier,
+  onClick : () -> Unit,
+  title : String,
+  isActive : Boolean
+) {
+  val animatedColor by animateColorAsState(
+    targetValue = if (isActive) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onBackground.copy(
+      alpha = 0.5f
+    ),
+    label = "color",
+  )
+
+  Box(
+    modifier = modifier
+      .height(48.dp)
+      .clickable {
+        if (isActive) return@clickable
+        onClick()
+      },
+    contentAlignment = Alignment.Center
+
+  ) {
+    MainText(
+      text = title,
+      textSize = Size.Large,
+      textAlign = TextAlign.Center,
+      color = animatedColor
+    )
+  }
+}
+
+@Composable
+private fun BottomSection(
+  movie : MovieWithGenres,
+  currentTab : Int,
+  onTabSelected : (Int) -> Unit,
+  onToggleShowAllOverview : () -> Unit,
+  showAllOverview : Boolean
+) {
+  Column(
+    modifier = Modifier
+      .padding(
+        horizontal = 16.dp,
+      ),
+    verticalArrangement = Arrangement.spacedBy(16.dp)
+  ) {
+    CustomBottomTab(
+      currentTab = currentTab,
+      onTabSelected = onTabSelected
+    )
+    ContentBottomTab(
+      currentTab = currentTab,
+      overview = movie.movie.overview,
+      genres = movie.genres,
+      onToggleShowAllOverview = onToggleShowAllOverview,
+      showAllOverview = showAllOverview
+    )
+
+
+  }
+}
+
+@OptIn(ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
+@Composable
+private fun ContentBottomTab(
+  currentTab : Int,
+  overview : String,
+  genres : List<Genre>,
+  onToggleShowAllOverview : () -> Unit,
+  showAllOverview : Boolean
+) {
+  val overviewBasedOnShowAll = if (showAllOverview) overview else overview.substring(0, 200)
+
+  AnimatedContent(
+    targetState = currentTab,
+    transitionSpec = {
+      TabsSpec(targetState, 0)
+    },
+    label = "content",
+    modifier = Modifier
+      .fillMaxWidth()
+  ) {
+    when (it) {
+      0 -> {
+        Column(
+          modifier = Modifier.animateContentSize()
+        ) {
+          AnimatedContent(
+            targetState = overviewBasedOnShowAll,
+            label = "overview",
+            transitionSpec = {
+              (fadeIn() + slideInVertically())
+                .togetherWith(fadeOut() + slideOutVertically())
+            }
+          ) { animatedOverview ->
+            MainText(
+              text = animatedOverview,
+              textSize = Size.Medium
+            )
+          }
+
+          MainText(
+            text = if (showAllOverview) "Show Less" else "Show All",
+            textSize = Size.Medium,
+            color = MaterialTheme.colorScheme.primary,
+            onClick = onToggleShowAllOverview
+          )
+        }
+
+      }
+
+      1 -> {
+        FlowRow(
+          modifier = Modifier
+            .fillMaxWidth(),
+          horizontalArrangement = Arrangement.spacedBy(8.dp),
+          verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+          genres.forEach { genre ->
+            MainButton(
+              text = genre.name,
+              onClick = { /* TODO: navigate ke genre screen */ },
+            )
+          }
+        }
+
+
+      }
+    }
+  }
+}
+
+
+@Composable
+private fun CustomBottomTab(
+  currentTab : Int,
+  onTabSelected : (Int) -> Unit
+
+) {
+  val indicatorOffset by animateFloatAsState(
+    targetValue = currentTab * 0.5f,
+    label = "indicator"
+  )
+  val screenWithDp = LocalConfiguration.current.screenWidthDp
+
+  Column(
+
+  ) {
+
+    Row(
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.SpaceAround,
+      modifier = Modifier.fillMaxWidth()
+    ) {
+      BottomAction(
+        modifier = Modifier
+          .weight(0.5f),
+        onClick = {
+          onTabSelected(0)
+        },
+        title = "Overview",
+        isActive = currentTab == 0
+      )
+      BottomAction(
+        modifier = Modifier
+          .weight(0.5f),
+        onClick = {
+          onTabSelected(1)
+        },
+        title = "Genre",
+        isActive = currentTab == 1
+
+      )
+    }
+
+    Box(
+      modifier = Modifier
+        .padding()
+        .fillMaxWidth(0.5f)
+        .height(4.dp)
+        .offset {
+          IntOffset(
+            // ! 32 nih: padding horizontal
+            x = (indicatorOffset * (screenWithDp - 32).dp.toPx()).toInt(),
+            y = 0
+          )
+        }
+        .background(
+          color = MaterialTheme.colorScheme.tertiary,
+        )
+    )
+
+  }
+
 }
