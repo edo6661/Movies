@@ -37,7 +37,7 @@ fun MovieList(
   isLoadingToggleFavorite : Boolean,
   onToggleFavorite : (Int) -> Unit,
   userId : Long? = null,
-  searchedOnce : Boolean = false,
+  searchedOnce : Boolean = true,
   isNoMoreData : Boolean = false
 
 ) {
@@ -89,7 +89,7 @@ fun MovieListContent(
   isLoadingToggleFavorite : Boolean,
   onToggleFavorite : (Int) -> Unit,
   userId : Long?,
-  searchedOnce : Boolean = false
+  searchedOnce : Boolean = true
 
 ) {
   SwipeRefresh(
@@ -100,18 +100,18 @@ fun MovieListContent(
     )
   ) {
     when {
-      isLoading && ! isRefreshing                                      -> {
+      isLoading && ! isRefreshing                                                                         -> {
         CenteredCircularLoading(modifier = Modifier.fillMaxSize())
       }
 
-      ! error?.message.isNullOrEmpty() && ! isRefreshing               -> {
+      ! error?.message.isNullOrEmpty() && ! isRefreshing                                                  -> {
         MainError(
           message = error?.message ?: ErrorMessages.UNKNOWN_ERROR,
           onRetry = { onLoad() }
         )
       }
 
-      movies.isEmpty() && ! isLoading && error == null && searchedOnce -> {
+      movies.isEmpty() && ! isLoading && error == null && searchedOnce && ! isLoadingMore && isRefreshing -> {
         MainEmpty(
           title = "No movies found",
           description = "Try searching for another movie",
@@ -119,7 +119,7 @@ fun MovieListContent(
         )
       }
 
-      ! searchedOnce                                                   -> {
+      ! searchedOnce                                                                                      -> {
         MainEmpty(
           title = "Search for movies",
           description = "Type in the search bar above to find movies",
@@ -127,7 +127,7 @@ fun MovieListContent(
         )
       }
 
-      else                                                             -> {
+      else                                                                                                -> {
 
         LazyColumn(
           state = listState,

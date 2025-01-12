@@ -419,12 +419,14 @@ private fun ContentBottomTab(
             )
           }
 
-          MainText(
-            text = if (showAllOverview) "Show Less" else "Show All",
-            textSize = Size.Medium,
-            color = MaterialTheme.colorScheme.primary,
-            onClick = onToggleShowAllOverview
-          )
+          if (overview.length > 200) {
+            MainText(
+              text = if (showAllOverview) "Show Less" else "Show All",
+              textSize = Size.Medium,
+              color = MaterialTheme.colorScheme.primary,
+              onClick = onToggleShowAllOverview
+            )
+          }
         }
 
       }

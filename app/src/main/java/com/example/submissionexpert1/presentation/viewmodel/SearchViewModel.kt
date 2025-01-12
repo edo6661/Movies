@@ -401,7 +401,7 @@ data class SearchState(
   val alert : String? = null,
   val isLoadingToggleFavorite : Boolean = false,
   val userId : Long? = null,
-  val query : String = "spiderman",
+  val query : String = "",
   val searchedOnce : Boolean = false,
   val isNoMoreData : Boolean = false
 )

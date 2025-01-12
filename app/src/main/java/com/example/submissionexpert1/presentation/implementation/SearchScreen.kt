@@ -1,6 +1,7 @@
 package com.example.submissionexpert1.presentation.implementation
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -9,6 +10,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.submissionexpert1.presentation.ui.shared.MainTextField
@@ -66,6 +69,10 @@ fun SearchScreen(
   }
 
 
+  val focusRequester = remember { FocusRequester() }
+  LaunchedEffect(Unit) {
+    focusRequester.requestFocus()
+  }
 
 
   Column(
@@ -87,6 +94,9 @@ fun SearchScreen(
 
       unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
       focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+      modifier = Modifier
+        .focusRequester(focusRequester)
+        .fillMaxWidth()
     )
 
 
