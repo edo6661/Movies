@@ -1,5 +1,6 @@
 package com.example.submissionexpert1.presentation.ui.shared.movie
 
+import android.icu.text.DecimalFormat
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -57,14 +58,7 @@ fun CardMovieItem(
 
       ),
     shape = MaterialTheme.shapes.medium,
-//    elevation = CardDefaults.cardElevation(
-//      defaultElevation = 16.dp,
-//      pressedElevation = 8.dp,
-//      disabledElevation = 0.dp,
-//      focusedElevation = 16.dp,
-//      hoveredElevation = 16.dp,
-//      draggedElevation = 16.dp,
-//    ),
+
     border = BorderStroke(
       width = 1.dp,
       color = MaterialTheme.colorScheme.tertiary
@@ -127,7 +121,7 @@ fun CardMovieItem(
           val keyValues : Map<ImageVector, String> = mapOf(
             Pair(
               Icons.Default.Star,
-              movie.popularity.toInt().toString()
+              DecimalFormat("#.#").format(movie.voteAverage)
             ),
             Pair(
               Icons.Default.DateRange,

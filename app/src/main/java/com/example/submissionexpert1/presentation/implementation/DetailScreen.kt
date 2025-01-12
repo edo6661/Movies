@@ -56,7 +56,7 @@ fun DetailScreen(
     vm.onEvent(event)
   }
 
-  
+
 
 
   Column(
@@ -198,7 +198,7 @@ private fun TopSection(
         MainText(
           text = movie.title,
           modifier = Modifier.padding(
-            top = 60.dp
+            top = 80.dp
           ),
           textSize = Size.ExtraLarge
         )
