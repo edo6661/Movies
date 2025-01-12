@@ -9,10 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.submissionexpert1.R
 import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.domain.common.state.ErrorState
 import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.presentation.ui.state.alert.BottomAlert
+import com.example.submissionexpert1.presentation.ui.state.empty.MainEmpty
 import com.example.submissionexpert1.presentation.ui.state.error.MainError
 import com.example.submissionexpert1.presentation.ui.state.loading.CenteredCircularLoading
 import com.google.accompanist.swiperefresh.SwipeRefresh
@@ -34,7 +36,9 @@ fun MovieList(
   onRefresh : () -> Unit,
   isLoadingToggleFavorite : Boolean,
   onToggleFavorite : (Int) -> Unit,
-  userId : Long? = null
+  userId : Long? = null,
+  searchedOnce : Boolean = false,
+  isNoMoreData : Boolean = false
 
 ) {
   Box(
@@ -53,12 +57,19 @@ fun MovieList(
       onLoad = onLoad,
       isLoadingToggleFavorite = isLoadingToggleFavorite,
       onToggleFavorite = onToggleFavorite,
-      userId = userId
+      userId = userId,
+      searchedOnce = searchedOnce
     )
     BottomAlert(
       message = alert ?: "",
       onDismiss = { onDismissedAlert() },
       visible = alert != null,
+      modifier = Modifier.align(Alignment.BottomCenter)
+    )
+    BottomAlert(
+      message = "No more data",
+      onDismiss = { onDismissedAlert() },
+      visible = isNoMoreData,
       modifier = Modifier.align(Alignment.BottomCenter)
     )
   }
@@ -77,26 +88,46 @@ fun MovieListContent(
   onLoad : () -> Unit,
   isLoadingToggleFavorite : Boolean,
   onToggleFavorite : (Int) -> Unit,
-  userId : Long?
+  userId : Long?,
+  searchedOnce : Boolean = false
 
 ) {
   SwipeRefresh(
     state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
     onRefresh = { onRefresh() },
+    modifier = Modifier.padding(
+      top = 20.dp,
+    )
   ) {
     when {
-      isLoading && ! isRefreshing -> {
+      isLoading && ! isRefreshing                                      -> {
         CenteredCircularLoading(modifier = Modifier.fillMaxSize())
       }
 
-      ! error?.message.isNullOrEmpty() && ! isRefreshing -> {
+      ! error?.message.isNullOrEmpty() && ! isRefreshing               -> {
         MainError(
           message = error?.message ?: ErrorMessages.UNKNOWN_ERROR,
           onRetry = { onLoad() }
         )
       }
 
-      else -> {
+      movies.isEmpty() && ! isLoading && error == null && searchedOnce -> {
+        MainEmpty(
+          title = "No movies found",
+          description = "Try searching for another movie",
+          imgRes = R.drawable.empty
+        )
+      }
+
+      ! searchedOnce                                                   -> {
+        MainEmpty(
+          title = "Search for movies",
+          description = "Type in the search bar above to find movies",
+          imgRes = R.drawable.no_result
+        )
+      }
+
+      else                                                             -> {
 
         LazyColumn(
           state = listState,

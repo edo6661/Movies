@@ -1,14 +1,17 @@
 package com.example.submissionexpert1.presentation.ui.nav
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.submissionexpert1.presentation.common.Size
 import com.example.submissionexpert1.presentation.ui.shared.MainText
@@ -29,10 +32,9 @@ fun TopBackNav(
       titleContentColor = MaterialTheme.colorScheme.onBackground,
     ),
     title = {
-      Row(
+      Box(
         modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        contentAlignment = Alignment.CenterStart
       ) {
         Icon(
           Icons.AutoMirrored.Filled.ArrowBack,
@@ -48,15 +50,13 @@ fun TopBackNav(
         MainText(
           text = title,
           textSize = Size.Large,
-
-          )
-        Icon(
-          Icons.Default.Favorite,
-          contentDescription = "Favorite",
+          textAlign = TextAlign.Center,
           modifier = Modifier
-            .padding(16.dp)
-            .size(24.dp)
+            .align(Alignment.Center)
+
+
         )
+
 
       }
     },

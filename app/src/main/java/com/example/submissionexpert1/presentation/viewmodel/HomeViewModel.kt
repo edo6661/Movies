@@ -163,7 +163,7 @@ class HomeViewModel @Inject constructor(
           is Result.Success -> {
 
 
-            handleSuccess(result)
+            handleSuccessOnLoad(result)
 
           }
 
@@ -248,7 +248,7 @@ class HomeViewModel @Inject constructor(
     }
   }
 
-  private suspend fun handleSuccess(
+  private suspend fun handleSuccessOnLoad(
     result : Result.Success<PaginationMovie>
   ) {
 

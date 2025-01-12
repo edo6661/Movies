@@ -44,7 +44,7 @@ class SearchViewModel @Inject constructor(
       _uiState
         .map { it.query }
         .distinctUntilChanged()
-        .debounce(300)
+        .debounce(500)
         .collect { query ->
           if (query.isNotEmpty()) {
             resetStates()
@@ -65,7 +65,6 @@ class SearchViewModel @Inject constructor(
         alert = null
       )
     }
-    // Reset movie state
     _movieState.update {
       SearchMovieState(
         data = null,
@@ -193,28 +192,8 @@ class SearchViewModel @Inject constructor(
             }
 
             is Result.Success -> {
-              if (_uiState.value.page == 1) {
-                _movieState.update {
-                  it.copy(data = result.data)
-                }
-              } else {
-                val currentResults = _movieState.value.data?.results ?: emptyList()
-                val newResults = currentResults + (result.data.results)
-                _movieState.update {
-                  it.copy(
-                    data = result.data.copy(
-                      results = newResults
-                    )
-                  )
-                }
-              }
-              _uiState.update {
-                it.copy(
-                  isLoading = false,
-                  isLoadingMore = false,
-                  page = it.page + 1
-                )
-              }
+              handleSuccessOnSearch(result)
+
             }
 
 
@@ -269,7 +248,8 @@ class SearchViewModel @Inject constructor(
   private fun onAlertDismissed() {
     _uiState.update {
       it.copy(
-        alert = null
+        alert = null,
+        isNoMoreData = false
       )
     }
   }
@@ -281,7 +261,8 @@ class SearchViewModel @Inject constructor(
           _uiState.update {
             it.copy(
               isLoading = true,
-              error = null
+              error = null,
+              searchedOnce = true
             )
           }
         }
@@ -298,16 +279,47 @@ class SearchViewModel @Inject constructor(
     }
   }
 
-  private suspend fun handleSuccess(
+  private suspend fun handleSuccessOnSearch(
     result : Result.Success<PaginationMovie>
   ) {
-
     val data =
       avoidSameMovieId(
         dispatcher = ioDispatcher,
         currentData = _movieState.value.data,
         incomingData = result.data
       )
+
+    if (_uiState.value.page == 1) {
+      _movieState.update {
+        it.copy(data = data)
+      }
+    } else {
+      val currentResults = _movieState.value.data?.results ?: emptyList()
+      val newResults = currentResults + (data.results)
+      _movieState.update {
+        it.copy(
+          data = data.copy(
+            results = newResults
+          )
+        )
+      }
+      if (data.results.isEmpty()) {
+        _uiState.update {
+          it.copy(
+            isNoMoreData = true
+          )
+        }
+      }
+    }
+    _uiState.update {
+      it.copy(
+        isLoading = false,
+        isLoadingMore = false,
+        page = it.page + 1
+      )
+    }
+
+
     _uiState.update {
       it.copy(
         isLoading = false,
@@ -389,7 +401,9 @@ data class SearchState(
   val alert : String? = null,
   val isLoadingToggleFavorite : Boolean = false,
   val userId : Long? = null,
-  val query : String = ""
+  val query : String = "spiderman",
+  val searchedOnce : Boolean = false,
+  val isNoMoreData : Boolean = false
 )
 
 data class SearchMovieState(

@@ -1,6 +1,5 @@
 package com.example.submissionexpert1.presentation.implementation
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -32,11 +31,6 @@ fun SearchScreen(
 
   val uiState by vm.uiState.collectAsState()
   val movieState by vm.movieState.collectAsState()
-
-  LaunchedEffect(uiState) {
-    Log.d("SearchScreen", "uiState: $uiState")
-    Log.d("SearchScreen", "movieState: $movieState")
-  }
 
 
   val movies = if (uiState.isRefreshing) {
@@ -82,14 +76,15 @@ fun SearchScreen(
       onValueChange = {
         vm.onEvent(SearchEvent.OnQueryChanged(it))
       },
-      label = "Search",
+      label = "Search Movie",
       trailingIcon = {
         Icon(
           imageVector = Icons.Default.Search,
           contentDescription = "Search",
-          tint = MaterialTheme.colorScheme.onSurface,
+          tint = MaterialTheme.colorScheme.tertiary,
         )
       },
+
       unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
       focusedContainerColor = MaterialTheme.colorScheme.tertiary,
     )
@@ -97,6 +92,7 @@ fun SearchScreen(
 
     MovieList(
       movies = movies,
+      searchedOnce = uiState.searchedOnce,
       listState = listState,
       onNavigateDetail = onNavigateDetail,
       alert = uiState.alert,
@@ -118,7 +114,8 @@ fun SearchScreen(
       },
       onRefresh = {
         vm.onEvent(SearchEvent.OnRefresh)
-      }
+      },
+      isNoMoreData = uiState.isNoMoreData
 
     )
 
