@@ -225,7 +225,6 @@ class MovieRepositoryImpl @Inject constructor(
 
   // TODO: bug kalo user null, bakal loading terus
   override fun getMovie(id : Int) : Flow<Result<MovieWithGenres>> = flow {
-    emit(Result.Loading)
     val userId = when (val resultUserId = getUserId()) {
       is Result.Success -> resultUserId.data
 

@@ -59,7 +59,7 @@ fun HomeScreen(
 
   Column(
     modifier = modifier.padding(
-      16.dp
+      horizontal = 16.dp
     ),
   ) {
 

@@ -31,7 +31,6 @@ fun BottomBar(
 
     HorizontalDivider(
       modifier = Modifier
-        .offset(y = (- 16).dp)
         .background(MaterialTheme.colorScheme.secondary)
         .fillMaxWidth()
         .height(2.5.dp)

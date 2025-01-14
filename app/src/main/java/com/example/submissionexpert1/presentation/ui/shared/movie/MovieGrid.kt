@@ -71,10 +71,10 @@ fun MovieGrid(
     BottomAlert(
       message = alert ?: "",
       onDismiss = { onDismissedAlert() },
-      visible = alert != null,
+      visible = alert.isNullOrEmpty().not(),
       modifier = Modifier.align(Alignment.BottomCenter)
     )
-    
+
   }
 }
 
@@ -121,7 +121,7 @@ fun MovieGridContent(
       movies.isEmpty() && ! isLoading && error == null && searchedOnce && ! isLoadingMore && ! isRefreshing -> {
         MainEmpty(
           title = "No movies found",
-          description = "Try searching for another movie",
+          description = "xiexie, next",
           imgRes = R.drawable.empty
         )
       }

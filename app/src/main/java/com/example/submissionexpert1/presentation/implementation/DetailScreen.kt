@@ -62,7 +62,7 @@ fun DetailScreen(
 
 
   Column(
-    modifier = modifier.fillMaxSize(),
+    modifier = modifier,
   ) {
     when {
       state.isLoading     -> {

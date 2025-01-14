@@ -25,6 +25,13 @@ fun TopNav(
   navigateToSearch : () -> Unit,
 ) {
   TopAppBar(
+    colors = TopAppBarColors(
+      containerColor = MaterialTheme.colorScheme.background,
+      actionIconContentColor = MaterialTheme.colorScheme.onBackground,
+      navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
+      scrolledContainerColor = MaterialTheme.colorScheme.background,
+      titleContentColor = MaterialTheme.colorScheme.onBackground,
+    ),
     title = {
       Row(
         verticalAlignment = Alignment.CenterVertically,

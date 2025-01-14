@@ -12,10 +12,7 @@ import com.example.submissionexpert1.domain.usecase.movie.IGetMovieUseCase
 import com.example.submissionexpert1.domain.usecase.movie.IToggleFavoriteMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -101,41 +98,69 @@ class DetailViewModel @Inject constructor(
   }
 
   private fun onMovieLoaded(id : Int) {
-    viewModelScope.launch(ioDispatcher) {
-      getMovieUseCase(id)
-        .onStart {
-          withContext(mainDispatcher) {
-            _state.value = _state.value.copy(isLoading = true)
+    getMovieUseCase(id)
+      .flowOn(ioDispatcher)
+      .onStart {
+        _state.value = _state.value.copy(isLoading = true)
+      }
+      .onEach {
+        when (it) {
+          is Result.Success -> {
+            _state.value = _state.value.copy(
+              movie = it.data,
+              isLoading = false
+            )
           }
 
-        }
+          is Result.Error   -> {
+            _state.value = _state.value.copy(
+              error = it.message,
+              isLoading = false
+            )
+          }
 
-        .collect { result ->
-          withContext(mainDispatcher) {
-            when (result) {
-              is Result.Success -> {
-                _state.value = _state.value.copy(
-                  movie = result.data,
-                  isLoading = false
-                )
-              }
-
-              is Result.Error   -> {
-                _state.value = _state.value.copy(
-                  error = result.message,
-                  isLoading = false
-                )
-              }
-
-              is Result.Loading -> {
-                _state.value = _state.value.copy(
-                  isLoading = true
-                )
-              }
-            }
+          is Result.Loading -> {
+            _state.value = _state.value.copy(
+              isLoading = true
+            )
           }
         }
-    }
+      }
+      .flowOn(mainDispatcher)
+      .launchIn(viewModelScope)
+
+//    viewModelScope.launch(ioDispatcher) {
+//      getMovieUseCase(id)
+//        .onStart {
+//            _state.value = _state.value.copy(isLoading = true)
+//        }
+//
+//        .collect { result ->
+//          withContext(mainDispatcher) {
+//            when (result) {
+//              is Result.Success -> {
+//                _state.value = _state.value.copy(
+//                  movie = result.data,
+//                  isLoading = false
+//                )
+//              }
+//
+//              is Result.Error   -> {
+//                _state.value = _state.value.copy(
+//                  error = result.message,
+//                  isLoading = false
+//                )
+//              }
+//
+//              is Result.Loading -> {
+//                _state.value = _state.value.copy(
+//                  isLoading = true
+//                )
+//              }
+//            }
+//          }
+//        }
+//    }
   }
 }
 
