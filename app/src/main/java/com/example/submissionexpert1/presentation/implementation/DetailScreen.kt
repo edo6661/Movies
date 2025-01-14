@@ -1,6 +1,5 @@
 package com.example.submissionexpert1.presentation.implementation
 
-import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -9,9 +8,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.NoPhotography
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.VerticalDivider
@@ -49,12 +47,12 @@ fun DetailScreen(
   modifier : Modifier = Modifier,
   vm : DetailViewModel = hiltViewModel(),
   id : Int,
-  navigateToLogin : () -> Unit
+  navigateToLogin : () -> Unit,
+  onNavigateBack : () -> Unit
 ) {
 
   val state by vm.state.collectAsState()
 
-  Log.d("DetailScreen", "DetailScreen: $id")
   fun onEvent(event : DetailEvent) {
     vm.onEvent(event)
   }
@@ -92,7 +90,8 @@ fun DetailScreen(
           userId = state.userId,
           navigateToLogin = navigateToLogin,
           onToggleShowAllOverview = { onEvent(DetailEvent.OnToggleShowAllOverview) },
-          showAllOverview = state.showAllOverview
+          showAllOverview = state.showAllOverview,
+          onNavigateBack = onNavigateBack
         )
       }
     }
@@ -107,15 +106,26 @@ fun DetailContent(
   userId : Long? = null,
   navigateToLogin : () -> Unit,
   onToggleShowAllOverview : () -> Unit,
-  showAllOverview : Boolean
+  showAllOverview : Boolean,
+  onNavigateBack : () -> Unit
 ) {
   var currentTab by remember { mutableIntStateOf(0) }
 
   val onlyMovie = movie.movie
 
+
+
   Column(
     verticalArrangement = Arrangement.spacedBy(16.dp)
   ) {
+    TopBar(
+      movie = onlyMovie,
+      onToggleFavorite = onToggleFavorite,
+      userId = userId,
+      navigateToLogin = navigateToLogin,
+      onNavigateBack = onNavigateBack
+    )
+
     TopSection(
       movie = onlyMovie,
       onToggleFavorite = onToggleFavorite,
@@ -138,6 +148,71 @@ fun DetailContent(
   }
 }
 
+@Composable
+private fun TopBar(
+  movie : Movie,
+  onToggleFavorite : (Int) -> Unit,
+  userId : Long? = null,
+  navigateToLogin : () -> Unit,
+  onNavigateBack : () -> Unit
+
+) {
+  Box(
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(
+        top = 16.dp,
+        start = 16.dp,
+        end = 16.dp,
+        bottom = 8.dp
+      ),
+    contentAlignment = Alignment.CenterStart
+  ) {
+    Icon(
+      Icons.AutoMirrored.Filled.ArrowBack,
+      contentDescription = "Back",
+      modifier = Modifier
+        .clickable {
+          onNavigateBack()
+        }
+
+        .size(24.dp)
+    )
+
+    MainText(
+      text = movie.title,
+      textSize = Size.Large,
+      textAlign = TextAlign.Center,
+      modifier = Modifier
+        .align(Alignment.Center)
+        .fillMaxWidth(0.7f),
+      isEllipsis = true,
+      maxLines = 1
+    )
+
+    Crossfade(
+      targetState = movie.isFavorite, label = "favorite",
+      modifier = Modifier
+        .align(Alignment.CenterEnd)
+        .padding(end = 16.dp)
+    ) {
+      Icon(
+        imageVector = if (it) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+        contentDescription = "Favorite",
+        modifier = Modifier
+
+          .size(24.dp)
+          .clickable {
+            when (userId) {
+              null -> navigateToLogin()
+              else -> onToggleFavorite(movie.id)
+            }
+          }
+      )
+    }
+  }
+}
+
 
 @Composable
 private fun TopSection(
@@ -148,71 +223,69 @@ private fun TopSection(
 
 ) {
   Box(
-    modifier = Modifier
   ) {
 
-    Box() {
+    Image(
+      painter = rememberAsyncImagePainter(
+        model = Prefix.PREFIX_IMAGE_URL + movie.backdropPath,
+        error = painterResource(id = R.drawable.error_image)
+      ),
+      contentDescription = movie.title,
+      contentScale = ContentScale.Fit,
+      modifier = Modifier
+        .fillMaxWidth()
+        .clip(
+          RoundedCornerShape(
+            bottomEnd = 24.dp,
+            bottomStart = 24.dp
+          )
+        )
+    )
+    Row(
+      modifier = Modifier
+        .align(Alignment.BottomStart)
+        .padding(
+          start = 16.dp
+        )
+        .offset(
+          y = (80).dp
+        ),
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.spacedBy(16.dp)
+
+    ) {
       Image(
-        painter = rememberAsyncImagePainter(
-          model = Prefix.PREFIX_IMAGE_URL + movie.backdropPath,
-          error = painterResource(id = R.drawable.error_image)
+        rememberAsyncImagePainter(
+          model = Prefix.PREFIX_IMAGE_URL + movie.posterPath,
+          error = painterResource(id = R.drawable.error_image),
         ),
         contentDescription = movie.title,
-        contentScale = ContentScale.Fit,
         modifier = Modifier
-          .fillMaxWidth()
+          .width(120.dp)
+          .height(160.dp)
           .clip(
             RoundedCornerShape(
-              bottomEnd = 24.dp,
-              bottomStart = 24.dp
+              16.dp
             )
-          )
+          ),
+        contentScale = ContentScale.Crop
       )
-      Row(
-        modifier = Modifier
-          .align(Alignment.BottomStart)
-          .padding(
-            start = 16.dp
-          )
-          .offset(
-            y = (80).dp
-          ),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-
-      ) {
-        Image(
-          rememberAsyncImagePainter(
-            model = Prefix.PREFIX_IMAGE_URL + movie.posterPath,
-            error = painterResource(id = R.drawable.error_image),
-          ),
-          contentDescription = movie.title,
-          modifier = Modifier
-            .width(120.dp)
-            .height(160.dp)
-            .clip(
-              RoundedCornerShape(
-                16.dp
-              )
-            ),
-          contentScale = ContentScale.Crop
-        )
-        MainText(
-          text = movie.title,
-          modifier = Modifier.padding(
-            top = 80.dp
-          ),
-          textSize = Size.ExtraLarge
-        )
-      }
-
-      DetailRating(
-        modifier = Modifier
-          .align(Alignment.BottomEnd),
-        rating = movie.voteAverage
+      MainText(
+        text = movie.title,
+        modifier = Modifier.padding(
+          top = 80.dp
+        ),
+        textSize = Size.ExtraLarge
       )
-
     }
+
+    DetailRating(
+      modifier = Modifier
+        .align(Alignment.BottomEnd),
+      rating = movie.voteAverage
+    )
+
+  }
 
 //    ToggleButtonFavorite(
 //      isFavorite = movie.isFavorite,
@@ -236,7 +309,6 @@ private fun TopSection(
 //        .background(MaterialTheme.colorScheme.secondaryContainer)
 //
 //    )
-  }
 }
 
 @Composable

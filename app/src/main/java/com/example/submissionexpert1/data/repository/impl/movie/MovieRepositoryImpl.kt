@@ -16,7 +16,6 @@ import com.example.submissionexpert1.data.repository.BaseRepository
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
 import com.example.submissionexpert1.domain.common.Result
-import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.domain.model.MovieWithGenres
 import com.example.submissionexpert1.domain.model.PaginationMovie
 import com.example.submissionexpert1.domain.repository.movie.IMovieRepository
@@ -292,31 +291,6 @@ class MovieRepositoryImpl @Inject constructor(
     }
   }
 
-  private fun getMovieFromApi(id : Int) : Flow<Result<Movie>> = flow {
-    val result = safeApiCall {
-      apiService.getDetailMovie(id)
-    }
-    when (result) {
-      is Result.Success -> {
-        // TODO: benerin nanti toDomain nya, soalnya beda response
-        val movie = result.data.toDomain().copy(
-          isFavorite = false
-        )
-        safeDatabaseCall {
-          movieDao.insertMovie(movie.toEntity())
-        }
-        emit(Result.Success(movie))
-      }
-
-      is Result.Error   -> {
-        emit(Result.Error(result.message))
-      }
-
-      is Result.Loading -> {
-        emit(Result.Loading)
-      }
-    }
-  }
 
   override suspend fun toggleFavoriteMovie(movieId : Int) : Result<String> {
     return when (val resultUserId = getUserId()) {

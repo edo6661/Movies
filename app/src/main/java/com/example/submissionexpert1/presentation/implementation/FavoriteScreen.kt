@@ -84,6 +84,7 @@ fun FavoriteScreen(
       userId = uiState.userId,
       onLoad = { onEvent(FavoriteEvent.OnLoad) },
       onRefresh = { onEvent(FavoriteEvent.OnRefresh) },
+      isTopSectionExist = false
     )
   }
 

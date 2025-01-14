@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.submissionexpert1.application.di.IODispatcher
 import com.example.submissionexpert1.application.di.MainDispatcher
 import com.example.submissionexpert1.core.constants.ErrorMessages
-import com.example.submissionexpert1.data.db.EntertainmentDb
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.common.state.ErrorState
@@ -28,7 +27,6 @@ class FavoriteViewModel @Inject constructor(
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
   @MainDispatcher private val mainDispatcher : CoroutineDispatcher,
   private val userPreferences : UserPreferences,
-  private val db : EntertainmentDb
 ) : ViewModel() {
 
   private val _uiState = MutableStateFlow(FavoriteState())
@@ -42,17 +40,9 @@ class FavoriteViewModel @Inject constructor(
 
   init {
 
-    // TODO: untuk testing
-//    deleteAllOnDb()
 
     onEvent(FavoriteEvent.OnLoad)
     getUserId()
-  }
-
-  private fun deleteAllOnDb() {
-    viewModelScope.launch(ioDispatcher) {
-      db.clearDatabase()
-    }
   }
 
   private fun getUserId() {

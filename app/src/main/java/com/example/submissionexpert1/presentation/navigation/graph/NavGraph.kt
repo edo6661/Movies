@@ -86,6 +86,9 @@ fun NavGraph(
         id = it.arguments?.getString("id")?.toIntOrNull() ?: 0,
         navigateToLogin = {
           navController.navigateSingleTop(Screen.Auth.Login.route)
+        },
+        onNavigateBack = {
+          navController.popBackStack()
         }
       )
     }

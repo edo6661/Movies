@@ -13,7 +13,7 @@ fun scaffoldConfig(currentRoute : String?)
   return when (currentRoute) {
     "Detail/{id}"       -> ScaffoldConfig(
       showMainNav = false,
-      showBackNav = true,
+      showBackNav = false,
       showBottomBar = false
     )
 
