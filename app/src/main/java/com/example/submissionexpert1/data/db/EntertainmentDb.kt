@@ -33,12 +33,12 @@ import com.example.submissionexpert1.data.db.helper.Converters
     PaginationFavoriteMovieEntity::class
 
   ],
-  version = 8,
+  version = 10,
   exportSchema = true,
   autoMigrations = [
     AutoMigration(
-      from = 7,
-      to = 8,
+      from = 9,
+      to = 10,
 //      spec = EntertainmentDb.MyAutoMigration::class
     )
   ]

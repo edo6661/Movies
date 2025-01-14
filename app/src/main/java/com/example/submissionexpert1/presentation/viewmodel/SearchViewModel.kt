@@ -249,7 +249,6 @@ class SearchViewModel @Inject constructor(
     _uiState.update {
       it.copy(
         alert = null,
-        isNoMoreData = false
       )
     }
   }
@@ -303,13 +302,7 @@ class SearchViewModel @Inject constructor(
           )
         )
       }
-      if (data.results.isEmpty()) {
-        _uiState.update {
-          it.copy(
-            isNoMoreData = true
-          )
-        }
-      }
+
     }
     _uiState.update {
       it.copy(
@@ -403,7 +396,6 @@ data class SearchState(
   val userId : Long? = null,
   val query : String = "",
   val searchedOnce : Boolean = false,
-  val isNoMoreData : Boolean = false
 )
 
 data class SearchMovieState(

@@ -113,12 +113,12 @@ class MovieRepositoryImpl @Inject constructor(
       is Result.Success -> {
         result.data?.let {
           insertGenresMoviesCrossRef(it.results.flatMap { movie ->
-            movie.genreIds.map { genreId ->
+            movie.genreIds?.map { genreId ->
               MovieGenreCrossRef(
                 movieId = movie.id,
                 genreId = genreId
               )
-            }
+            } ?: emptyList()
           })
           Result.Success(it)
           // ! ini case nya padahal data cache nya itu null tapi kok error nya no internet connection? karena dia nge handle UnknownHostException, jadi cuman nerusin aja
@@ -201,12 +201,12 @@ class MovieRepositoryImpl @Inject constructor(
             movieDao.insertMovies(apiResult.data.results.map { it.toEntity() })
           }
           insertGenresMoviesCrossRef(apiResult.data.results.flatMap { movie ->
-            movie.genreIds.map { genreId ->
+            movie.genreIds?.map { genreId ->
               MovieGenreCrossRef(
                 movieId = movie.id,
                 genreId = genreId
               )
-            }
+            } ?: emptyList()
           })
           emit(Result.Success(apiResult.data.toDomain()))
 
@@ -259,14 +259,14 @@ class MovieRepositoryImpl @Inject constructor(
     when (result) {
       is Result.Success -> {
         result.data?.let {
-          it.movie.genreIds.map { genreId ->
+          it.movie.genreIds?.map { genreId ->
             insertGenreMovieCrossRef(
               MovieGenreCrossRef(
                 movieId = it.movie.id,
                 genreId = genreId
               )
             )
-          }
+          } ?: emptyList()
           emit(
             Result.Success(
               it.copy(

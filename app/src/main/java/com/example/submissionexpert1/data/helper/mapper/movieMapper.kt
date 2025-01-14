@@ -117,7 +117,7 @@ fun MovieEntity.toDomain() : Movie {
     originalTitle = originalTitle,
     adult = adult,
     video = video,
-    genreIds = genreIds,
+    genreIds = genreIds ?: emptyList(),
   )
 }
 
@@ -164,7 +164,7 @@ fun MovieWithFavorite.toDomain() : Movie {
     originalTitle = movie.originalTitle,
     adult = movie.adult,
     video = movie.video,
-    genreIds = movie.genreIds,
+    genreIds = movie.genreIds ?: emptyList(),
     isFavorite = isFavorite
   )
 }

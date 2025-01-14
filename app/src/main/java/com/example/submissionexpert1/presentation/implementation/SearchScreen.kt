@@ -125,9 +125,8 @@ fun SearchScreen(
       onRefresh = {
         vm.onEvent(SearchEvent.OnRefresh)
       },
-      isNoMoreData = uiState.isNoMoreData
 
-    )
+      )
 
 
   }

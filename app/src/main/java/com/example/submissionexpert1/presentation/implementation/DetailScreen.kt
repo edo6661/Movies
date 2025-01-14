@@ -28,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
 import com.example.submissionexpert1.R
 import com.example.submissionexpert1.core.constants.Prefix
+import com.example.submissionexpert1.core.utils.safeUiString
 import com.example.submissionexpert1.domain.model.Genre
 import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.domain.model.MovieWithGenres
@@ -180,7 +181,7 @@ private fun TopBar(
     )
 
     MainText(
-      text = movie.title,
+      text = safeUiString(movie.title),
       textSize = Size.Large,
       textAlign = TextAlign.Center,
       modifier = Modifier
@@ -271,7 +272,7 @@ private fun TopSection(
         contentScale = ContentScale.Crop
       )
       MainText(
-        text = movie.title,
+        text = safeUiString(movie.title),
         modifier = Modifier.padding(
           top = 80.dp
         ),
@@ -282,7 +283,7 @@ private fun TopSection(
     DetailRating(
       modifier = Modifier
         .align(Alignment.BottomEnd),
-      rating = movie.voteAverage
+      rating = movie.voteAverage ?: 0.0,
     )
 
   }
@@ -336,17 +337,17 @@ private fun MiddleSection(
       IconMiddleValue(
         icon = Icons.Default.Star,
         key = "Popularity",
-        value = movie.popularity.toInt().toString(),
+        value = safeUiString(movie.popularity?.toInt().toString()),
       )
       IconMiddleValue(
         icon = Icons.Default.NoPhotography,
         key = "Adult",
-        value = if (movie.adult) "Yes" else "No"
+        value = if (movie.adult == true) "Yes" else "No"
       )
       IconMiddleValue(
         icon = Icons.Default.DateRange,
         key = "Release Date",
-        value = movie.releaseDate.substring(0, 4),
+        value = safeUiString(movie.releaseDate?.substring(0, 4)),
         latest = true
       )
 
@@ -439,7 +440,7 @@ private fun BottomSection(
     )
     ContentBottomTab(
       currentTab = currentTab,
-      overview = movie.movie.overview,
+      overview = safeUiString(movie.movie.overview),
       genres = movie.genres,
       onToggleShowAllOverview = onToggleShowAllOverview,
       showAllOverview = showAllOverview

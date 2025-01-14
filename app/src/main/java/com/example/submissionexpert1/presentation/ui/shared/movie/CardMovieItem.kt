@@ -83,7 +83,6 @@ fun CardMovieItem(
           .memoryCachePolicy(CachePolicy.ENABLED)
           .build(),
         contentDescription = movie.title,
-        placeholder = painterResource(id = R.drawable.placeholder),
         error = painterResource(id = R.drawable.error_image),
         modifier = Modifier
           .fillMaxWidth(0.4f)
@@ -92,8 +91,9 @@ fun CardMovieItem(
               topStart = 8.dp,
               bottomStart = 8.dp,
             )
-          ),
-        contentScale = ContentScale.FillHeight
+          )
+          .aspectRatio(2 / 3f),
+        contentScale = ContentScale.FillWidth
       )
 
 
@@ -108,7 +108,7 @@ fun CardMovieItem(
           )
       ) {
         MainText(
-          text = movie.title,
+          text = safeUiString(movie.title),
           textSize = Size.Large,
           isEllipsis = true,
           maxLines = 3,
@@ -125,7 +125,7 @@ fun CardMovieItem(
             ),
             Pair(
               Icons.Default.DateRange,
-              safeUiString(movie.releaseDate.take(4))
+              safeUiString(movie.releaseDate?.take(4))
 
             ),
             Pair(

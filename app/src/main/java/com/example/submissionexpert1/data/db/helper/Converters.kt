@@ -5,8 +5,8 @@ import androidx.room.TypeConverter
 class Converters {
 
   @TypeConverter
-  fun fromGenreIds(genreIds : List<Int>) : String {
-    return genreIds.joinToString(",")
+  fun fromGenreIds(genreIds : List<Int>?) : String {
+    return genreIds?.joinToString(",") ?: ""
   }
 
   @TypeConverter
