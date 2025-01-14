@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -75,7 +76,7 @@ fun LoginScreen(
           MainText(
             text = "Register",
             onClick = { onNavigateRegister() },
-            textSize = Size.Small
+            textSize = Size.Medium
           )
         }
         MainButton(
@@ -112,13 +113,19 @@ private fun TextFieldsLogin(
     keyboardOptions = KeyboardOptions.Default.copy(
       keyboardType = KeyboardType.Email,
     ),
-    error = emailError
-  )
+    error = emailError,
+    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+
+    )
   MainTextField(
     value = password,
     onValueChange = {
       onPasswordChange(it)
     },
+    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+
     label = "Password",
     placeholder = "Password here",
     keyboardOptions = KeyboardOptions.Default.copy(

@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.submissionexpert1.R
 import com.example.submissionexpert1.domain.model.User
+import com.example.submissionexpert1.presentation.common.Size
 import com.example.submissionexpert1.presentation.ui.shared.MainText
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -22,7 +23,6 @@ fun TopNav(
   currentRoute : String?,
   user : User? = null,
   logout : () -> Unit,
-  navigateToSearch : () -> Unit,
 ) {
   TopAppBar(
     colors = TopAppBarColors(
@@ -39,8 +39,9 @@ fun TopNav(
       ) {
         MainText(
           text = currentRoute ?: R.string.app_name.toString(),
+          textSize = Size.ExtraLarge
 
-          )
+        )
 
       }
     },
@@ -50,12 +51,12 @@ fun TopNav(
           onClick = logout,
           modifier = Modifier
             .padding(end = 16.dp)
-            .background(MaterialTheme.colorScheme.primary, CircleShape)
+            .background(MaterialTheme.colorScheme.secondary, CircleShape)
         ) {
           Icon(
             contentDescription = "Logout",
             imageVector = Icons.AutoMirrored.Filled.Logout,
-            tint = MaterialTheme.colorScheme.onPrimary
+            tint = MaterialTheme.colorScheme.onSecondary
           )
         }
       }

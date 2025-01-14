@@ -12,16 +12,21 @@ import com.example.submissionexpert1.data.source.local.preferences.ThemePreferen
 private val DarkColorScheme = darkColorScheme(
   background = Charcoal,
   onBackground = White,
+  onSecondary = White,
   primary = GrayishGreen,
   secondary = LightBlue,
   tertiary = CharcoalGray,
   surfaceDim = CoolGray,
+  onSurface = White,
 )
 
 private val LightColorScheme = lightColorScheme(
-  primary = LightBlue,
+  primary = GrayishGreen,
   secondary = LightBlue,
-  tertiary = Charcoal,
+  tertiary = CharcoalGray,
+  surfaceDim = CoolGray,
+  background = White,
+  onSecondary = White
 
   /* Other default colors to override
     background = Color(0xFFFFFBFE),

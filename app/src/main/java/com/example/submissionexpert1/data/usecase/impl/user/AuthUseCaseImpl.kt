@@ -19,5 +19,9 @@ class AuthUseCaseImpl @Inject constructor(
     return repository.register(user)
   }
 
+  override suspend fun update(user : User, newPassword : String) : Flow<Result<String>> {
+    return repository.update(user, newPassword)
+  }
+
 
 }

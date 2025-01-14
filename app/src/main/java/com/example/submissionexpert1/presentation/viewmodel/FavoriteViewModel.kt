@@ -139,17 +139,12 @@ class FavoriteViewModel @Inject constructor(
     getPopularMovieUseCase(
       page = _uiState.value.page.toString()
     )
-      // * rangkuman akuh
-      // ! semua operasi diatas `flowOn` akan dijalankan di background thread
       .flowOn(ioDispatcher)
-      // ! semua operasi dibawah `flowOn` akan dijalankan di main thread
 
-      // ! di jalanin sebelum data pertama kali di alirkan
       .onStart {
         handleLoading()
       }
 
-      // ! dijalanin saat data pertama kali di alirkan
       .onEach { result ->
         when (result) {
           is Result.Success -> {
@@ -189,8 +184,6 @@ class FavoriteViewModel @Inject constructor(
     }
 
     viewModelScope.launch {
-      // TODO: REMOVE
-//      delay(1000)
       onLoad()
       _uiState.update {
         it.copy(
@@ -242,8 +235,6 @@ class FavoriteViewModel @Inject constructor(
     result : Result.Success<PaginationMovie>
   ) {
 
-    // TODO: REMOVE
-//    delay(1000)
     val data =
       avoidSameMovieId(
         dispatcher = ioDispatcher,

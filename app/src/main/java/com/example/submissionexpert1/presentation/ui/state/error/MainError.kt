@@ -49,17 +49,7 @@ fun MainError(
       textSize = Size.Large,
       textAlign = TextAlign.Center
     )
-    // ! kalo mau ada deskripsi
-//    description?.let {
-//      MainText(
-//        text = it,
-//        textSize = Size.Medium,
-//        textAlign = TextAlign.Center,
-//        color = MaterialTheme.colorScheme.onSurface.copy(
-//          alpha = 0.6f
-//        )
-//      )
-//    }
+    
     Spacer(
       modifier = Modifier.height(8.dp)
     )

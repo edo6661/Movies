@@ -45,7 +45,6 @@ fun CardMovieItem(
   userId : Long? = null
 
 ) {
-//  val isActive =
   Card(
     modifier = modifier
       .fillMaxWidth(),

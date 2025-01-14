@@ -11,7 +11,6 @@ import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.domain.model.MovieWithGenres
 import com.example.submissionexpert1.domain.model.PaginationMovie
 
-// ! RES
 fun PaginationMovieResponse.toDomain() : PaginationMovie {
   return PaginationMovie(
     page = page,
@@ -36,7 +35,6 @@ fun MovieResponse.toDomain() : Movie {
     originalTitle = originalTitle,
     adult = adult,
     video = video,
-    // TODO: benerin nanti
     genreIds = emptyList()
   )
 }
@@ -99,8 +97,6 @@ fun PaginationMovieResponse.toDatabaseEntities() : Triple<PaginationEntity, List
   return Triple(paginationEntity, movieEntities, paginationMovieEntities)
 }
 
-
-// ! entity
 
 fun MovieEntity.toDomain() : Movie {
   return Movie(

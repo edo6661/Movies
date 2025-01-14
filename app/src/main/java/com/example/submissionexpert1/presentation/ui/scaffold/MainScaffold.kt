@@ -5,7 +5,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import com.example.submissionexpert1.domain.model.User
-import com.example.submissionexpert1.presentation.navigation.Screen
 import com.example.submissionexpert1.presentation.ui.nav.BottomBar
 import com.example.submissionexpert1.presentation.ui.nav.TopBackNav
 import com.example.submissionexpert1.presentation.ui.nav.TopNav
@@ -36,9 +35,6 @@ fun MainScaffold(
             currentRoute = currentRoute,
             user = user,
             logout = logout,
-            navigateToSearch = {
-              navController.navigate(Screen.Search.route)
-            }
           )
         }
 

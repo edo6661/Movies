@@ -45,7 +45,6 @@ class MovieRepositoryImpl @Inject constructor(
     val apiResult = safeApiCall {
       apiService.getPopularMovies(
         page = page,
-        // TODO: replace dengan dynamic language (pake shared preference / data store)
         language = "en-US",
       )
     }

@@ -39,7 +39,6 @@ import com.example.submissionexpert1.data.db.helper.Converters
     AutoMigration(
       from = 9,
       to = 10,
-//      spec = EntertainmentDb.MyAutoMigration::class
     )
   ]
 )
@@ -50,12 +49,6 @@ abstract class EntertainmentDb : RoomDatabase() {
     const val DATABASE_NAME = "entertainment_db"
   }
 
-//  @RenameColumn(
-//    tableName = "movies",
-//    fromColumnName = "posterPath",
-//    toColumnName = "posterPath"
-//  )
-//  class MyAutoMigration : AutoMigrationSpec
 
   abstract fun userDao() : UserDao
   abstract fun movieDao() : MovieDao

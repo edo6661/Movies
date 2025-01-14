@@ -1,6 +1,8 @@
 package com.example.submissionexpert1.data.repository.impl.user
 
+import com.example.submissionexpert1.core.constants.Auth
 import com.example.submissionexpert1.core.utils.checkPassword
+import com.example.submissionexpert1.core.utils.hashPassword
 import com.example.submissionexpert1.data.db.dao.AuthDao
 import com.example.submissionexpert1.data.db.entity.UserEntity
 import com.example.submissionexpert1.data.helper.mapper.toEntity
@@ -11,6 +13,7 @@ import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.model.User
 import com.example.submissionexpert1.domain.repository.user.IAuthRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -81,7 +84,57 @@ class AuthRepositoryImpl @Inject constructor(
         Result.Error(result.message)
       }
     }
+  }
 
+  override suspend fun update(
+    user : User, newPassword : String
+  ) : Flow<Result<String>> = flow {
+    val userFromPref = pref.getUserData().first() !!
+    val isUserChangeEmail = user.email != userFromPref.email
+    if (isUserChangeEmail) {
+      val isEmailExistResult = safeDatabaseCall {
+        authDao.isEmailExist(user.email).firstOrNull() ?: false
+      }
+      if (isEmailExistResult is Result.Success && isEmailExistResult.data) {
+        emit(Result.Error(Auth.EMAIL_ALREADY_EXIST))
+        return@flow
+      }
+    }
+    val userFromLocal = safeDatabaseCall {
+      authDao.login(userFromPref.email).first() !!
+    }
+    if (userFromLocal is Result.Success && ! checkPassword(
+        user.password,
+        userFromLocal.data.password
+      )
+    ) {
+      emit(Result.Error(Auth.PASSWORD_INVALID))
+      return@flow
+    }
+
+
+    val updateResult = safeDatabaseCall {
+      authDao.update(
+        user.copy(
+          password = hashPassword(newPassword)
+        ).toEntity(
+        )
+      )
+    }
+    emit(handleUpdate(updateResult))
+  }
+
+  private suspend fun handleUpdate(result : Result<Unit>) : Result<String> {
+    return when (result) {
+      is Result.Success -> {
+        pref.clearUserSession()
+        Result.Success("Update Success")
+      }
+
+      is Result.Error   -> {
+        Result.Error(result.message)
+      }
+    }
   }
 
 

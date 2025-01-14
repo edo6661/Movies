@@ -21,13 +21,10 @@ import com.example.submissionexpert1.presentation.viewmodel.SearchViewModel
 
 private const val LOAD_MORE_THRESHOLD = 3
 
-// TODO: benerin infinite scroll nya di view model dan disini
-// ! benerin di onSearch, increment page nya
 @Composable
 fun SearchScreen(
   modifier : Modifier,
   onNavigateDetail : (String) -> Unit,
-  onNavigateBack : () -> Unit,
   vm : SearchViewModel = hiltViewModel()
 ) {
 
@@ -94,6 +91,8 @@ fun SearchScreen(
 
       unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
       focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+
+
       modifier = Modifier
         .focusRequester(focusRequester)
         .fillMaxWidth()

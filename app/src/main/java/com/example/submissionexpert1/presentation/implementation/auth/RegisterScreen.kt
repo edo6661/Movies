@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -63,7 +64,7 @@ fun RegisterScreen(
       )
 
       Box(contentAlignment = Alignment.CenterEnd, modifier = Modifier.fillMaxWidth()) {
-        MainText(text = "Login", onClick = onNavigateLogin, textSize = Size.Small)
+        MainText(text = "Login", onClick = onNavigateLogin, textSize = Size.Medium)
       }
       MainButton(
         text = if (state.isLoading) "Loading..." else "Register",
@@ -92,23 +93,32 @@ private fun TextFieldsRegister(
     onValueChange = onFirstNameChange,
     label = "First Name",
     placeholder = "First Name here",
-    error = state.firstNameError
-  )
+    error = state.firstNameError,
+    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+
+    )
   MainTextField(
     value = state.lastName,
     onValueChange = onLastNameChange,
     label = "Last Name",
     placeholder = "Last Name here",
-    error = state.lastNameError
-  )
+    error = state.lastNameError,
+    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+
+    )
   MainTextField(
     value = state.email,
     onValueChange = onEmailChange,
     label = "Email",
     placeholder = "Email here",
     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
-    error = state.emailError
-  )
+    error = state.emailError,
+    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+
+    )
   MainTextField(
     value = state.password,
     onValueChange = onPasswordChange,
@@ -117,6 +127,9 @@ private fun TextFieldsRegister(
     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
     error = state.passwordError,
     isPasswordVisible = state.isPasswordVisible,
+    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+
     trailingIcon = {
       IconToggleButton(
         checked = state.isPasswordVisible,
@@ -124,7 +137,9 @@ private fun TextFieldsRegister(
       ) {
         Icon(
           imageVector = if (state.isPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-          contentDescription = if (state.isPasswordVisible) "Hide password" else "Show password"
+          contentDescription = if (state.isPasswordVisible) "Hide password" else "Show password",
+          tint = MaterialTheme.colorScheme.onSecondary
+          
         )
       }
     }
@@ -137,6 +152,9 @@ private fun TextFieldsRegister(
     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password),
     error = state.confirmPasswordError,
     isPasswordVisible = state.isConfirmPasswordVisible,
+    unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
+    focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+
     trailingIcon = {
       IconToggleButton(
         checked = state.isConfirmPasswordVisible,
@@ -144,7 +162,8 @@ private fun TextFieldsRegister(
       ) {
         Icon(
           imageVector = if (state.isConfirmPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-          contentDescription = if (state.isConfirmPasswordVisible) "Hide password" else "Show password"
+          contentDescription = if (state.isConfirmPasswordVisible) "Hide password" else "Show password",
+          tint = MaterialTheme.colorScheme.onSecondary
         )
       }
     }

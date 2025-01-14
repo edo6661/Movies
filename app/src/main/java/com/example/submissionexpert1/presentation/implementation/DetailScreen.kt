@@ -552,12 +552,11 @@ private fun CustomBottomTab(
 
     Box(
       modifier = Modifier
-        .padding()
         .fillMaxWidth(0.5f)
         .height(4.dp)
         .offset {
           IntOffset(
-            // ! 32 nih: padding horizontal
+            // ! 32 nih: total padding horizontal dari parent
             x = (indicatorOffset * (screenWithDp - 32).dp.toPx()).toInt(),
             y = 0
           )

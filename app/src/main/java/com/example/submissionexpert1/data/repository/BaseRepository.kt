@@ -43,8 +43,6 @@ abstract class BaseRepository {
       val result = databaseCall.invoke()
       successResult(result)
     } catch (e : Exception) {
-      // TODO: nanti delete
-      e.printStackTrace()
       errorResult(
         e.localizedMessage ?: ErrorMessages.UNKNOWN_ERROR
       )

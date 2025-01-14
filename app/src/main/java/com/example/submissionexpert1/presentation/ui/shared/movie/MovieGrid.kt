@@ -44,7 +44,8 @@ fun MovieGrid(
   userId : Long? = null,
   searchedOnce : Boolean = true,
   navigateToSearch : () -> Unit = {},
-  isTopSectionExist : Boolean = true
+  isTopSectionExist : Boolean = true,
+  column : Int
 
 ) {
   Box(
@@ -66,7 +67,8 @@ fun MovieGrid(
       userId = userId,
       searchedOnce = searchedOnce,
       navigateToSearch = navigateToSearch,
-      isTopSectionExist = isTopSectionExist
+      isTopSectionExist = isTopSectionExist,
+      column = column
     )
     BottomAlert(
       message = alert ?: "",
@@ -94,7 +96,8 @@ fun MovieGridContent(
   userId : Long?,
   searchedOnce : Boolean = true,
   navigateToSearch : () -> Unit,
-  isTopSectionExist : Boolean = true
+  isTopSectionExist : Boolean = true,
+  column : Int
 
 ) {
 
@@ -135,7 +138,6 @@ fun MovieGridContent(
       }
 
       else                                                                                                  -> {
-        val column = 3
 
         LazyVerticalGrid(
           state = gridState,

@@ -60,6 +60,9 @@ fun NavGraph(
     ) {
       SettingsScreen(
         modifier = modifier,
+        onNavigateLogin = {
+          navController.navigateSingleTop(Screen.Auth.Login.route)
+        }
       )
     }
     composable(
@@ -68,10 +71,8 @@ fun NavGraph(
       SearchScreen(
         modifier = modifier,
         onNavigateDetail = onNavigateDetail,
-        onNavigateBack = {
-          navController.popBackStack()
-        }
-      )
+
+        )
     }
     composable(
       route = "Detail/{id}",

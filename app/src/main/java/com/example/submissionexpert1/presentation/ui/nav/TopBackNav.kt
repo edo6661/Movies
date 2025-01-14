@@ -49,7 +49,7 @@ fun TopBackNav(
 
         MainText(
           text = title,
-          textSize = Size.Large,
+          textSize = Size.ExtraLarge,
           textAlign = TextAlign.Center,
           modifier = Modifier
             .align(Alignment.Center)

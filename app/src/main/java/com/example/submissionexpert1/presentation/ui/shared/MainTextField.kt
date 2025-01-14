@@ -40,8 +40,8 @@ fun MainTextField(
   leadingIcon : @Composable (() -> Unit)? = null,
   trailingIcon : @Composable (() -> Unit)? = null,
   shape : RoundedCornerShape = RoundedCornerShape(8.dp),
-  unfocusedTextColor : Color = Color.Unspecified,
-  focusedTextColor : Color = Color.Unspecified,
+  unfocusedTextColor : Color = MaterialTheme.colorScheme.onSecondary,
+  focusedTextColor : Color = MaterialTheme.colorScheme.onSecondary,
   unfocusedContainerColor : Color = Color.Unspecified,
   focusedContainerColor : Color = Color.Unspecified,
   unfocusedLabelColor : Color = Color.Unspecified,
@@ -115,8 +115,10 @@ private fun SupportTextField(
 ) {
   MainText(
     text = text,
+    color = MaterialTheme.colorScheme.onSecondary,
+    textSize = Size.Medium
 
-    )
+  )
 }
 
 @Composable
@@ -153,11 +155,13 @@ fun SearchClickableTextField(
   ) {
     MainText(
       text = "Search",
+      textSize = Size.Medium,
+      color = MaterialTheme.colorScheme.onSecondary,
     )
     Icon(
       imageVector = Icons.Default.Search,
       contentDescription = "Search",
-      tint = MaterialTheme.colorScheme.onSurface,
+      tint = MaterialTheme.colorScheme.onSecondary,
     )
 
   }

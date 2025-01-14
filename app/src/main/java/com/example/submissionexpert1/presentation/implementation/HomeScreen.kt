@@ -85,69 +85,7 @@ fun HomeScreen(
       onLoad = { onEvent(HomeEvent.OnLoad) },
       onRefresh = { onEvent(HomeEvent.OnRefresh) },
       navigateToSearch = navigateToSearch,
+      column = 3
     )
   }
 }
-//
-//@Composable
-//fun HomeContent(
-//  uiState : HomeState,
-//  movies : List<Movie>,
-//  listState : LazyListState,
-//  onEvent : (HomeEvent) -> Unit,
-//  onNavigateDetail : (String) -> Unit
-//
-//) {
-//  SwipeRefresh(
-//    state = rememberSwipeRefreshState(isRefreshing = uiState.isRefreshing),
-//    onRefresh = { onEvent(HomeEvent.OnRefresh) },
-//  ) {
-//    when {
-//      uiState.isLoading && ! uiState.isRefreshing -> {
-//        CenteredCircularLoading(
-//          modifier = Modifier.fillMaxSize()
-//        )
-//      }
-//
-//      ! uiState.error?.message.isNullOrEmpty() && ! uiState.isRefreshing -> {
-//        MainError(
-//          message = uiState.error?.message ?: ErrorMessages.UNKNOWN_ERROR,
-//          onRetry = { onEvent(HomeEvent.OnLoad) }
-//        )
-//      }
-//
-//      else -> {
-//
-//        LazyColumn(
-//          state = listState,
-//          verticalArrangement = Arrangement.spacedBy(16.dp),
-//
-//          ) {
-//
-//          items(
-//            items = movies,
-//            key = { movie -> movie.id }
-//          ) { movie ->
-//            CardMovieItem(
-//              movie = movie,
-//              onClick = {
-//                Log.d("HomeScreen", "Movie: ${movie.title}")
-//                onNavigateDetail(movie.id.toString())
-//              }
-//            )
-//          }
-//
-//          item {
-//            // ! kalo state is loading more (sengaja ga di if)
-//            // TODO: nanti apa apain
-//            CenteredCircularLoading(
-//              modifier = Modifier.fillMaxWidth()
-//            )
-//          }
-//        }
-//      }
-//    }
-//  }
-//
-//
-//}

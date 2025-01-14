@@ -17,7 +17,7 @@ fun MainButton(
   modifier : Modifier = Modifier,
   text : String,
   size : Size = Size.Medium,
-  color : Color = MaterialTheme.colorScheme.onBackground,
+  color : Color = MaterialTheme.colorScheme.onSecondary,
   backgroundColor : Color = MaterialTheme.colorScheme.tertiary,
   fontWeight : FontWeight = FontWeight.Bold,
   isEnabled : Boolean = true,

@@ -10,7 +10,6 @@ class AuthInterceptor @Inject constructor(
 
   override fun intercept(chain : Interceptor.Chain) : Response {
     val originalRequest = chain.request()
-    // TODO: replace / add kalo udah nambahin auth tmdb
     val token = BuildConfig.ACCESS_TOKEN
     return if (token.isNotEmpty()) {
       val newRequest = originalRequest.newBuilder()

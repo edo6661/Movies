@@ -1,10 +1,8 @@
 package com.example.submissionexpert1.data.api
 
-import com.example.submissionexpert1.data.source.remote.response.MovieResponse
 import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
 import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiService {
@@ -22,13 +20,6 @@ interface ApiService {
     @Query("language") language : String = "id-ID",
     @Query("query") query : String,
   ) : Response<PaginationMovieResponse>
-
-  @GET(ApiConfig.DETAIL_MOVIE)
-  suspend fun getDetailMovie(
-    @Path("id") id : Int,
-  ) : Response<MovieResponse>
-
-  // TODO: tambahin endpoint untuk search
 
 
 }
