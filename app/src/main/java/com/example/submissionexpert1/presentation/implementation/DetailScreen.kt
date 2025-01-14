@@ -290,28 +290,6 @@ private fun TopSection(
 
   }
 
-//    ToggleButtonFavorite(
-//      isFavorite = movie.isFavorite,
-//      isLoadingToggleFavorite = false,
-//      onToggleFavorite = {
-//
-//        when (userId) {
-//          null -> navigateToLogin()
-//          else -> onToggleFavorite(movie.id)
-//        }
-//
-//      },
-//      id = movie.id,
-//      modifier = Modifier
-//        .align(Alignment.BottomEnd)
-//        .clip(
-//          RoundedCornerShape(
-//            topStart = 4.dp,
-//          )
-//        )
-//        .background(MaterialTheme.colorScheme.secondaryContainer)
-//
-//    )
 }
 
 @Composable

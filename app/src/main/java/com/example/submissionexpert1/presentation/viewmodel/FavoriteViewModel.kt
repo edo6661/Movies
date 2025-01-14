@@ -5,10 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.submissionexpert1.application.di.IODispatcher
 import com.example.submissionexpert1.application.di.MainDispatcher
 import com.example.submissionexpert1.core.constants.ErrorMessages
+import com.example.submissionexpert1.data.repository.impl.movie.FavoriteChangeEvent
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.common.state.ErrorState
 import com.example.submissionexpert1.domain.model.PaginationMovie
+import com.example.submissionexpert1.domain.repository.movie.IMovieRepository
 import com.example.submissionexpert1.domain.usecase.movie.IGetPopularMoviesFavoriteUseCase
 import com.example.submissionexpert1.domain.usecase.movie.IToggleFavoriteMovieUseCase
 import com.example.submissionexpert1.presentation.utils.avoidSameMovieId
@@ -27,6 +29,7 @@ class FavoriteViewModel @Inject constructor(
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
   @MainDispatcher private val mainDispatcher : CoroutineDispatcher,
   private val userPreferences : UserPreferences,
+  private val movieRepository : IMovieRepository
 ) : ViewModel() {
 
   private val _uiState = MutableStateFlow(FavoriteState())
@@ -43,6 +46,23 @@ class FavoriteViewModel @Inject constructor(
 
     onEvent(FavoriteEvent.OnLoad)
     getUserId()
+    observeFavoriteChanges()
+  }
+
+  private fun observeFavoriteChanges() {
+    viewModelScope.launch {
+      movieRepository.favoriteChanges.collect { e ->
+        when (e) {
+          is FavoriteChangeEvent.Toggled     -> {
+            updateToggledMovie(e.movieId)
+          }
+
+          is FavoriteChangeEvent.BatchUpdate -> {
+            onRefresh()
+          }
+        }
+      }
+    }
   }
 
   private fun getUserId() {
@@ -80,7 +100,7 @@ class FavoriteViewModel @Inject constructor(
                 isLoadingToggleFavorite = false,
               )
             }
-            updateMovie(movieId)
+            updateToggledMovie(movieId)
 
 
           }
@@ -104,7 +124,7 @@ class FavoriteViewModel @Inject constructor(
     }
   }
 
-  private fun updateMovie(
+  private fun updateToggledMovie(
     movieId : Int
   ) {
     _movieState.update { currentMovieState ->

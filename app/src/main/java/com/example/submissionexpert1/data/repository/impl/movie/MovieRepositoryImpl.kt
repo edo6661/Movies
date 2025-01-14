@@ -19,10 +19,7 @@ import com.example.submissionexpert1.domain.common.Result
 import com.example.submissionexpert1.domain.model.MovieWithGenres
 import com.example.submissionexpert1.domain.model.PaginationMovie
 import com.example.submissionexpert1.domain.repository.movie.IMovieRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
@@ -34,6 +31,11 @@ class MovieRepositoryImpl @Inject constructor(
   private val userPreferences : UserPreferences,
   private val movieGenreDao : MovieGenreDao
 ) : IMovieRepository, BaseRepository() {
+
+  private val _favoriteChanges = MutableSharedFlow<FavoriteChangeEvent>()
+
+  override val favoriteChanges = _favoriteChanges.asSharedFlow()
+
 
   override fun getPopularMovies(
     page : String,
@@ -223,7 +225,6 @@ class MovieRepositoryImpl @Inject constructor(
 
     }
 
-  // TODO: bug kalo user null, bakal loading terus
   override fun getMovie(id : Int) : Flow<Result<MovieWithGenres>> = flow {
     val userId = when (val resultUserId = getUserId()) {
       is Result.Success -> resultUserId.data
@@ -300,6 +301,7 @@ class MovieRepositoryImpl @Inject constructor(
         }
         when (result) {
           is Result.Success -> {
+            _favoriteChanges.emit(FavoriteChangeEvent.Toggled(movieId))
             Result.Success("Success Toggle Favorite")
           }
 
@@ -347,4 +349,9 @@ class MovieRepositoryImpl @Inject constructor(
   }
 
 
+}
+
+sealed class FavoriteChangeEvent {
+  data class Toggled(val movieId : Int) : FavoriteChangeEvent()
+  data class BatchUpdate(val movieIds : List<Int>) : FavoriteChangeEvent()
 }
