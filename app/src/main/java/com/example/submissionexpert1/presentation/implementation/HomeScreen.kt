@@ -3,20 +3,15 @@ package com.example.submissionexpert1.presentation.implementation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.submissionexpert1.presentation.common.Size
 import com.example.submissionexpert1.presentation.ui.shared.MainText
-import com.example.submissionexpert1.presentation.ui.shared.MainTextField
 import com.example.submissionexpert1.presentation.ui.shared.SearchClickableTextField
-import com.example.submissionexpert1.presentation.ui.shared.movie.MovieList
+import com.example.submissionexpert1.presentation.ui.shared.movie.MovieGrid
 import com.example.submissionexpert1.presentation.viewmodel.HomeEvent
 import com.example.submissionexpert1.presentation.viewmodel.HomeViewModel
 
@@ -40,14 +35,14 @@ fun HomeScreen(
     movieState.data?.results ?: emptyList()
   }
 
-  val listState = rememberLazyListState()
+  val gridState = rememberLazyGridState()
 
   val reachedBottom by remember {
     derivedStateOf {
-      val layoutInfo = listState.layoutInfo
+      val layoutInfo = gridState.layoutInfo
       val totalItemsCount = layoutInfo.totalItemsCount
       val lastVisibleItemIndex =
-        (listState.firstVisibleItemIndex + layoutInfo.visibleItemsInfo.size)
+        (gridState.firstVisibleItemIndex + layoutInfo.visibleItemsInfo.size)
 
       totalItemsCount > 0 && lastVisibleItemIndex > (totalItemsCount - LOAD_MORE_THRESHOLD)
     }
@@ -63,7 +58,7 @@ fun HomeScreen(
     key1 = uiState.isLoading,
     key2 = uiState.alert != null,
   ) {
-    listState.scrollToItem(0)
+    gridState.scrollToItem(0)
   }
 
   Column(
@@ -76,7 +71,7 @@ fun HomeScreen(
       text = "What do you want to watch?",
       textSize = Size.ExtraLarge
     )
-    
+
     SearchClickableTextField(
       onSearchClick = {
         navigateToSearch()
@@ -85,9 +80,9 @@ fun HomeScreen(
     )
 
 
-    MovieList(
+    MovieGrid(
       movies = movies,
-      listState = listState,
+      gridState = gridState,
       onNavigateDetail = onNavigateDetail,
       alert = uiState.alert,
       isLoading = uiState.isLoading,
@@ -98,7 +93,7 @@ fun HomeScreen(
       onToggleFavorite = { movieId ->
         if (uiState.userId == null) {
           navigateToLogin()
-          return@MovieList
+          return@MovieGrid
         }
         onEvent(HomeEvent.OnToggleFavorite(movieId))
       },

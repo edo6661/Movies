@@ -1,5 +1,6 @@
 package com.example.submissionexpert1.presentation.implementation
 
+import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -52,6 +53,8 @@ fun DetailScreen(
 ) {
 
   val state by vm.state.collectAsState()
+
+  Log.d("DetailScreen", "DetailScreen: $id")
   fun onEvent(event : DetailEvent) {
     vm.onEvent(event)
   }
@@ -152,7 +155,6 @@ private fun TopSection(
       Image(
         painter = rememberAsyncImagePainter(
           model = Prefix.PREFIX_IMAGE_URL + movie.backdropPath,
-          placeholder = painterResource(id = R.drawable.user_placeholder),
           error = painterResource(id = R.drawable.error_image)
         ),
         contentDescription = movie.title,

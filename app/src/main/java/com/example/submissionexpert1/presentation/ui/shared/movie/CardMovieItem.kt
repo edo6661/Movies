@@ -93,7 +93,7 @@ fun CardMovieItem(
               bottomStart = 8.dp,
             )
           ),
-        contentScale = ContentScale.Crop
+        contentScale = ContentScale.FillHeight
       )
 
 
