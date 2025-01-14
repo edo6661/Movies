@@ -229,7 +229,8 @@ private fun TopSection(
     Image(
       painter = rememberAsyncImagePainter(
         model = Prefix.PREFIX_IMAGE_URL + movie.backdropPath,
-        error = painterResource(id = R.drawable.error_image)
+        error = painterResource(id = R.drawable.error_image),
+        placeholder = painterResource(id = R.drawable.placeholder)
       ),
       contentDescription = movie.title,
       contentScale = ContentScale.Fit,
@@ -259,6 +260,7 @@ private fun TopSection(
         rememberAsyncImagePainter(
           model = Prefix.PREFIX_IMAGE_URL + movie.posterPath,
           error = painterResource(id = R.drawable.error_image),
+          placeholder = painterResource(id = R.drawable.placeholder)
         ),
         contentDescription = movie.title,
         modifier = Modifier

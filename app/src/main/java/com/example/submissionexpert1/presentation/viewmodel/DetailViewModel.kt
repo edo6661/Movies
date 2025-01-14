@@ -12,6 +12,7 @@ import com.example.submissionexpert1.domain.usecase.movie.IGetMovieUseCase
 import com.example.submissionexpert1.domain.usecase.movie.IToggleFavoriteMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -101,7 +102,9 @@ class DetailViewModel @Inject constructor(
     getMovieUseCase(id)
       .flowOn(ioDispatcher)
       .onStart {
+
         _state.value = _state.value.copy(isLoading = true)
+        delay(4000)
       }
       .onEach {
         when (it) {
