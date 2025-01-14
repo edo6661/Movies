@@ -53,13 +53,11 @@ class FavoriteViewModel @Inject constructor(
     viewModelScope.launch {
       movieRepository.favoriteChanges.collect { e ->
         when (e) {
-          is FavoriteChangeEvent.Toggled     -> {
+          is FavoriteChangeEvent.Toggled -> {
             updateToggledMovie(e.movieId)
           }
 
-          is FavoriteChangeEvent.BatchUpdate -> {
-            onRefresh()
-          }
+
         }
       }
     }
@@ -103,12 +101,6 @@ class FavoriteViewModel @Inject constructor(
             updateToggledMovie(movieId)
 
 
-          }
-
-          is Result.Loading -> {
-            _uiState.update {
-              it.copy(isLoadingToggleFavorite = true)
-            }
           }
 
           is Result.Error   -> {
@@ -160,13 +152,7 @@ class FavoriteViewModel @Inject constructor(
       // ! dijalanin saat data pertama kali di alirkan
       .onEach { result ->
         when (result) {
-          is Result.Loading -> {
-            handleLoading()
-          }
-
           is Result.Success -> {
-
-
             handleSuccess(result)
 
           }

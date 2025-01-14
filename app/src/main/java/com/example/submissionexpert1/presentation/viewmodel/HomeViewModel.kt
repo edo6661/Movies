@@ -95,11 +95,6 @@ class HomeViewModel @Inject constructor(
 
           }
 
-          is Result.Loading -> {
-            _uiState.update {
-              it.copy(isLoadingToggleFavorite = true)
-            }
-          }
 
           is Result.Error   -> {
             _uiState.update {
@@ -156,9 +151,7 @@ class HomeViewModel @Inject constructor(
       // ! dijalanin saat data pertama kali di alirkan
       .onEach { result ->
         when (result) {
-          is Result.Loading -> {
-            handleLoading()
-          }
+         
 
           is Result.Success -> {
 

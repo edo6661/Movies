@@ -16,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -114,29 +115,31 @@ class RegisterViewModel @Inject constructor(
           email = _state.value.email,
           password = hashedPassword
         )
-      ).collect { result ->
-        withContext(mainDispatcher) {
+      )
+        .onStart {
+          updateState { copy(isLoading = true) }
+        }
+        .collect { result ->
+          withContext(mainDispatcher) {
 
-          when (result) {
-            is Result.Success -> {
+            when (result) {
+              is Result.Success -> {
 
-              updateState { copy(isLoading = false, message = Message.Success(result.data)) }
-            }
-
-            is Result.Error   -> {
-              if (result.message == "Email Already Exist") {
-                updateState { copy(isLoading = false, emailError = "Email Already Exist") }
-
+                updateState { copy(isLoading = false, message = Message.Success(result.data)) }
               }
-              updateState { copy(isLoading = false, message = Message.Error(result.message)) }
-            }
 
-            is Result.Loading -> {
-              updateState { copy(isLoading = true) }
+              is Result.Error   -> {
+                if (result.message == "Email Already Exist") {
+                  updateState { copy(isLoading = false, emailError = "Email Already Exist") }
+
+                }
+                updateState { copy(isLoading = false, message = Message.Error(result.message)) }
+              }
+
+
             }
           }
         }
-      }
 
 
     }

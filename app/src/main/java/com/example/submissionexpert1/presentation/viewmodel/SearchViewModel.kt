@@ -126,11 +126,6 @@ class SearchViewModel @Inject constructor(
 
           }
 
-          is Result.Loading -> {
-            _uiState.update {
-              it.copy(isLoadingToggleFavorite = true)
-            }
-          }
 
           is Result.Error   -> {
             _uiState.update {
@@ -187,9 +182,7 @@ class SearchViewModel @Inject constructor(
 
         .onEach { result ->
           when (result) {
-            is Result.Loading -> {
-              handleLoading()
-            }
+
 
             is Result.Success -> {
               handleSuccessOnSearch(result)

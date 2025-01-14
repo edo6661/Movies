@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -69,6 +70,13 @@ class LoginViewModel @Inject constructor(
     updateState { copy(isLoading = true) }
     viewModelScope.launch(ioDispatcher) {
       useCase.login(currentState.email, currentState.password)
+        .onStart {
+          updateState {
+            copy(
+              isLoading = true,
+            )
+          }
+        }
         .collect { result ->
           withContext(mainDispatcher) {
             when (result) {
@@ -84,10 +92,6 @@ class LoginViewModel @Inject constructor(
                     password = ""
                   )
                 }
-              }
-
-              is Result.Loading -> {
-                updateState { copy(isLoading = true) }
               }
             }
           }

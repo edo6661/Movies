@@ -78,9 +78,6 @@ class MovieRepositoryImpl @Inject constructor(
         }
       }
 
-      is Result.Loading -> {
-        emit(Result.Loading)
-      }
 
     }
   }
@@ -102,7 +99,6 @@ class MovieRepositoryImpl @Inject constructor(
     val userId = when (val resultUserId = getUserId()) {
       is Result.Success -> resultUserId.data
       is Result.Error   -> return Result.Error(resultUserId.message)
-      is Result.Loading -> return Result.Loading
       null              -> null
     }
     val result = safeDatabaseCall {
@@ -128,7 +124,6 @@ class MovieRepositoryImpl @Inject constructor(
       }
 
       is Result.Error   -> Result.Error(result.message)
-      is Result.Loading -> Result.Loading
     }
   }
 
@@ -147,7 +142,6 @@ class MovieRepositoryImpl @Inject constructor(
   override fun getPopularMoviesFavorite(
     page : String,
   ) : Flow<Result<PaginationMovie>> = flow {
-    emit(Result.Loading)
     val userId = when (val resultUserId = getUserId()) {
       is Result.Success -> resultUserId.data
 
@@ -156,10 +150,6 @@ class MovieRepositoryImpl @Inject constructor(
         return@flow
       }
 
-      is Result.Loading -> {
-        emit(Result.Loading)
-        return@flow
-      }
 
       null              -> {
         emit(Result.Error(ErrorMessages.UNAUTHORIZED))
@@ -183,9 +173,6 @@ class MovieRepositoryImpl @Inject constructor(
         emit(Result.Error(result.message))
       }
 
-      is Result.Loading -> {
-        emit(Result.Loading)
-      }
     }
   }
 
@@ -218,9 +205,6 @@ class MovieRepositoryImpl @Inject constructor(
           emit(Result.Error(apiResult.message))
         }
 
-        is Result.Loading -> {
-          emit(Result.Loading)
-        }
       }
 
     }
@@ -234,10 +218,6 @@ class MovieRepositoryImpl @Inject constructor(
         return@flow
       }
 
-      is Result.Loading -> {
-        emit(Result.Loading)
-        return@flow
-      }
 
       null              -> {
         null
@@ -285,9 +265,6 @@ class MovieRepositoryImpl @Inject constructor(
         emit(Result.Error(result.message))
       }
 
-      is Result.Loading -> {
-        emit(Result.Loading)
-      }
     }
   }
 
@@ -309,9 +286,7 @@ class MovieRepositoryImpl @Inject constructor(
             Result.Error(result.message)
           }
 
-          is Result.Loading -> {
-            Result.Loading
-          }
+
         }
       }
 
@@ -319,9 +294,6 @@ class MovieRepositoryImpl @Inject constructor(
         Result.Error(resultUserId.message)
       }
 
-      is Result.Loading -> {
-        Result.Loading
-      }
 
       null              -> Result.Error(ErrorMessages.UNAUTHORIZED)
     }
@@ -353,5 +325,4 @@ class MovieRepositoryImpl @Inject constructor(
 
 sealed class FavoriteChangeEvent {
   data class Toggled(val movieId : Int) : FavoriteChangeEvent()
-  data class BatchUpdate(val movieIds : List<Int>) : FavoriteChangeEvent()
 }

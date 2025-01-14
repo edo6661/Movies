@@ -22,7 +22,6 @@ class AuthRepositoryImpl @Inject constructor(
 ) : IAuthRepository, BaseRepository() {
 
   override suspend fun login(email : String, password : String) : Flow<Result<String>> = flow {
-    emit(Result.Loading)
 
     val loginResult = safeDatabaseCall {
       authDao.login(email).firstOrNull()
@@ -39,9 +38,6 @@ class AuthRepositoryImpl @Inject constructor(
         checkUser(resultUser.data, password)
       }
 
-      is Result.Loading -> {
-        Result.Loading
-      }
 
       is Result.Error   -> {
         Result.Error(resultUser.message)
@@ -60,7 +56,6 @@ class AuthRepositoryImpl @Inject constructor(
 
 
   override suspend fun register(user : User) : Flow<Result<String>> = flow {
-    emit(Result.Loading)
     val isEmailExistResult = safeDatabaseCall {
       authDao.isEmailExist(user.email).firstOrNull() ?: false
     }
@@ -81,9 +76,6 @@ class AuthRepositoryImpl @Inject constructor(
         Result.Success("Register Success")
       }
 
-      is Result.Loading -> {
-        Result.Loading
-      }
 
       is Result.Error   -> {
         Result.Error(result.message)

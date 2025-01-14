@@ -86,11 +86,7 @@ class DetailViewModel @Inject constructor(
             )
           }
 
-          is Result.Loading -> {
-            _state.value = _state.value.copy(
-              isLoadingToggleFavorite = true
-            )
-          }
+
         }
       }
 
@@ -122,48 +118,12 @@ class DetailViewModel @Inject constructor(
             )
           }
 
-          is Result.Loading -> {
-            _state.value = _state.value.copy(
-              isLoading = true
-            )
-          }
+
         }
       }
       .flowOn(mainDispatcher)
       .launchIn(viewModelScope)
 
-//    viewModelScope.launch(ioDispatcher) {
-//      getMovieUseCase(id)
-//        .onStart {
-//            _state.value = _state.value.copy(isLoading = true)
-//        }
-//
-//        .collect { result ->
-//          withContext(mainDispatcher) {
-//            when (result) {
-//              is Result.Success -> {
-//                _state.value = _state.value.copy(
-//                  movie = result.data,
-//                  isLoading = false
-//                )
-//              }
-//
-//              is Result.Error   -> {
-//                _state.value = _state.value.copy(
-//                  error = result.message,
-//                  isLoading = false
-//                )
-//              }
-//
-//              is Result.Loading -> {
-//                _state.value = _state.value.copy(
-//                  isLoading = true
-//                )
-//              }
-//            }
-//          }
-//        }
-//    }
   }
 }
 
