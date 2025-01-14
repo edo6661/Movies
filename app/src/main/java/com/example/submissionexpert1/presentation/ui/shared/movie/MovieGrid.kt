@@ -2,6 +2,7 @@ package com.example.submissionexpert1.presentation.ui.shared.movie
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,6 +14,9 @@ import com.example.submissionexpert1.R
 import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.domain.common.state.ErrorState
 import com.example.submissionexpert1.domain.model.Movie
+import com.example.submissionexpert1.presentation.common.Size
+import com.example.submissionexpert1.presentation.ui.shared.MainText
+import com.example.submissionexpert1.presentation.ui.shared.SearchClickableTextField
 import com.example.submissionexpert1.presentation.ui.state.alert.BottomAlert
 import com.example.submissionexpert1.presentation.ui.state.empty.MainEmpty
 import com.example.submissionexpert1.presentation.ui.state.error.MainError
@@ -39,7 +43,9 @@ fun MovieGrid(
   onToggleFavorite : (Int) -> Unit,
   userId : Long? = null,
   searchedOnce : Boolean = true,
-  isNoMoreData : Boolean = false
+  isNoMoreData : Boolean = false,
+  navigateToSearch : () -> Unit = {},
+  isTopSectionExist : Boolean = true
 
 ) {
   Box(
@@ -59,7 +65,9 @@ fun MovieGrid(
       isLoadingToggleFavorite = isLoadingToggleFavorite,
       onToggleFavorite = onToggleFavorite,
       userId = userId,
-      searchedOnce = searchedOnce
+      searchedOnce = searchedOnce,
+      navigateToSearch = navigateToSearch,
+      isTopSectionExist = isTopSectionExist
     )
     BottomAlert(
       message = alert ?: "",
@@ -90,7 +98,9 @@ fun MovieGridContent(
   isLoadingToggleFavorite : Boolean,
   onToggleFavorite : (Int) -> Unit,
   userId : Long?,
-  searchedOnce : Boolean = true
+  searchedOnce : Boolean = true,
+  navigateToSearch : () -> Unit,
+  isTopSectionExist : Boolean = true
 
 ) {
   SwipeRefresh(
@@ -129,17 +139,43 @@ fun MovieGridContent(
       }
 
       else                                                                                                -> {
+        val column = 3
 
         LazyVerticalGrid(
           state = gridState,
           verticalArrangement = Arrangement.spacedBy(16.dp),
           horizontalArrangement = Arrangement.spacedBy(16.dp),
-          columns = GridCells.Fixed(2),
+          columns = GridCells.Fixed(column),
           modifier = Modifier
             .fillMaxHeight()
 
 
         ) {
+          if (isTopSectionExist) {
+            item(
+              span = {
+                GridItemSpan(column)
+              }
+            ) {
+
+              MainText(
+                text = "What do you want to watch?",
+                textSize = Size.ExtraLarge
+              )
+            }
+            item(
+              span = {
+                GridItemSpan(column)
+              }
+            ) {
+              SearchClickableTextField(
+                onSearchClick = {
+                  navigateToSearch()
+
+                }
+              )
+            }
+          }
           items(
             count = movies.size,
             key = { index -> movies[index].id }
@@ -157,9 +193,13 @@ fun MovieGridContent(
 
 
           item(
+            span = {
+              GridItemSpan(column)
+            }
+
           ) {
             if (isLoadingMore) {
-              CenteredCircularLoading(modifier = Modifier.fillMaxWidth())
+              CenteredCircularLoading(modifier = Modifier.fillMaxSize())
             }
           }
         }

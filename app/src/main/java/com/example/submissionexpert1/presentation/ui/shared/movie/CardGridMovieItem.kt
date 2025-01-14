@@ -33,7 +33,6 @@ fun CardGridMovieItem(
   userId : Long? = null
 
 ) {
-//  val isActive =
   Card(
     modifier = modifier
       .fillMaxWidth(),
@@ -70,7 +69,7 @@ fun CardGridMovieItem(
           )
         )
         .aspectRatio(2 / 3f),
-      contentScale = ContentScale.FillWidth
+      contentScale = ContentScale.FillHeight
     )
   }
 

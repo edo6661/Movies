@@ -1,6 +1,5 @@
 package com.example.submissionexpert1.presentation.implementation
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -8,9 +7,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.submissionexpert1.presentation.common.Size
-import com.example.submissionexpert1.presentation.ui.shared.MainText
-import com.example.submissionexpert1.presentation.ui.shared.SearchClickableTextField
 import com.example.submissionexpert1.presentation.ui.shared.movie.MovieGrid
 import com.example.submissionexpert1.presentation.viewmodel.HomeEvent
 import com.example.submissionexpert1.presentation.viewmodel.HomeViewModel
@@ -65,20 +61,7 @@ fun HomeScreen(
     modifier = modifier.padding(
       16.dp
     ),
-    verticalArrangement = Arrangement.spacedBy(24.dp)
   ) {
-    MainText(
-      text = "What do you want to watch?",
-      textSize = Size.ExtraLarge
-    )
-
-    SearchClickableTextField(
-      onSearchClick = {
-        navigateToSearch()
-
-      }
-    )
-
 
     MovieGrid(
       movies = movies,
@@ -101,6 +84,7 @@ fun HomeScreen(
       userId = uiState.userId,
       onLoad = { onEvent(HomeEvent.OnLoad) },
       onRefresh = { onEvent(HomeEvent.OnRefresh) },
+      navigateToSearch = navigateToSearch,
     )
   }
 }

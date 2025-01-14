@@ -1,10 +1,13 @@
 package com.example.submissionexpert1.presentation.implementation
 
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.submissionexpert1.presentation.ui.shared.movie.MovieList
+import com.example.submissionexpert1.presentation.ui.shared.movie.MovieGrid
 import com.example.submissionexpert1.presentation.viewmodel.FavoriteEvent
 import com.example.submissionexpert1.presentation.viewmodel.FavoriteViewModel
 
@@ -27,14 +30,14 @@ fun FavoriteScreen(
     movieState.data?.results ?: emptyList()
   }
 
-  val listState = rememberLazyListState()
+  val gridState = rememberLazyGridState()
 
   val reachedBottom by remember {
     derivedStateOf {
-      val layoutInfo = listState.layoutInfo
+      val layoutInfo = gridState.layoutInfo
       val totalItemsCount = layoutInfo.totalItemsCount
       val lastVisibleItemIndex =
-        (listState.firstVisibleItemIndex + layoutInfo.visibleItemsInfo.size)
+        (gridState.firstVisibleItemIndex + layoutInfo.visibleItemsInfo.size)
 
       totalItemsCount > 0 && lastVisibleItemIndex > (totalItemsCount - LOAD_MORE_THRESHOLD)
     }
@@ -50,32 +53,38 @@ fun FavoriteScreen(
     key1 = uiState.isLoading,
     key2 = uiState.alert != null,
   ) {
-    listState.scrollToItem(0)
+    gridState.scrollToItem(0)
   }
 
 
 
 
 
+  Column(
+    modifier = modifier.padding(
+      16.dp
+    ),
+  ) {
 
-  MovieList(
-    movies = movies,
-    listState = listState,
-    onNavigateDetail = onNavigateDetail,
-    alert = uiState.alert,
-    isLoading = uiState.isLoading,
-    isRefreshing = uiState.isRefreshing,
-    isLoadingMore = uiState.isLoadingMore,
-    error = uiState.error,
-    isLoadingToggleFavorite = uiState.isLoadingToggleFavorite,
-    onToggleFavorite = { movieId ->
+    MovieGrid(
+      movies = movies,
+      gridState = gridState,
+      onNavigateDetail = onNavigateDetail,
+      alert = uiState.alert,
+      isLoading = uiState.isLoading,
+      isRefreshing = uiState.isRefreshing,
+      isLoadingMore = uiState.isLoadingMore,
+      error = uiState.error,
+      isLoadingToggleFavorite = uiState.isLoadingToggleFavorite,
+      onToggleFavorite = { movieId ->
 
-      onEvent(FavoriteEvent.OnToggleFavorite(movieId))
-    },
-    onDismissedAlert = { onEvent(FavoriteEvent.OnDismissedAlert) },
-    userId = uiState.userId,
-    onLoad = { onEvent(FavoriteEvent.OnLoad) },
-    onRefresh = { onEvent(FavoriteEvent.OnRefresh) }
+        onEvent(FavoriteEvent.OnToggleFavorite(movieId))
+      },
+      onDismissedAlert = { onEvent(FavoriteEvent.OnDismissedAlert) },
+      userId = uiState.userId,
+      onLoad = { onEvent(FavoriteEvent.OnLoad) },
+      onRefresh = { onEvent(FavoriteEvent.OnRefresh) },
+    )
+  }
 
-  )
 }
