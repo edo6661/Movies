@@ -1,63 +1,91 @@
 package com.example.submissionexpert1.presentation.implementation
 
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.submissionexpert1.presentation.ui.state.error.MainError
-import com.example.submissionexpert1.presentation.ui.state.loading.CenteredCircularLoading
+import com.example.submissionexpert1.presentation.ui.shared.movie.MovieGrid
 import com.example.submissionexpert1.presentation.viewmodel.HomeEvent
 import com.example.submissionexpert1.presentation.viewmodel.HomeViewModel
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+
+private const val LOAD_MORE_THRESHOLD = 3
 
 @Composable
 fun HomeScreen(
   modifier : Modifier = Modifier,
   onNavigateDetail : (String) -> Unit,
-  viewModel : HomeViewModel = hiltViewModel()
+  viewModel : HomeViewModel = hiltViewModel(),
+  navigateToLogin : () -> Unit,
+  navigateToSearch : () -> Unit
+
 ) {
-  val state by viewModel.state.collectAsState()
+  val uiState by viewModel.uiState.collectAsState()
+  val movieState by viewModel.movieState.collectAsState()
+  val onEvent = { event : HomeEvent -> viewModel.onEvent(event) }
+  val movies = if (uiState.isRefreshing) {
+    movieState.dataBeforeRefresh?.results ?: emptyList()
+  } else {
+    movieState.data?.results ?: emptyList()
+  }
 
+  val gridState = rememberLazyGridState()
 
-  SwipeRefresh(
-    state = rememberSwipeRefreshState(isRefreshing = state.isRefreshing),
-    onRefresh = {
-      viewModel.onEvent(HomeEvent.OnRefresh)
-    },
-    modifier = modifier
-  ) {
-    when {
-      state.isLoading && ! state.isRefreshing -> {
-        CenteredCircularLoading()
-      }
+  val reachedBottom by remember {
+    derivedStateOf {
+      val layoutInfo = gridState.layoutInfo
+      val totalItemsCount = layoutInfo.totalItemsCount
+      val lastVisibleItemIndex =
+        (gridState.firstVisibleItemIndex + layoutInfo.visibleItemsInfo.size)
 
-      ! state.error?.message.isNullOrEmpty()  -> {
-        MainError(
-          message = state.error?.message ?: "Error",
-          description = "Ada yang salah dengan sesuatu, coba lagi nanti ya!",
-          onRetry = {
-            viewModel.onEvent(HomeEvent.OnLoad)
-          }
-        )
-      }
-
-      else                                    -> {
-        LazyColumn {
-          items(
-            items = state.data?.results ?: emptyList(),
-            key = { movie -> movie.id },
-          ) { movie ->
-            Text(
-              text = movie.title
-            )
-          }
-        }
-      }
+      totalItemsCount > 0 && lastVisibleItemIndex > (totalItemsCount - LOAD_MORE_THRESHOLD)
     }
+  }
+
+
+  LaunchedEffect(reachedBottom) {
+    if (reachedBottom && ! uiState.isLoadingMore && ! uiState.isRefreshing) {
+      viewModel.onEvent(HomeEvent.OnLoad)
+    }
+  }
+  LaunchedEffect(
+    key1 = uiState.isLoading,
+    key2 = uiState.alert != null,
+  ) {
+    gridState.scrollToItem(0)
+  }
+
+  Column(
+    modifier = modifier.padding(
+      horizontal = 16.dp
+    ),
+  ) {
+
+    MovieGrid(
+      movies = movies,
+      gridState = gridState,
+      onNavigateDetail = onNavigateDetail,
+      alert = uiState.alert,
+      isLoading = uiState.isLoading,
+      isRefreshing = uiState.isRefreshing,
+      isLoadingMore = uiState.isLoadingMore,
+      error = uiState.error,
+      isLoadingToggleFavorite = uiState.isLoadingToggleFavorite,
+      onToggleFavorite = { movieId ->
+        if (uiState.userId == null) {
+          navigateToLogin()
+          return@MovieGrid
+        }
+        onEvent(HomeEvent.OnToggleFavorite(movieId))
+      },
+      onDismissedAlert = { onEvent(HomeEvent.OnDismissedAlert) },
+      userId = uiState.userId,
+      onLoad = { onEvent(HomeEvent.OnLoad) },
+      onRefresh = { onEvent(HomeEvent.OnRefresh) },
+      navigateToSearch = navigateToSearch,
+      column = 3
+    )
   }
 }

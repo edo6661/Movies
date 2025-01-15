@@ -21,16 +21,11 @@ import com.example.submissionexpert1.presentation.ui.shared.MainText
 @Composable
 fun MainError(
   message : String = "Koneksi Internet mu tergangguk!",
-  description : String? = "Yuk, pastikan internetmu lancar dengan cek ulang paket data, WIFI.",
   onRetry : () -> Unit = {}
 ) {
   Column(
     modifier = Modifier
-      .fillMaxSize()
-
-      .padding(
-        horizontal = 16.dp
-      ),
+      .fillMaxSize(),
     verticalArrangement = Arrangement.spacedBy(
       8.dp,
       alignment = Alignment.CenterVertically
@@ -54,16 +49,7 @@ fun MainError(
       textSize = Size.Large,
       textAlign = TextAlign.Center
     )
-    description?.let {
-      MainText(
-        text = it,
-        textSize = Size.Medium,
-        textAlign = TextAlign.Center,
-        color = MaterialTheme.colorScheme.onSurface.copy(
-          alpha = 0.6f
-        )
-      )
-    }
+    
     Spacer(
       modifier = Modifier.height(8.dp)
     )

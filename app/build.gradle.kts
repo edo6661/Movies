@@ -3,6 +3,8 @@ plugins {
   alias(libs.plugins.kotlin.android)
   id("org.jetbrains.kotlin.kapt")
   id("com.google.dagger.hilt.android")
+  id("androidx.room")
+
 }
 
 android {
@@ -26,6 +28,10 @@ android {
       "ACCESS_TOKEN",
       "\"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4MWMwMjE4ODdmNmMxZTRkZjZkMWVjN2E1NWIxNWNiMSIsIm5iZiI6MTcwMTE5MDU0Ni42MDQsInN1YiI6IjY1NjYxYjkyMTdiNWVmMDBjYmRjMTI0OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.H_T5hNRz6a2z0r7On_FxGJUD473HZQd0JxBPVVh2iVc\""
     )
+    room {
+      schemaDirectory("$projectDir/schemas")
+    }
+
   }
 
   buildTypes {
@@ -112,5 +118,9 @@ dependencies {
   implementation("com.airbnb.android:lottie-compose:6.4.0")
   // swipe refresh
   implementation("com.google.accompanist:accompanist-swiperefresh:0.26.2-beta")
+
+  //  hash
+  implementation("org.mindrot:jbcrypt:0.4")
+
 
 }

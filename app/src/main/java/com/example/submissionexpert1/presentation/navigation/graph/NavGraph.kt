@@ -7,30 +7,44 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.submissionexpert1.presentation.implementation.FavoriteScreen
-import com.example.submissionexpert1.presentation.implementation.HomeScreen
+import com.example.submissionexpert1.presentation.implementation.*
 import com.example.submissionexpert1.presentation.navigation.Screen
+import com.example.submissionexpert1.presentation.navigation.navigateSingleTop
 
 @Composable
 fun NavGraph(
   modifier : Modifier = Modifier,
   startDestination : String = Screen.Home.route,
-  navController : NavHostController
+  navController : NavHostController,
+  isUserLoggedIn : Boolean = false,
 ) {
   NavHost(
     navController = navController,
-    startDestination = startDestination,
+    startDestination = if (isUserLoggedIn) Screen.Home.route else startDestination,
   ) {
+    authNavGraph(
+      modifier = modifier,
+      navController = navController
+    )
     val onNavigateDetail = { id : String ->
-      navController.navigate("Detail/$id")
+      navController.navigateSingleTop("Detail/$id")
     }
     composable(
       route = Screen.Home.route
     ) {
+      val navigateToLogin = {
+        navController.navigateSingleTop(Screen.Auth.Login.route)
+      }
+      val navigateToSearch = {
+        navController.navigateSingleTop(Screen.Search.route)
+      }
+
 
       HomeScreen(
         modifier = modifier,
-        onNavigateDetail = onNavigateDetail
+        onNavigateDetail = onNavigateDetail,
+        navigateToLogin = navigateToLogin,
+        navigateToSearch = navigateToSearch
       )
     }
     composable(
@@ -42,6 +56,25 @@ fun NavGraph(
       )
     }
     composable(
+      route = Screen.Settings.route
+    ) {
+      SettingsScreen(
+        modifier = modifier,
+        onNavigateLogin = {
+          navController.navigateSingleTop(Screen.Auth.Login.route)
+        }
+      )
+    }
+    composable(
+      route = Screen.Search.route,
+    ) {
+      SearchScreen(
+        modifier = modifier,
+        onNavigateDetail = onNavigateDetail,
+
+        )
+    }
+    composable(
       route = "Detail/{id}",
       arguments = listOf(
         navArgument("id") {
@@ -49,9 +82,15 @@ fun NavGraph(
         }
       )
     ) {
-      FavoriteScreen(
+      DetailScreen(
         modifier = modifier,
-        onNavigateDetail = onNavigateDetail
+        id = it.arguments?.getString("id")?.toIntOrNull() ?: 0,
+        navigateToLogin = {
+          navController.navigateSingleTop(Screen.Auth.Login.route)
+        },
+        onNavigateBack = {
+          navController.popBackStack()
+        }
       )
     }
   }

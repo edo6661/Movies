@@ -1,5 +1,6 @@
 package com.example.submissionexpert1.presentation.ui.shared
 
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,34 +18,40 @@ fun MainText(
   modifier : Modifier = Modifier,
   style : TextStyle = TextStyle.Default,
   text : String,
-  textSize : Size = Size.Medium,
+  textSize : Size = Size.Small,
   color : Color = MaterialTheme.colorScheme.onSurface,
   fontWeight : FontWeight = FontWeight.Normal,
   isEllipsis : Boolean = false,
   maxLines : Int = Int.MAX_VALUE,
   textAlign : TextAlign = TextAlign.Start,
-  textDecoration : TextDecoration = TextDecoration.None
-
+  textDecoration : TextDecoration = TextDecoration.None,
+  onClick : (() -> Unit)? = null
 ) {
   val textSizeValue = when (textSize) {
-    Size.Small      -> MaterialTheme.typography.bodyMedium
-    Size.Medium     -> MaterialTheme.typography.titleMedium
-    Size.Large      -> MaterialTheme.typography.headlineMedium
-    Size.ExtraLarge -> MaterialTheme.typography.displayMedium
+    Size.Small      -> MaterialTheme.typography.labelSmall
+    Size.Medium     -> MaterialTheme.typography.bodySmall
+    Size.Large      -> MaterialTheme.typography.headlineSmall
+    Size.ExtraLarge -> MaterialTheme.typography.titleSmall
   }
   val textStyle = style.copy(
     color = color,
     fontWeight = fontWeight
   )
   val finalStyle = textStyle.merge(textSizeValue)
+
+  val finalModifier = if (onClick != null) {
+    modifier.clickable { onClick() }
+  } else {
+    modifier
+  }
+
   Text(
     text = text,
     style = finalStyle,
-    modifier = modifier,
+    modifier = finalModifier,
     maxLines = maxLines,
     overflow = if (isEllipsis) TextOverflow.Ellipsis else TextOverflow.Clip,
     textAlign = textAlign,
-    textDecoration = textDecoration
+    textDecoration = textDecoration,
   )
-
 }

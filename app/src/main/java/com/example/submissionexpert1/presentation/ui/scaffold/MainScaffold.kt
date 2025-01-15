@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import com.example.submissionexpert1.domain.model.User
 import com.example.submissionexpert1.presentation.ui.nav.BottomBar
 import com.example.submissionexpert1.presentation.ui.nav.TopBackNav
 import com.example.submissionexpert1.presentation.ui.nav.TopNav
@@ -15,32 +16,44 @@ fun MainScaffold(
   scaffoldConfig : ScaffoldConfig,
   isActive : (String) -> Boolean,
   currentRoute : String?,
-  content : @Composable (PaddingValues) -> Unit
+  user : User? = null,
+  logout : () -> Unit,
+  content : @Composable (PaddingValues) -> Unit,
 ) {
   Scaffold(
     topBar = {
       when {
         scaffoldConfig.showBackNav -> {
           TopBackNav(
-            title = "Temporary",
-            onNavigateBack = { navController.popBackStack() }
+            title = if (currentRoute == "Detail/{id}") "Detail" else currentRoute ?: "",
+            onNavigateBack = { navController.popBackStack() },
+          )
+        }
+
+        scaffoldConfig.showMainNav -> {
+          TopNav(
+            currentRoute = currentRoute,
+            user = user,
+            logout = logout,
           )
         }
 
         else                       -> {
-          TopNav(
-            currentRoute = currentRoute,
-          )
         }
       }
     },
     bottomBar = {
-      if (! scaffoldConfig.showBackNav) {
-        BottomBar(
-          isActive = isActive,
-          navController = navController
-        )
+      when {
+        scaffoldConfig.showBottomBar -> {
+          BottomBar(
+            isActive = isActive,
+            navController = navController,
+            user = user,
+
+            )
+        }
       }
+
     }
   ) { innerPadding ->
     content(innerPadding)
