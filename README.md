@@ -125,7 +125,7 @@ This project uses modern Android development technologies and libraries:
 ## Download
 
 You can download the latest version of the app here:
-[Download APK](https://github.com/edo6661/submission-android-expert-tmdb/releases/download/v1.0.0/app-debug.apk)
+[Download APK](https://github.com/edo6661/Movies_Android/releases/download/v1.0.0/app-debug.apk)
 
 ## Build Config
 
