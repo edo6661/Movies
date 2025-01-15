@@ -4,10 +4,12 @@ import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import com.example.submissionexpert1.data.source.local.preferences.ThemePreferences
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
   background = Charcoal,
@@ -61,6 +63,25 @@ fun SubmissionExpert1Theme(
     isDarkTheme                                                    -> DarkColorScheme
     else                                                           -> LightColorScheme
   }
+  val systemUiController = rememberSystemUiController()
+  val useDarkIcons = ! isSystemInDarkTheme()
+
+  val color = colorScheme.tertiary
+
+  SideEffect {
+    // ! top
+    systemUiController.setSystemBarsColor(
+      color = color,
+      darkIcons = useDarkIcons,
+    )
+    // ! bottom
+    systemUiController.setNavigationBarColor(
+      color = color,
+      darkIcons = useDarkIcons
+    )
+  }
+
+
 
   MaterialTheme(
     colorScheme = colorScheme,

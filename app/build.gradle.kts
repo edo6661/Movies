@@ -120,4 +120,5 @@ dependencies {
   implementation("com.google.accompanist:accompanist-swiperefresh:0.26.2-beta")
 
   implementation("androidx.core:core-splashscreen:1.0.1")
+  implementation("com.google.accompanist:accompanist-systemuicontroller:0.31.5-beta")
 }
