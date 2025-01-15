@@ -12,13 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.submissionexpert1.data.source.local.preferences.ThemePreferences
-import com.example.submissionexpert1.presentation.navigation.Screen
 import com.example.submissionexpert1.presentation.navigation.graph.NavGraph
-import com.example.submissionexpert1.presentation.navigation.navigateClearStack
 import com.example.submissionexpert1.presentation.ui.scaffold.MainScaffold
 import com.example.submissionexpert1.presentation.ui.scaffold.config.scaffoldConfig
 import com.example.submissionexpert1.presentation.ui.theme.SubmissionExpert1Theme
-import com.example.submissionexpert1.presentation.viewmodel.auth.MainEvent
 import com.example.submissionexpert1.presentation.viewmodel.auth.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -52,10 +49,7 @@ class MainActivity : ComponentActivity() {
           navController = navController,
           scaffoldConfig = scaffoldConfig(currentRoute),
           currentRoute = currentRoute,
-          logout = {
-            vm.onEvent(MainEvent.Logout)
-            navController.navigateClearStack(Screen.Home.route)
-          },
+
           user = state.user,
 
           ) {

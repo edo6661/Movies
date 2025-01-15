@@ -8,7 +8,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.submissionexpert1.presentation.implementation.*
+import com.example.submissionexpert1.presentation.navigation.ProfileScreen
 import com.example.submissionexpert1.presentation.navigation.Screen
+import com.example.submissionexpert1.presentation.navigation.navigateClearStack
 import com.example.submissionexpert1.presentation.navigation.navigateSingleTop
 
 @Composable
@@ -60,9 +62,32 @@ fun NavGraph(
     ) {
       SettingsScreen(
         modifier = modifier,
+        navigateToProfile = {
+          navController.navigateSingleTop(Screen.Profile.route)
+        },
+        navigateToTheme = {
+          navController.navigateSingleTop(Screen.Theme.route)
+        },
+        onNavigateLogout = {
+          navController.navigateClearStack(Screen.Home.route)
+        }
+      )
+    }
+    composable(
+      route = Screen.Profile.route
+    ) {
+      ProfileScreen(
+        modifier = modifier,
         onNavigateLogin = {
           navController.navigateSingleTop(Screen.Auth.Login.route)
         }
+      )
+    }
+    composable(
+      route = Screen.Theme.route
+    ) {
+      ThemeScreen(
+        modifier = modifier,
       )
     }
     composable(

@@ -21,7 +21,16 @@ fun scaffoldConfig(currentRoute : String?)
       showMainNav = false,
       showBackNav = true,
       showBottomBar = false
-
+    )
+    Screen.Profile.route -> ScaffoldConfig(
+      showMainNav = false,
+      showBackNav = true,
+      showBottomBar = false
+    )
+    Screen.Theme.route -> ScaffoldConfig(
+      showMainNav = false,
+      showBackNav = true,
+      showBottomBar = false
     )
 
     Screen.Home.route   -> ScaffoldConfig(

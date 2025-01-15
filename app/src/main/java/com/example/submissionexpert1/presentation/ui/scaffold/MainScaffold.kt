@@ -17,7 +17,6 @@ fun MainScaffold(
   isActive : (String) -> Boolean,
   currentRoute : String?,
   user : User? = null,
-  logout : () -> Unit,
   content : @Composable (PaddingValues) -> Unit,
 ) {
   Scaffold(
@@ -33,8 +32,6 @@ fun MainScaffold(
         scaffoldConfig.showMainNav -> {
           TopNav(
             currentRoute = currentRoute,
-            user = user,
-            logout = logout,
           )
         }
 
