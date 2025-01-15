@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-  namespace = "com.example.core"
+  namespace = "com.example.cori"
   compileSdk = 34
 
   defaultConfig {
@@ -30,6 +30,8 @@ android {
 }
 
 dependencies {
+  implementation(project(":domain"))
+  
 
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.appcompat)
@@ -37,4 +39,6 @@ dependencies {
   testImplementation(libs.junit)
   androidTestImplementation(libs.androidx.junit)
   androidTestImplementation(libs.androidx.espresso.core)
+  implementation("org.mindrot:jbcrypt:0.4")
+
 }

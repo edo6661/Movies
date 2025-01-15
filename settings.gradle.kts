@@ -21,5 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Submission Expert 1"
 include(":app")
-include(":cori")
+include(":core")
 include(":domain")
