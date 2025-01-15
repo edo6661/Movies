@@ -49,14 +49,13 @@ fun NavGraph(
         navigateToSearch = navigateToSearch
       )
     }
-    composable(
-      route = Screen.Favorite.route
-    ) {
+    composable(route = Screen.Favorite.route) {
       FavoriteScreen(
         modifier = modifier,
         onNavigateDetail = onNavigateDetail
       )
     }
+
     composable(
       route = Screen.Settings.route
     ) {

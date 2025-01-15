@@ -1,4 +1,4 @@
-package com.example.cori
+package com.example.favorite
 
 import org.junit.Test
 

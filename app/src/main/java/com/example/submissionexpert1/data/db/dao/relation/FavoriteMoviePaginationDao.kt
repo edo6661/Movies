@@ -10,30 +10,27 @@ interface FavoriteMoviePaginationDao {
 
   @Query(
     """
-  SELECT 
-      p.*,
-      m.*,
-      CASE 
-          WHEN EXISTS(
-              SELECT 1 
-              FROM pagination_favorite_movies as pfm
-              WHERE pfm.movieId = m.movieId 
-              AND pfm.userId = :userId
-          ) THEN 1 
-          ELSE 0 
-      END AS isFavorite
-  FROM pagination as p
-    INNER JOIN pagination_favorite_movies as pfm ON p.page = pfm.page
-  INNER JOIN movies as m ON pfm.movieId = m.movieId
-  AND EXISTS(
-      SELECT 1 
-      FROM pagination_favorite_movies as pfm
-      WHERE pfm.movieId = m.movieId 
-      AND pfm.userId = :userId
-      AND pfm.page = :page
-  )
-  ORDER BY m.popularity DESC
-  """
+      SELECT 
+        p.*,
+        m.*,
+        pfm.created_at,
+        CASE 
+            WHEN EXISTS(
+                SELECT 1 
+                FROM pagination_favorite_movies as pfm_sub
+                WHERE pfm_sub.movieId = m.movieId 
+                AND pfm_sub.userId = :userId
+            ) THEN 1 
+            ELSE 0 
+        END AS isFavorite
+      FROM pagination AS p
+      INNER JOIN pagination_favorite_movies AS pfm 
+        ON p.page = pfm.page AND pfm.userId = :userId
+      INNER JOIN movies AS m 
+        ON pfm.movieId = m.movieId
+      WHERE pfm.page = :page
+      ORDER BY pfm.created_at DESC
+    """
   )
   fun getFavoriteMoviesByUser(
     page : Int,

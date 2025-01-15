@@ -1,13 +1,8 @@
-package com.example.submissionexpert1.presentation.viewmodel
+package com.example.favorite
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cori.constants.ErrorMessages
-import com.example.domain.common.Result
-import com.example.domain.common.state.ErrorState
 import com.example.domain.event.FavoriteChangeEvent
-import com.example.domain.model.PaginationMovie
-import com.example.domain.repository.movie.IMovieRepository
 import com.example.domain.usecase.movie.IGetPopularMoviesFavoriteUseCase
 import com.example.domain.usecase.movie.IToggleFavoriteMovieUseCase
 import com.example.submissionexpert1.application.di.IODispatcher
@@ -30,7 +25,7 @@ class FavoriteViewModel @Inject constructor(
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
   @MainDispatcher private val mainDispatcher : CoroutineDispatcher,
   private val userPreferences : UserPreferences,
-  private val movieRepository : IMovieRepository
+  private val movieRepository : com.example.domain.repository.movie.IMovieRepository
 ) : ViewModel() {
 
   private val _uiState = MutableStateFlow(FavoriteState())
@@ -93,7 +88,7 @@ class FavoriteViewModel @Inject constructor(
       val result = toggleFavoriteMovieUseCase(movieId)
       withContext(mainDispatcher) {
         when (result) {
-          is Result.Success -> {
+          is com.example.domain.common.Result.Success -> {
             _uiState.update {
               it.copy(
                 isLoadingToggleFavorite = false,
@@ -104,7 +99,7 @@ class FavoriteViewModel @Inject constructor(
 
           }
 
-          is Result.Error   -> {
+          is com.example.domain.common.Result.Error   -> {
             _uiState.update {
               it.copy(
                 alert = result.message,
@@ -148,12 +143,12 @@ class FavoriteViewModel @Inject constructor(
 
       .onEach { result ->
         when (result) {
-          is Result.Success -> {
+          is com.example.domain.common.Result.Success -> {
             handleSuccess(result)
 
           }
 
-          is Result.Error   -> {
+          is com.example.domain.common.Result.Error   -> {
             handleError(result.message)
           }
         }
@@ -233,7 +228,7 @@ class FavoriteViewModel @Inject constructor(
   }
 
   private suspend fun handleSuccess(
-    result : Result.Success<PaginationMovie>
+    result : com.example.domain.common.Result.Success<com.example.domain.model.PaginationMovie>
   ) {
 
     val data =
@@ -242,12 +237,6 @@ class FavoriteViewModel @Inject constructor(
         currentData = _movieState.value.data,
         incomingData = result.data
       )
-    _movieState.update {
-      it.copy(
-        data = data
-      )
-    }
-
     _uiState.update {
       it.copy(
         isLoading = false,
@@ -258,6 +247,11 @@ class FavoriteViewModel @Inject constructor(
 
         )
     }
+    _movieState.update {
+      it.copy(
+        data = data
+      )
+    }
 
   }
 
@@ -265,7 +259,7 @@ class FavoriteViewModel @Inject constructor(
     message : String
   ) {
     when {
-      message == ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE || message == ErrorMessages.CANT_FETCH_MORE -> {
+      message == com.example.cori.constants.ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE || message == com.example.cori.constants.ErrorMessages.CANT_FETCH_MORE -> {
         _uiState.update {
           it.copy(
             alert = message,
@@ -282,11 +276,11 @@ class FavoriteViewModel @Inject constructor(
         }
       }
 
-      else                                                                                                   -> {
+      else                                                                                                                                                         -> {
         _uiState.update {
           it.copy(
             isLoading = false,
-            error = ErrorState(message = message),
+            error = com.example.domain.common.state.ErrorState(message = message),
             isRefreshing = false,
             isLoadingMore = false,
             page = 1,
@@ -306,7 +300,7 @@ class FavoriteViewModel @Inject constructor(
         isLoading = false,
         isRefreshing = false,
         isLoadingMore = false,
-        error = ErrorState(message = message),
+        error = com.example.domain.common.state.ErrorState(message = message),
         page = 1,
 
         )
@@ -320,15 +314,15 @@ data class FavoriteState(
   val isRefreshing : Boolean = false,
   val isLoadingMore : Boolean = false,
   val page : Int = 1,
-  val error : ErrorState? = null,
+  val error : com.example.domain.common.state.ErrorState? = null,
   val alert : String? = null,
   val isLoadingToggleFavorite : Boolean = false,
   val userId : Long? = null
 )
 
 data class FavoriteMovieState(
-  val data : PaginationMovie? = null,
-  val dataBeforeRefresh : PaginationMovie? = null,
+  val data : com.example.domain.model.PaginationMovie? = null,
+  val dataBeforeRefresh : com.example.domain.model.PaginationMovie? = null,
 )
 
 
@@ -340,3 +334,4 @@ sealed class FavoriteEvent {
     val movieId : Int
   ) : FavoriteEvent()
 }
+

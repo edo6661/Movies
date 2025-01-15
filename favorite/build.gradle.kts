@@ -1,37 +1,18 @@
 plugins {
-  alias(libs.plugins.android.application)
+  alias(libs.plugins.android.dynamic.feature)
   alias(libs.plugins.kotlin.android)
   id("org.jetbrains.kotlin.kapt")
   id("com.google.dagger.hilt.android")
-  id("androidx.room")
 
 }
-
 android {
-  namespace = "com.example.submissionexpert1"
+
+  namespace = "com.example.favorite"
   compileSdk = 34
 
   defaultConfig {
-    applicationId = "com.example.submissionexpert1"
     minSdk = 30
-    targetSdk = 34
-    versionCode = 1
-    versionName = "1.0"
-
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    vectorDrawables {
-      useSupportLibrary = true
-    }
-    buildConfigField("String", "API_BASE_URL", "\"https://api.themoviedb.org/3/\"")
-    buildConfigField(
-      "String",
-      "ACCESS_TOKEN",
-      "\"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4MWMwMjE4ODdmNmMxZTRkZjZkMWVjN2E1NWIxNWNiMSIsIm5iZiI6MTcwMTE5MDU0Ni42MDQsInN1YiI6IjY1NjYxYjkyMTdiNWVmMDBjYmRjMTI0OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.H_T5hNRz6a2z0r7On_FxGJUD473HZQd0JxBPVVh2iVc\""
-    )
-    room {
-      schemaDirectory("$projectDir/schemas")
-    }
-
   }
 
   buildTypes {
@@ -47,24 +28,15 @@ android {
   kotlinOptions {
     jvmTarget = "1.8"
   }
-  buildFeatures {
-    compose = true
-    buildConfig = true
-  }
-  composeOptions {
-    kotlinCompilerExtensionVersion = "1.5.1"
-  }
-  packaging {
-    resources {
-      excludes += "/META-INF/{AL2.0,LGPL2.1}"
-    }
-  }
-
 }
 
 dependencies {
+  implementation(project(":app"))
   implementation(project(":domain"))
   implementation(project(":cori"))
+  implementation("com.google.android.play:core-ktx:1.8.1")
+
+
 
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -101,6 +73,10 @@ dependencies {
   implementation("androidx.room:room-runtime:$room_version")
   implementation("androidx.room:room-ktx:$room_version")
   kapt("androidx.room:room-compiler:$room_version")
+
+
+  // serialization
+  implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
   // retrofit
   implementation("com.squareup.retrofit2:retrofit:2.10.0")
   // gson converter

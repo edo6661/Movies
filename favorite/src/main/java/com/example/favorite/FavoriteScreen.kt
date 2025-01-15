@@ -1,4 +1,4 @@
-package com.example.submissionexpert1.presentation.implementation
+package com.example.favorite
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -8,8 +8,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.submissionexpert1.presentation.ui.shared.movie.MovieGrid
-import com.example.submissionexpert1.presentation.viewmodel.FavoriteEvent
-import com.example.submissionexpert1.presentation.viewmodel.FavoriteViewModel
 
 
 private const val LOAD_MORE_THRESHOLD = 3
@@ -24,7 +22,6 @@ fun FavoriteScreen(
   val uiState by viewModel.uiState.collectAsState()
 
   val movieState by viewModel.movieState.collectAsState()
-
   val onEvent = { event : FavoriteEvent -> viewModel.onEvent(event) }
   val movies = if (uiState.isRefreshing) {
     movieState.dataBeforeRefresh?.results ?: emptyList()
@@ -53,6 +50,7 @@ fun FavoriteScreen(
   }
   LaunchedEffect(
     key1 = uiState.isLoading,
+    key2 = uiState.alert != null,
   ) {
     gridState.scrollToItem(0)
   }
@@ -63,7 +61,7 @@ fun FavoriteScreen(
 
   Column(
     modifier = modifier.padding(
-      horizontal = 16.dp
+      16.dp
     ),
   ) {
 
