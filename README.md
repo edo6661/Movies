@@ -1,11 +1,17 @@
 # Movie App
 
-An Android app that shows movies from The Movie Database (TMDB) API. Built with Kotlin and Jetpack Compose using clean architecture and modern Android development tools.
+An Android app that shows movies from The Movie Database (TMDB) API. Built with Kotlin and Jetpack Compose using clean architecture, MVVM and modern Android development tools.
 
-## Download
+## Features
 
-You can download the latest version of the app here:
-[Download APK](https://github.com/edo6661/submission-android-expert-tmdb/releases/download/v1.0.0/app-debug.apk)
+- Show movie list from TMDB API
+- Movie details
+- Search Movies
+- Save favorite movies using Room Database
+- Offline support with caching
+- Swipe to refresh
+- Infinite Scroll
+- Authentication using Room Database
 
 ## Screenshots
 
@@ -32,18 +38,49 @@ You can download the latest version of the app here:
 View more screenshots here:
 [Screenshots Gallery](https://drive.google.com/drive/folders/1lNG7YRV6-0IvXEp9ubUpsdc-W517Msd2)
 
-## Features
+## Getting Started
 
-- Show movie list from TMDB API
-- Movie details
-- Search Movies
-- Save favorite movies using Room Database
-- Offline support with caching
-- Material Design 3 with dynamic theming
-- Swipe to refresh
-- Splash screen
-- Authentication using Room Database
-- Multiple Theme
+### Prerequisites
+- Android Studio Arctic Fox or later
+- JDK 8 or later
+- Android device or emulator running Android 12 (API level 31) or later
+
+### Installation
+1. Clone this repository
+2. Open in Android Studio
+3. Sync gradle and wait for build
+4. Run the app
+
+### TMDB API Setup
+This app uses TMDB API. To run the app:
+1. Sign up at [TMDB](https://www.themoviedb.org/)
+2. Get your API Access Token
+3. Create or edit `local.properties` file in the root project directory
+4. Add your TMDB access token:
+```properties
+TMDB_ACCESS_TOKEN="your_access_token_here"
+```
+
+The app will automatically read the token from local.properties:
+```kotlin
+buildConfigField(
+    "String",
+    "ACCESS_TOKEN",
+    properties.getProperty("TMDB_ACCESS_TOKEN")
+)
+```
+
+Note: Make sure `local.properties` is included in your `.gitignore` file as it contains sensitive information.
+
+Example of `local.properties`:
+```properties
+## This file must *NOT* be checked into Version Control Systems,
+# as it contains information specific to your local configuration.
+#
+# Location of the SDK. This is only used by Gradle.
+sdk.dir=C\:\\Users\\username\\AppData\\Local\\Android\\Sdk
+TMDB_ACCESS_TOKEN="your_access_token_here"
+```
 
 ## Tech Stack
 
@@ -55,7 +92,7 @@ This project uses modern Android development technologies and libraries:
 - 100% Kotlin
 - Jetpack Compose for UI
 - Material Design 3
-- Clean Architecture with multi-module setup (app, core, domain)
+- Clean Architecture with multi-module setup
 - MVVM
 
 ### Libraries
@@ -63,7 +100,6 @@ This project uses modern Android development technologies and libraries:
   - Jetpack Compose with Material 3
   - Navigation Compose
   - Compose Material Icons
-  - Lottie Animation
   - Accompanist (SwipeRefresh, SystemUIController)
   - Splash Screen API
 
@@ -86,25 +122,10 @@ This project uses modern Android development technologies and libraries:
   - Espresso
   - Compose UI Testing
 
-## Getting Started
+## Download
 
-1. Clone this repository
-2. Open in Android Studio
-3. Sync gradle and wait for build
-4. Run the app
-
-### TMDB API Setup
-This app uses TMDB API. To run the app:
-1. Sign up at [TMDB](https://www.themoviedb.org/)
-2. Get your API Access Token
-3. Replace `ACCESS_TOKEN` in `build.gradle` with your token
-
-## Architecture
-
-This app uses Clean Architecture with 3 main modules:
-- **app**: Android application module with UI and DI
-- **domain**: Business logic and use cases
-- **core**: Data layer implementation and utilities
+You can download the latest version of the app here:
+[Download APK](https://github.com/edo6661/submission-android-expert-tmdb/releases/download/v1.0.0/app-debug.apk)
 
 ## Build Config
 
@@ -127,7 +148,7 @@ Please make a pull request to contribute or report any issues you find.
 ## License
 
 ```
-Copyright (c) 2024 [Your Name]
+Copyright (c) 2024 Muhammad Ridho
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
