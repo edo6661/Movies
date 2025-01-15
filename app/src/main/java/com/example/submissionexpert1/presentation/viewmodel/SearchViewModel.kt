@@ -331,7 +331,7 @@ class SearchViewModel @Inject constructor(
       message == ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE || message == ErrorMessages.CANT_FETCH_MORE -> {
         _uiState.update {
           it.copy(
-            alert = message,
+            error = ErrorState(message = "No internet connection"),
             isLoading = false,
             isRefreshing = false,
             isLoadingMore = false,

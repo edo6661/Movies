@@ -36,6 +36,9 @@ fun BottomAlert(
 
     Column(
       modifier = Modifier
+        .padding(
+          16.dp
+        )
         .fillMaxWidth()
         .background(MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.shapes.medium)
         .padding(16.dp)

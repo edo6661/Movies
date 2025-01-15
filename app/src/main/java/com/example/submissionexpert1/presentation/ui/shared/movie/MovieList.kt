@@ -63,7 +63,9 @@ fun MovieList(
       message = alert ?: "",
       onDismiss = { onDismissedAlert() },
       visible = alert != null,
-      modifier = Modifier.align(Alignment.BottomCenter)
+      modifier = Modifier
+        
+        .align(Alignment.BottomCenter)
     )
 
   }
