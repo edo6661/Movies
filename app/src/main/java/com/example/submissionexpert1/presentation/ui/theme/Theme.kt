@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.example.submissionexpert1.data.source.local.preferences.ThemePreferences
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -66,7 +67,9 @@ fun SubmissionExpert1Theme(
   val systemUiController = rememberSystemUiController()
   val useDarkIcons = ! isSystemInDarkTheme()
 
-  val color = colorScheme.tertiary
+  val color = Color.Transparent.copy(
+    alpha = 0.1f
+  )
 
   SideEffect {
     // ! top
