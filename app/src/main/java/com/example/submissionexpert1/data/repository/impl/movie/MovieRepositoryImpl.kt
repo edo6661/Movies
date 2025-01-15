@@ -50,6 +50,7 @@ class MovieRepositoryImpl @Inject constructor(
         language = "en-US",
       )
     }
+
     emitAll(handleApiResultPopularMovies(apiResult, page))
 
   }

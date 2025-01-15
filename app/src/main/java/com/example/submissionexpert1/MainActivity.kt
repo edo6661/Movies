@@ -1,7 +1,6 @@
 package com.example.submissionexpert1
 
 import android.os.Bundle
-import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -32,17 +31,13 @@ class MainActivity : ComponentActivity() {
 
   override fun onCreate(savedInstanceState : Bundle?) {
     super.onCreate(savedInstanceState)
-
-    window.requestFeature(Window.FEATURE_NO_TITLE)
-
     enableEdgeToEdge()
-
-
+    
     setContent {
       SubmissionExpert1Theme(
         themePreferences = themePreferences,
       ) {
-        
+
 
         val state by vm.state.collectAsState()
 

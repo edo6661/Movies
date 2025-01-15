@@ -13,7 +13,7 @@ android {
 
   defaultConfig {
     applicationId = "com.example.submissionexpert1"
-    minSdk = 30
+    minSdk = 31
     targetSdk = 34
     versionCode = 1
     versionName = "1.0"
@@ -119,5 +119,5 @@ dependencies {
   // swipe refresh
   implementation("com.google.accompanist:accompanist-swiperefresh:0.26.2-beta")
 
-  
+  implementation("androidx.core:core-splashscreen:1.0.1")
 }
