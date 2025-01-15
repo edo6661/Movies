@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
@@ -22,11 +24,13 @@ android {
     vectorDrawables {
       useSupportLibrary = true
     }
+    val properties = Properties()
+    properties.load(project.rootProject.file("local.properties").inputStream())
     buildConfigField("String", "API_BASE_URL", "\"https://api.themoviedb.org/3/\"")
     buildConfigField(
       "String",
       "ACCESS_TOKEN",
-      "\"eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4MWMwMjE4ODdmNmMxZTRkZjZkMWVjN2E1NWIxNWNiMSIsIm5iZiI6MTcwMTE5MDU0Ni42MDQsInN1YiI6IjY1NjYxYjkyMTdiNWVmMDBjYmRjMTI0OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.H_T5hNRz6a2z0r7On_FxGJUD473HZQd0JxBPVVh2iVc\""
+      properties.getProperty("TMDB_ACCESS_TOKEN")
     )
     room {
       schemaDirectory("$projectDir/schemas")
