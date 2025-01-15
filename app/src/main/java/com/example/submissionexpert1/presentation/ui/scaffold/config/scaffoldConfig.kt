@@ -11,34 +11,42 @@ data class ScaffoldConfig(
 fun scaffoldConfig(currentRoute : String?)
   : ScaffoldConfig {
   return when (currentRoute) {
-    "Detail/{id}"       -> ScaffoldConfig(
+    "Detail/{id}"        -> ScaffoldConfig(
       showMainNav = false,
       showBackNav = false,
       showBottomBar = false
     )
 
-    Screen.Search.route -> ScaffoldConfig(
+    Screen.Splash.route  -> ScaffoldConfig(
+      showMainNav = false,
+      showBackNav = false,
+      showBottomBar = false
+    )
+
+    Screen.Search.route  -> ScaffoldConfig(
       showMainNav = false,
       showBackNav = true,
       showBottomBar = false
     )
+
     Screen.Profile.route -> ScaffoldConfig(
       showMainNav = false,
       showBackNav = true,
       showBottomBar = false
     )
-    Screen.Theme.route -> ScaffoldConfig(
+
+    Screen.Theme.route   -> ScaffoldConfig(
       showMainNav = false,
       showBackNav = true,
       showBottomBar = false
     )
 
-    Screen.Home.route   -> ScaffoldConfig(
+    Screen.Home.route    -> ScaffoldConfig(
       showMainNav = false,
       showBackNav = false,
       showBottomBar = true
     )
 
-    else                -> ScaffoldConfig()
+    else                 -> ScaffoldConfig()
   }
 }

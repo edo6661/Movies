@@ -7,6 +7,7 @@ sealed class Screen(val route : String) {
   }
 
   data object Home : Screen("Home")
+  data object Splash : Screen("Splash")
   data object Favorite : Screen("Favorite")
   data class Detail(val id : String) : Screen("Detail/$id")
   data object Search : Screen("Search")

@@ -25,12 +25,14 @@ class MainActivity : ComponentActivity() {
 
   private val vm : MainViewModel by viewModels()
 
+
   @Inject
   lateinit var themePreferences : ThemePreferences
 
   override fun onCreate(savedInstanceState : Bundle?) {
     super.onCreate(savedInstanceState)
     enableEdgeToEdge()
+
     setContent {
       SubmissionExpert1Theme(
         themePreferences = themePreferences,

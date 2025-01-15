@@ -22,12 +22,22 @@ fun NavGraph(
 ) {
   NavHost(
     navController = navController,
-    startDestination = if (isUserLoggedIn) Screen.Home.route else startDestination,
+    startDestination = startDestination,
   ) {
     authNavGraph(
       modifier = modifier,
       navController = navController
     )
+//    composable(
+//      route = Screen.Splash.route
+//    ) {
+//      SplashScreen(
+//        modifier = modifier,
+//        onSplashFinished = {
+//          navController.navigateClearStack(Screen.Home.route)
+//        }
+//      )
+//    }
     val onNavigateDetail = { id : String ->
       navController.navigateSingleTop("Detail/$id")
     }

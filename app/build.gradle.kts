@@ -119,5 +119,7 @@ dependencies {
   // swipe refresh
   implementation("com.google.accompanist:accompanist-swiperefresh:0.26.2-beta")
 
+  implementation("androidx.core:core-splashscreen:1.0.1")
+
 
 }
