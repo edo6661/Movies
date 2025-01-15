@@ -30,8 +30,8 @@ import com.example.submissionexpert1.presentation.viewmodel.auth.RegisterViewMod
 
 @Composable
 fun RegisterScreen(
-  viewModel : RegisterViewModel = hiltViewModel(),
   modifier : Modifier = Modifier,
+  viewModel : RegisterViewModel = hiltViewModel(),
   onNavigateLogin : () -> Unit
 ) {
   val state by viewModel.state.collectAsState()
@@ -139,7 +139,7 @@ private fun TextFieldsRegister(
           imageVector = if (state.isPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
           contentDescription = if (state.isPasswordVisible) "Hide password" else "Show password",
           tint = MaterialTheme.colorScheme.onSecondary
-          
+
         )
       }
     }

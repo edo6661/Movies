@@ -5,10 +5,6 @@ fun String.validateEmail() : Boolean {
   return this.matches(emailPattern.toRegex())
 }
 
-fun String.validatePassword() : Boolean {
-  val passwordPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$"
-  return this.matches(passwordPattern.toRegex())
-}
 
 fun String.validateConfirmPassword(password : String) : Boolean {
   return this == password

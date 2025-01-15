@@ -19,19 +19,17 @@ import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.cori.constants.Prefix
+import com.example.domain.model.Movie
 import com.example.submissionexpert1.R
 
 
 @Composable
 fun CardGridMovieItem(
   modifier : Modifier = Modifier,
-  movie : com.example.domain.model.Movie,
+  movie : Movie,
   onClick : () -> Unit,
-  isLoadingToggleFavorite : Boolean,
-  onToggleFavorite : (Int) -> Unit,
-  userId : Long? = null
 
-) {
+  ) {
   Card(
     modifier = modifier
       .fillMaxWidth(),
@@ -49,7 +47,7 @@ fun CardGridMovieItem(
     ) {
     AsyncImage(
       model = ImageRequest.Builder(LocalContext.current)
-        .data(com.example.cori.constants.Prefix.PREFIX_IMAGE_URL + movie.posterPath)
+        .data(Prefix.PREFIX_IMAGE_URL + movie.posterPath)
         .crossfade(true)
         .diskCachePolicy(CachePolicy.ENABLED)
         .diskCacheKey(movie.posterPath)

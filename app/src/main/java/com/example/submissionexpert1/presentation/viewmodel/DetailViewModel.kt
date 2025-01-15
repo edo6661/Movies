@@ -3,13 +3,12 @@ package com.example.submissionexpert1.presentation.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.common.Result
+import com.example.domain.usecase.movie.IGetMovieUseCase
+import com.example.domain.usecase.movie.IToggleFavoriteMovieUseCase
 import com.example.submissionexpert1.application.di.IODispatcher
 import com.example.submissionexpert1.application.di.MainDispatcher
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
-import com.example.domain.common.Result
-import com.example.domain.model.MovieWithGenres
-import com.example.domain.usecase.movie.IGetMovieUseCase
-import com.example.domain.usecase.movie.IToggleFavoriteMovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
@@ -22,8 +21,8 @@ class DetailViewModel @Inject constructor(
   savedStateHandle : SavedStateHandle,
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
   @MainDispatcher private val mainDispatcher : CoroutineDispatcher,
-  private val getMovieUseCase : com.example.domain.usecase.movie.IGetMovieUseCase,
-  private val toggleMovieUseCase : com.example.domain.usecase.movie.IToggleFavoriteMovieUseCase,
+  private val getMovieUseCase : IGetMovieUseCase,
+  private val toggleMovieUseCase : IToggleFavoriteMovieUseCase,
   private val userPreferences : UserPreferences
 ) : ViewModel() {
 
@@ -65,7 +64,7 @@ class DetailViewModel @Inject constructor(
       val result = toggleMovieUseCase(id)
       withContext(mainDispatcher) {
         when (result) {
-          is com.example.domain.common.Result.Success -> {
+          is Result.Success -> {
             _state.value = _state.value.copy(
               isLoadingToggleFavorite = false,
               movie = _state.value.movie?.movie?.copy(
@@ -78,7 +77,7 @@ class DetailViewModel @Inject constructor(
             )
           }
 
-          is com.example.domain.common.Result.Error   -> {
+          is Result.Error   -> {
             _state.value = _state.value.copy(
               error = result.message,
               isLoadingToggleFavorite = false
@@ -102,14 +101,14 @@ class DetailViewModel @Inject constructor(
       }
       .onEach {
         when (it) {
-          is com.example.domain.common.Result.Success -> {
+          is Result.Success -> {
             _state.value = _state.value.copy(
               movie = it.data,
               isLoading = false
             )
           }
 
-          is com.example.domain.common.Result.Error   -> {
+          is Result.Error   -> {
             _state.value = _state.value.copy(
               error = it.message,
               isLoading = false

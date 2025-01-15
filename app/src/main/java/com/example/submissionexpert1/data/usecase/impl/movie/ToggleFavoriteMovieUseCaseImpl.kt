@@ -6,10 +6,10 @@ import com.example.domain.usecase.movie.IToggleFavoriteMovieUseCase
 import javax.inject.Inject
 
 class ToggleFavoriteMovieUseCaseImpl @Inject constructor(
-  private val movieRepository : com.example.domain.repository.movie.IMovieRepository
-) : com.example.domain.usecase.movie.IToggleFavoriteMovieUseCase {
+  private val movieRepository : IMovieRepository
+) : IToggleFavoriteMovieUseCase {
 
-  override suspend fun invoke(movieId : Int) : com.example.domain.common.Result<String> {
+  override suspend fun invoke(movieId : Int) : Result<String> {
     return movieRepository.toggleFavoriteMovie(movieId)
   }
 

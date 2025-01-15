@@ -16,7 +16,7 @@ fun MainScaffold(
   scaffoldConfig : ScaffoldConfig,
   isActive : (String) -> Boolean,
   currentRoute : String?,
-  user : com.example.domain.model.User? = null,
+  user : User? = null,
   content : @Composable (PaddingValues) -> Unit,
 ) {
   Scaffold(

@@ -18,7 +18,6 @@ fun NavGraph(
   modifier : Modifier = Modifier,
   startDestination : String = Screen.Home.route,
   navController : NavHostController,
-  isUserLoggedIn : Boolean = false,
 ) {
   NavHost(
     navController = navController,
@@ -28,25 +27,14 @@ fun NavGraph(
       modifier = modifier,
       navController = navController
     )
-//    composable(
-//      route = Screen.Splash.route
-//    ) {
-//      SplashScreen(
-//        modifier = modifier,
-//        onSplashFinished = {
-//          navController.navigateClearStack(Screen.Home.route)
-//        }
-//      )
-//    }
+
     val onNavigateDetail = { id : String ->
       navController.navigateSingleTop("Detail/$id")
     }
     composable(
       route = Screen.Home.route
     ) {
-      val navigateToLogin = {
-        navController.navigateSingleTop(Screen.Auth.Login.route)
-      }
+      
       val navigateToSearch = {
         navController.navigateSingleTop(Screen.Search.route)
       }
@@ -55,7 +43,6 @@ fun NavGraph(
       HomeScreen(
         modifier = modifier,
         onNavigateDetail = onNavigateDetail,
-        navigateToLogin = navigateToLogin,
         navigateToSearch = navigateToSearch
       )
     }

@@ -1,6 +1,5 @@
 package com.example.submissionexpert1.data.db.entity.relation
 
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -31,14 +30,5 @@ data class PaginationMovieEntity(
   val page : Int,
   val movieId : Int
 )
-
-data class PaginationWithMovie(
-  @Embedded val pagination : PaginationEntity,
-  @Embedded val movie : MovieEntity
-)
-
-
-
-
 
 

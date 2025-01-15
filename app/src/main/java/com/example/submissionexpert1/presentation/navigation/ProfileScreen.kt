@@ -1,31 +1,29 @@
 package com.example.submissionexpert1.presentation.navigation
 
 import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.submissionexpert1.data.source.local.preferences.ThemePreferences
 import com.example.submissionexpert1.presentation.common.Message
 import com.example.submissionexpert1.presentation.ui.shared.MainButton
 import com.example.submissionexpert1.presentation.ui.shared.MainTextField
-import com.example.submissionexpert1.presentation.viewmodel.ProfileViewModel
 import com.example.submissionexpert1.presentation.viewmodel.ProfileEvent
 import com.example.submissionexpert1.presentation.viewmodel.ProfileState
-import com.example.submissionexpert1.presentation.viewmodel.SettingViewModel
+import com.example.submissionexpert1.presentation.viewmodel.ProfileViewModel
 
 
 @Composable
@@ -57,18 +55,17 @@ fun ProfileScreen(
   ) {
 
 
-      Spacer(
-        modifier = Modifier.height(16.dp)
-      )
-      TextFieldsSetting(
-        state = state,
-        onEvent = onEvent
-      )
+    Spacer(
+      modifier = Modifier.height(16.dp)
+    )
+    TextFieldsSetting(
+      state = state,
+      onEvent = onEvent
+    )
 
 
   }
 }
-
 
 
 @Suppress("t")

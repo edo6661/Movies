@@ -2,12 +2,11 @@ package com.example.submissionexpert1.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.domain.model.User
+import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,8 +16,9 @@ class SettingViewModel @Inject constructor(
   private val userPreferences : UserPreferences,
 ) : ViewModel() {
 
-  private var _user :MutableStateFlow<com.example.domain.model.User?> = MutableStateFlow(null)
+  private var _user : MutableStateFlow<User?> = MutableStateFlow(null)
   val user = _user.asStateFlow()
+
   init {
     viewModelScope.launch {
       userPreferences.getUserData().collect {
@@ -42,5 +42,5 @@ class SettingViewModel @Inject constructor(
 }
 
 sealed class SettingEvent {
-  object Logout : SettingEvent()
+  data object Logout : SettingEvent()
 }

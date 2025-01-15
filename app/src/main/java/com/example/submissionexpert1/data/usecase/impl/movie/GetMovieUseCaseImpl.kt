@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetMovieUseCaseImpl @Inject constructor(
-  private val repo : com.example.domain.repository.movie.IMovieRepository
-) : com.example.domain.usecase.movie.IGetMovieUseCase {
+  private val repo : IMovieRepository
+) : IGetMovieUseCase {
 
-  override fun invoke(id : Int) : Flow<com.example.domain.common.Result<com.example.domain.model.MovieWithGenres>> {
+  override fun invoke(id : Int) : Flow<Result<MovieWithGenres>> {
     return repo.getMovie(id)
   }
 

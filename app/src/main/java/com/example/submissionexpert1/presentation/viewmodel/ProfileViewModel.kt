@@ -3,29 +3,30 @@ package com.example.submissionexpert1.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cori.constants.Auth
+import com.example.domain.common.Result
+import com.example.domain.usecase.user.IAuthUseCase
 import com.example.submissionexpert1.application.di.IODispatcher
 import com.example.submissionexpert1.application.di.MainDispatcher
-import com.example.submissionexpert1.data.source.local.preferences.ThemePreferences
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.submissionexpert1.presentation.common.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-  private val themePreferences : ThemePreferences,
   private val userPreferences : UserPreferences,
-  private val useCase : com.example.domain.usecase.user.IAuthUseCase,
+  private val useCase : IAuthUseCase,
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
   @MainDispatcher private val mainDispatcher : CoroutineDispatcher
 ) : ViewModel() {
 
-  var _uiState = MutableStateFlow(ProfileState())
+  private var _uiState = MutableStateFlow(ProfileState())
   val uiState = _uiState.asStateFlow()
 
 
@@ -113,7 +114,7 @@ class ProfileViewModel @Inject constructor(
         }
         .collect { result ->
           when (result) {
-            is com.example.domain.common.Result.Success -> {
+            is Result.Success -> {
               withContext(mainDispatcher) {
                 _uiState.value = _uiState.value.copy(
                   isLoading = false,
@@ -122,17 +123,17 @@ class ProfileViewModel @Inject constructor(
               }
             }
 
-            is com.example.domain.common.Result.Error   -> {
+            is Result.Error   -> {
               withContext(mainDispatcher) {
                 when (result.message) {
-                  com.example.cori.constants.Auth.EMAIL_ALREADY_EXIST -> {
+                  Auth.EMAIL_ALREADY_EXIST -> {
                     _uiState.value = _uiState.value.copy(
                       isLoading = false,
                       emailError = result.message
                     )
                   }
 
-                  com.example.cori.constants.Auth.PASSWORD_INVALID    -> {
+                  Auth.PASSWORD_INVALID    -> {
                     _uiState.value = _uiState.value.copy(
                       isLoading = false,
                       passwordError = result.message,
@@ -140,7 +141,7 @@ class ProfileViewModel @Inject constructor(
                     )
                   }
 
-                  else                                                -> {
+                  else                     -> {
                     _uiState.value = _uiState.value.copy(
                       isLoading = false,
                       message = Message.Error(result.message)

@@ -5,8 +5,8 @@ import com.example.domain.usecase.movie.IGetMoviesWithQueryUseCase
 import javax.inject.Inject
 
 class GetMoviesWithQueryUseCaseImpl @Inject constructor(
-  private val repo : com.example.domain.repository.movie.IMovieRepository
-) : com.example.domain.usecase.movie.IGetMoviesWithQueryUseCase {
+  private val repo : IMovieRepository
+) : IGetMoviesWithQueryUseCase {
 
   override operator fun invoke(page : String, query : String) = repo.getMoviesWithQuery(page, query)
 }

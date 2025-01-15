@@ -17,12 +17,7 @@ fun scaffoldConfig(currentRoute : String?)
       showBottomBar = false
     )
 
-    Screen.Splash.route  -> ScaffoldConfig(
-      showMainNav = false,
-      showBackNav = false,
-      showBottomBar = false
-    )
-
+   
     Screen.Search.route  -> ScaffoldConfig(
       showMainNav = false,
       showBackNav = true,

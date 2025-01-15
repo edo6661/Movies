@@ -116,8 +116,9 @@ private fun TextFieldsLogin(
     error = emailError,
     unfocusedContainerColor = MaterialTheme.colorScheme.tertiary,
     focusedContainerColor = MaterialTheme.colorScheme.tertiary,
+    modifier = Modifier
 
-    )
+  )
   MainTextField(
     value = password,
     onValueChange = {
@@ -133,6 +134,7 @@ private fun TextFieldsLogin(
     ),
     error = passwordError,
     isPasswordVisible = isPasswordVisible,
+    modifier = Modifier,
     trailingIcon = {
       IconToggleButton(
         checked = isPasswordVisible,

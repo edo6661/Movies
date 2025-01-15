@@ -23,11 +23,9 @@ import com.example.submissionexpert1.presentation.ui.shared.MainText
 fun BottomBar(
   isActive : (String) -> Boolean,
   navController : NavHostController,
-  user : com.example.domain.model.User? = null,
+  user : User? = null,
 ) {
-  Column(
-
-  ) {
+  Column {
 
     HorizontalDivider(
       modifier = Modifier

@@ -26,8 +26,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
-import com.example.cori.constants.Prefix
-import com.example.cori.utils.safeUiString
+import com.example.domain.model.Genre
+import com.example.domain.model.Movie
+import com.example.domain.model.MovieWithGenres
 import com.example.submissionexpert1.R
 import com.example.submissionexpert1.presentation.common.Size
 import com.example.submissionexpert1.presentation.ui.animation.TabsSpec
@@ -83,7 +84,7 @@ fun DetailScreen(
 
       state.movie != null -> {
         DetailContent(
-          movie = state.movie as com.example.domain.model.MovieWithGenres,
+          movie = state.movie as MovieWithGenres,
           onToggleFavorite = { id -> onEvent(DetailEvent.OnToggleFavorite(id)) },
           userId = state.userId,
           navigateToLogin = navigateToLogin,
@@ -99,7 +100,7 @@ fun DetailScreen(
 
 @Composable
 fun DetailContent(
-  movie : com.example.domain.model.MovieWithGenres,
+  movie : MovieWithGenres,
   onToggleFavorite : (Int) -> Unit,
   userId : Long? = null,
   navigateToLogin : () -> Unit,
@@ -126,9 +127,6 @@ fun DetailContent(
 
     TopSection(
       movie = onlyMovie,
-      onToggleFavorite = onToggleFavorite,
-      userId = userId,
-      navigateToLogin = navigateToLogin
     )
     MiddleSection(
       movie = onlyMovie
@@ -148,7 +146,7 @@ fun DetailContent(
 
 @Composable
 private fun TopBar(
-  movie : com.example.domain.model.Movie,
+  movie : Movie,
   onToggleFavorite : (Int) -> Unit,
   userId : Long? = null,
   navigateToLogin : () -> Unit,
@@ -214,14 +212,10 @@ private fun TopBar(
 
 @Composable
 private fun TopSection(
-  movie : com.example.domain.model.Movie,
-  onToggleFavorite : (Int) -> Unit,
-  userId : Long? = null,
-  navigateToLogin : () -> Unit
+  movie : Movie,
 
-) {
-  Box(
   ) {
+  Box {
 
     Image(
       painter = rememberAsyncImagePainter(
@@ -291,7 +285,7 @@ private fun TopSection(
 
 @Composable
 private fun MiddleSection(
-  movie : com.example.domain.model.Movie
+  movie : Movie
 ) {
 
   val paddingTopDodgePoster = 64
@@ -398,7 +392,7 @@ private fun BottomAction(
 
 @Composable
 private fun BottomSection(
-  movie : com.example.domain.model.MovieWithGenres,
+  movie : MovieWithGenres,
   currentTab : Int,
   onTabSelected : (Int) -> Unit,
   onToggleShowAllOverview : () -> Unit,
@@ -427,12 +421,12 @@ private fun BottomSection(
   }
 }
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ContentBottomTab(
   currentTab : Int,
   overview : String,
-  genres : List<com.example.domain.model.Genre>,
+  genres : List<Genre>,
   onToggleShowAllOverview : () -> Unit,
   showAllOverview : Boolean
 ) {
@@ -517,9 +511,7 @@ private fun CustomBottomTab(
   )
   val screenWithDp = LocalConfiguration.current.screenWidthDp
 
-  Column(
-
-  ) {
+  Column {
 
     Row(
       verticalAlignment = Alignment.CenterVertically,

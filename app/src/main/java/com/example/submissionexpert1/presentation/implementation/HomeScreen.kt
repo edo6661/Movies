@@ -18,7 +18,6 @@ fun HomeScreen(
   modifier : Modifier = Modifier,
   onNavigateDetail : (String) -> Unit,
   viewModel : HomeViewModel = hiltViewModel(),
-  navigateToLogin : () -> Unit,
   navigateToSearch : () -> Unit
 
 ) {
@@ -72,16 +71,7 @@ fun HomeScreen(
       isRefreshing = uiState.isRefreshing,
       isLoadingMore = uiState.isLoadingMore,
       error = uiState.error,
-      isLoadingToggleFavorite = uiState.isLoadingToggleFavorite,
-      onToggleFavorite = { movieId ->
-        if (uiState.userId == null) {
-          navigateToLogin()
-          return@MovieGrid
-        }
-        onEvent(HomeEvent.OnToggleFavorite(movieId))
-      },
       onDismissedAlert = { onEvent(HomeEvent.OnDismissedAlert) },
-      userId = uiState.userId,
       onLoad = { onEvent(HomeEvent.OnLoad) },
       onRefresh = { onEvent(HomeEvent.OnRefresh) },
       navigateToSearch = navigateToSearch,

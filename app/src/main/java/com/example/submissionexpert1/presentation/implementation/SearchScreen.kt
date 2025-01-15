@@ -109,15 +109,9 @@ fun SearchScreen(
       isRefreshing = uiState.isRefreshing,
       isLoadingMore = uiState.isLoadingMore,
       error = uiState.error,
-      isLoadingToggleFavorite = uiState.isLoadingToggleFavorite,
-      onToggleFavorite = { movieId ->
-        vm.onEvent(SearchEvent.OnToggleFavorite(movieId))
-
-      },
       onDismissedAlert = {
         vm.onEvent(SearchEvent.OnDismissedAlert)
       },
-      userId = uiState.userId,
       onLoad = {
         vm.onEvent(SearchEvent.OnSearch)
       },

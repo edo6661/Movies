@@ -4,12 +4,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.cori.constants.ErrorMessages
+import com.example.domain.common.state.ErrorState
+import com.example.domain.model.Movie
 import com.example.submissionexpert1.R
 import com.example.submissionexpert1.presentation.ui.state.alert.BottomAlert
 import com.example.submissionexpert1.presentation.ui.state.empty.MainEmpty
@@ -18,30 +19,23 @@ import com.example.submissionexpert1.presentation.ui.state.loading.CenteredCircu
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieList(
-  movies : List<com.example.domain.model.Movie>,
+  movies : List<Movie>,
   listState : LazyListState,
   onNavigateDetail : (String) -> Unit,
   alert : String?,
   isLoading : Boolean,
   isRefreshing : Boolean,
   isLoadingMore : Boolean,
-  error : com.example.domain.common.state.ErrorState?,
+  error : ErrorState?,
   onDismissedAlert : () -> Unit,
   onLoad : () -> Unit,
   onRefresh : () -> Unit,
-  isLoadingToggleFavorite : Boolean,
-  onToggleFavorite : (Int) -> Unit,
-  userId : Long? = null,
   searchedOnce : Boolean = true,
 
   ) {
-  Box(
-
-
-  ) {
+  Box {
     MovieListContent(
       movies = movies,
       listState = listState,
@@ -52,9 +46,6 @@ fun MovieList(
       error = error,
       onRefresh = onRefresh,
       onLoad = onLoad,
-      isLoadingToggleFavorite = isLoadingToggleFavorite,
-      onToggleFavorite = onToggleFavorite,
-      userId = userId,
       searchedOnce = searchedOnce
     )
     BottomAlert(
@@ -71,18 +62,15 @@ fun MovieList(
 
 @Composable
 fun MovieListContent(
-  movies : List<com.example.domain.model.Movie>,
+  movies : List<Movie>,
   listState : LazyListState,
   onNavigateDetail : (String) -> Unit,
   isLoading : Boolean,
   isRefreshing : Boolean,
   isLoadingMore : Boolean,
-  error : com.example.domain.common.state.ErrorState?,
+  error : ErrorState?,
   onRefresh : () -> Unit,
   onLoad : () -> Unit,
-  isLoadingToggleFavorite : Boolean,
-  onToggleFavorite : (Int) -> Unit,
-  userId : Long?,
   searchedOnce : Boolean = true
 
 ) {
@@ -100,7 +88,7 @@ fun MovieListContent(
 
       ! error?.message.isNullOrEmpty() && ! isRefreshing                                                    -> {
         MainError(
-          message = error?.message ?: com.example.cori.constants.ErrorMessages.UNKNOWN_ERROR,
+          message = error?.message ?: ErrorMessages.UNKNOWN_ERROR,
           onRetry = { onLoad() }
         )
       }
@@ -141,9 +129,6 @@ fun MovieListContent(
               onClick = {
                 onNavigateDetail(movie.id.toString())
               },
-              isLoadingToggleFavorite = isLoadingToggleFavorite,
-              onToggleFavorite = onToggleFavorite,
-              userId = userId
             )
           }
 

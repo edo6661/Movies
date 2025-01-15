@@ -5,7 +5,6 @@ import com.example.domain.event.FavoriteChangeEvent
 import com.example.domain.model.MovieWithGenres
 import com.example.domain.model.PaginationMovie
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 
 interface IMovieRepository {

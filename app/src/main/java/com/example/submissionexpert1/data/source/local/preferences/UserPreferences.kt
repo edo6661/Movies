@@ -21,13 +21,13 @@ class UserPreferences @Inject constructor(
   private val gson = Gson()
   private val dataStore = context.dataStore
 
-  suspend fun saveUserSession(user : com.example.domain.model.User) = dataStore.edit {
+  suspend fun saveUserSession(user : User) = dataStore.edit {
     it[USER_DATA_KEY] = gson.toJson(user)
   }
 
-  fun getUserData() : Flow<com.example.domain.model.User?> = dataStore.data.map { preferences ->
+  fun getUserData() : Flow<User?> = dataStore.data.map { preferences ->
     preferences[USER_DATA_KEY]?.let {
-      gson.fromJson(it, com.example.domain.model.User::class.java)
+      gson.fromJson(it, User::class.java)
     }
   }
 

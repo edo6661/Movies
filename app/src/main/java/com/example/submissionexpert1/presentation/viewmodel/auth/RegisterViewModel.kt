@@ -6,6 +6,9 @@ import com.example.cori.extensions.validate3Char
 import com.example.cori.extensions.validateConfirmPassword
 import com.example.cori.extensions.validateEmail
 import com.example.cori.utils.hashPassword
+import com.example.domain.common.Result
+import com.example.domain.model.User
+import com.example.domain.usecase.user.IAuthUseCase
 import com.example.submissionexpert1.application.di.IODispatcher
 import com.example.submissionexpert1.application.di.MainDispatcher
 import com.example.submissionexpert1.presentation.common.Message
@@ -18,10 +21,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-  private val useCase : com.example.domain.usecase.user.IAuthUseCase,
+  private val useCase : IAuthUseCase,
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
   @MainDispatcher private val mainDispatcher : CoroutineDispatcher
 
@@ -62,11 +64,6 @@ class RegisterViewModel @Inject constructor(
     )
   }
 
-  private fun resetState() {
-    _state.value = RegisterState()
-  }
-
-
   private fun validateAndRegister() {
     val currentState = _state.value
 
@@ -102,11 +99,11 @@ class RegisterViewModel @Inject constructor(
   }
 
   private fun performRegistration() {
-    val hashedPassword = com.example.cori.utils.hashPassword(_state.value.password)
+    val hashedPassword = hashPassword(_state.value.password)
     updateState { copy(isLoading = true) }
     viewModelScope.launch(ioDispatcher) {
       useCase.register(
-        com.example.domain.model.User(
+        User(
           firstName = _state.value.firstName,
           lastName = _state.value.lastName,
           email = _state.value.email,
@@ -120,12 +117,12 @@ class RegisterViewModel @Inject constructor(
           withContext(mainDispatcher) {
 
             when (result) {
-              is com.example.domain.common.Result.Success -> {
+              is Result.Success -> {
 
                 updateState { copy(isLoading = false, message = Message.Success(result.data)) }
               }
 
-              is com.example.domain.common.Result.Error   -> {
+              is Result.Error   -> {
                 if (result.message == "Email Already Exist") {
                   updateState { copy(isLoading = false, emailError = "Email Already Exist") }
 

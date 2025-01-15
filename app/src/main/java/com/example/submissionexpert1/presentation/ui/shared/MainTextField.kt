@@ -24,7 +24,7 @@ import com.example.submissionexpert1.presentation.common.Size
 
 @Composable
 fun MainTextField(
-  modifier : Modifier = Modifier.fillMaxWidth(),
+  modifier : Modifier = Modifier,
   value : String,
   onValueChange : (String) -> Unit,
   label : String? = null,
@@ -68,7 +68,7 @@ fun MainTextField(
       enabled = enabled,
       readOnly = readOnly,
       maxLines = maxLines,
-      modifier = modifier,
+      modifier = modifier.fillMaxWidth(),
       keyboardOptions = keyboardOptions,
       textStyle = textStyle,
       leadingIcon = leadingIcon,

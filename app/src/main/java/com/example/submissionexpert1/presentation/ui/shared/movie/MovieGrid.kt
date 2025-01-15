@@ -5,12 +5,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.cori.constants.ErrorMessages
+import com.example.domain.common.state.ErrorState
+import com.example.domain.model.Movie
 import com.example.submissionexpert1.R
 import com.example.submissionexpert1.presentation.common.Size
 import com.example.submissionexpert1.presentation.ui.shared.MainText
@@ -22,34 +23,26 @@ import com.example.submissionexpert1.presentation.ui.state.loading.CenteredCircu
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieGrid(
-  movies : List<com.example.domain.model.Movie>,
+  movies : List<Movie>,
   gridState : LazyGridState,
   onNavigateDetail : (String) -> Unit,
   alert : String?,
   isLoading : Boolean,
   isRefreshing : Boolean,
   isLoadingMore : Boolean,
-  error : com.example.domain.common.state.ErrorState?,
+  error : ErrorState?,
   onDismissedAlert : () -> Unit,
   onLoad : () -> Unit,
   onRefresh : () -> Unit,
-  isLoadingToggleFavorite : Boolean,
-  onToggleFavorite : (Int) -> Unit,
-  userId : Long? = null,
   searchedOnce : Boolean = true,
   navigateToSearch : () -> Unit = {},
   isTopSectionExist : Boolean = true,
   column : Int
 
 ) {
-  Box(
-
-
-  ) {
+  Box {
     MovieGridContent(
       movies = movies,
       gridState = gridState,
@@ -60,9 +53,6 @@ fun MovieGrid(
       error = error,
       onRefresh = onRefresh,
       onLoad = onLoad,
-      isLoadingToggleFavorite = isLoadingToggleFavorite,
-      onToggleFavorite = onToggleFavorite,
-      userId = userId,
       searchedOnce = searchedOnce,
       navigateToSearch = navigateToSearch,
       isTopSectionExist = isTopSectionExist,
@@ -80,18 +70,15 @@ fun MovieGrid(
 
 @Composable
 fun MovieGridContent(
-  movies : List<com.example.domain.model.Movie>,
+  movies : List<Movie>,
   gridState : LazyGridState,
   onNavigateDetail : (String) -> Unit,
   isLoading : Boolean,
   isRefreshing : Boolean,
   isLoadingMore : Boolean,
-  error : com.example.domain.common.state.ErrorState?,
+  error : ErrorState?,
   onRefresh : () -> Unit,
   onLoad : () -> Unit,
-  isLoadingToggleFavorite : Boolean,
-  onToggleFavorite : (Int) -> Unit,
-  userId : Long?,
   searchedOnce : Boolean = true,
   navigateToSearch : () -> Unit,
   isTopSectionExist : Boolean = true,
@@ -114,7 +101,7 @@ fun MovieGridContent(
 
       ! error?.message.isNullOrEmpty() && ! isRefreshing                                                    -> {
         MainError(
-          message = error?.message ?: com.example.cori.constants.ErrorMessages.UNKNOWN_ERROR,
+          message = error?.message ?: ErrorMessages.UNKNOWN_ERROR,
           onRetry = { onLoad() }
         )
       }
@@ -181,9 +168,6 @@ fun MovieGridContent(
               onClick = {
                 onNavigateDetail(movies[i].id.toString())
               },
-              isLoadingToggleFavorite = isLoadingToggleFavorite,
-              onToggleFavorite = onToggleFavorite,
-              userId = userId
             )
           }
 

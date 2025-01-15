@@ -62,7 +62,6 @@ class MainActivity : ComponentActivity() {
             modifier = Modifier
               .padding(it),
             navController = navController,
-            isUserLoggedIn = state.user != null,
           )
         }
       }

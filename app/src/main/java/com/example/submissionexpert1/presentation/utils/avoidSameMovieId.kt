@@ -5,10 +5,10 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
 suspend fun avoidSameMovieId(
-  currentData : com.example.domain.model.PaginationMovie?,
-  incomingData : com.example.domain.model.PaginationMovie,
+  currentData : PaginationMovie?,
+  incomingData : PaginationMovie,
   dispatcher : CoroutineDispatcher
-) : com.example.domain.model.PaginationMovie = withContext(dispatcher) {
+) : PaginationMovie = withContext(dispatcher) {
   val existingIdsCurrentData = currentData?.results?.map { it.id }?.toSet() ?: emptySet()
   val filteredNewResults = incomingData.results.filterNot { it.id in existingIdsCurrentData }
   val combinedFilteredResults = currentData?.copy(

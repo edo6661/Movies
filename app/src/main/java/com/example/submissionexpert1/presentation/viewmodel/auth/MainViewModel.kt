@@ -2,19 +2,16 @@ package com.example.submissionexpert1.presentation.viewmodel.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.submissionexpert1.application.di.IODispatcher
-import com.example.submissionexpert1.application.di.MainDispatcher
-import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.domain.model.User
+import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-  
+
   private val userPreferences : UserPreferences,
 ) : ViewModel() {
 
@@ -54,7 +51,7 @@ class MainViewModel @Inject constructor(
 }
 
 data class MainState(
-  val user : com.example.domain.model.User? = null,
+  val user : User? = null,
 )
 
 sealed class MainEvent {

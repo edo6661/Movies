@@ -8,12 +8,12 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetPopularMoviesUseCaseImpl @Inject constructor(
-  private val movieRepository : com.example.domain.repository.movie.IMovieRepository
-) : com.example.domain.usecase.movie.IGetPopularMoviesUseCase {
+  private val movieRepository : IMovieRepository
+) : IGetPopularMoviesUseCase {
 
   override operator fun invoke(
     page : String,
-  ) : Flow<com.example.domain.common.Result<com.example.domain.model.PaginationMovie>> {
+  ) : Flow<Result<PaginationMovie>> {
     return movieRepository.getPopularMovies(
       page,
     )
