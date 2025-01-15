@@ -10,10 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.cori.constants.ErrorMessages
 import com.example.submissionexpert1.R
-import com.example.submissionexpert1.core.constants.ErrorMessages
-import com.example.submissionexpert1.domain.common.state.ErrorState
-import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.presentation.common.Size
 import com.example.submissionexpert1.presentation.ui.shared.MainText
 import com.example.submissionexpert1.presentation.ui.shared.SearchClickableTextField
@@ -28,14 +26,14 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieGrid(
-  movies : List<Movie>,
+  movies : List<com.example.domain.model.Movie>,
   gridState : LazyGridState,
   onNavigateDetail : (String) -> Unit,
   alert : String?,
   isLoading : Boolean,
   isRefreshing : Boolean,
   isLoadingMore : Boolean,
-  error : ErrorState?,
+  error : com.example.domain.common.state.ErrorState?,
   onDismissedAlert : () -> Unit,
   onLoad : () -> Unit,
   onRefresh : () -> Unit,
@@ -82,13 +80,13 @@ fun MovieGrid(
 
 @Composable
 fun MovieGridContent(
-  movies : List<Movie>,
+  movies : List<com.example.domain.model.Movie>,
   gridState : LazyGridState,
   onNavigateDetail : (String) -> Unit,
   isLoading : Boolean,
   isRefreshing : Boolean,
   isLoadingMore : Boolean,
-  error : ErrorState?,
+  error : com.example.domain.common.state.ErrorState?,
   onRefresh : () -> Unit,
   onLoad : () -> Unit,
   isLoadingToggleFavorite : Boolean,
@@ -116,7 +114,7 @@ fun MovieGridContent(
 
       ! error?.message.isNullOrEmpty() && ! isRefreshing                                                    -> {
         MainError(
-          message = error?.message ?: ErrorMessages.UNKNOWN_ERROR,
+          message = error?.message ?: com.example.cori.constants.ErrorMessages.UNKNOWN_ERROR,
           onRetry = { onLoad() }
         )
       }

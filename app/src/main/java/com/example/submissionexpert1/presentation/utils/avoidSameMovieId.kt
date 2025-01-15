@@ -1,14 +1,14 @@
 package com.example.submissionexpert1.presentation.utils
 
-import com.example.submissionexpert1.domain.model.PaginationMovie
+import com.example.domain.model.PaginationMovie
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
 suspend fun avoidSameMovieId(
-  currentData : PaginationMovie?,
-  incomingData : PaginationMovie,
+  currentData : com.example.domain.model.PaginationMovie?,
+  incomingData : com.example.domain.model.PaginationMovie,
   dispatcher : CoroutineDispatcher
-) : PaginationMovie = withContext(dispatcher) {
+) : com.example.domain.model.PaginationMovie = withContext(dispatcher) {
   val existingIdsCurrentData = currentData?.results?.map { it.id }?.toSet() ?: emptySet()
   val filteredNewResults = incomingData.results.filterNot { it.id in existingIdsCurrentData }
   val combinedFilteredResults = currentData?.copy(

@@ -6,13 +6,13 @@ import com.example.submissionexpert1.data.db.entity.PaginationEntity
 import com.example.submissionexpert1.data.db.entity.relation.*
 import com.example.submissionexpert1.data.source.remote.response.MovieResponse
 import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
-import com.example.submissionexpert1.domain.model.Genre
-import com.example.submissionexpert1.domain.model.Movie
-import com.example.submissionexpert1.domain.model.MovieWithGenres
-import com.example.submissionexpert1.domain.model.PaginationMovie
+import com.example.domain.model.Genre
+import com.example.domain.model.Movie
+import com.example.domain.model.MovieWithGenres
+import com.example.domain.model.PaginationMovie
 
-fun PaginationMovieResponse.toDomain() : PaginationMovie {
-  return PaginationMovie(
+fun PaginationMovieResponse.toDomain() : com.example.domain.model.PaginationMovie {
+  return com.example.domain.model.PaginationMovie(
     page = page,
     results = results.map { it.toDomain() },
     totalPages = totalPages,
@@ -20,8 +20,8 @@ fun PaginationMovieResponse.toDomain() : PaginationMovie {
   )
 }
 
-fun MovieResponse.toDomain() : Movie {
-  return Movie(
+fun MovieResponse.toDomain() : com.example.domain.model.Movie {
+  return com.example.domain.model.Movie(
     id = id,
     title = title,
     overview = overview,
@@ -39,7 +39,7 @@ fun MovieResponse.toDomain() : Movie {
   )
 }
 
-fun Movie.toEntity() : MovieEntity {
+fun com.example.domain.model.Movie.toEntity() : MovieEntity {
   return MovieEntity(
     movieId = id,
     title = title,
@@ -98,8 +98,8 @@ fun PaginationMovieResponse.toDatabaseEntities() : Triple<PaginationEntity, List
 }
 
 
-fun MovieEntity.toDomain() : Movie {
-  return Movie(
+fun MovieEntity.toDomain() : com.example.domain.model.Movie {
+  return com.example.domain.model.Movie(
     id = movieId,
     title = title,
     overview = overview,
@@ -117,25 +117,26 @@ fun MovieEntity.toDomain() : Movie {
   )
 }
 
-fun MovieWithGenresEntity.toDomain() : MovieWithGenres = MovieWithGenres(
-  movie = movie.toDomain(),
-  genres = genres.map { it.toDomain() }
-)
+fun MovieWithGenresEntity.toDomain() : com.example.domain.model.MovieWithGenres =
+  com.example.domain.model.MovieWithGenres(
+    movie = movie.toDomain(),
+    genres = genres.map { it.toDomain() }
+  )
 
-fun GenreEntity.toDomain() : Genre {
-  return Genre(
+fun GenreEntity.toDomain() : com.example.domain.model.Genre {
+  return com.example.domain.model.Genre(
     genreId = genreId,
     name = name
   )
 }
 
-fun List<PaginationWithMovie>.toDomain() : PaginationMovie {
+fun List<PaginationWithMovie>.toDomain() : com.example.domain.model.PaginationMovie {
 
   val paginationEntity = first().pagination
 
   val movies = this.map { it.movie.toDomain() }
 
-  return PaginationMovie(
+  return com.example.domain.model.PaginationMovie(
     page = paginationEntity.page,
     results = movies,
     totalPages = paginationEntity.totalPages,
@@ -145,8 +146,8 @@ fun List<PaginationWithMovie>.toDomain() : PaginationMovie {
 }
 
 
-fun MovieWithFavorite.toDomain() : Movie {
-  return Movie(
+fun MovieWithFavorite.toDomain() : com.example.domain.model.Movie {
+  return com.example.domain.model.Movie(
     id = movie.movieId,
     title = movie.title,
     overview = movie.overview,
@@ -165,14 +166,14 @@ fun MovieWithFavorite.toDomain() : Movie {
   )
 }
 
-fun List<PaginationWithMovieAndFavorite>.toDomainWithFavorite() : PaginationMovie? {
+fun List<PaginationWithMovieAndFavorite>.toDomainWithFavorite() : com.example.domain.model.PaginationMovie? {
 
   if (isEmpty()) return null
 
   val paginationEntity = first().pagination
   val movie = this.map { it.movie.toDomain() }
 
-  return PaginationMovie(
+  return com.example.domain.model.PaginationMovie(
     page = paginationEntity.page,
     results = movie,
     totalPages = paginationEntity.totalPages,

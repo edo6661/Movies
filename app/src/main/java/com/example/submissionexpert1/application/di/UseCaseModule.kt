@@ -2,10 +2,6 @@ package com.example.submissionexpert1.application.di
 
 import com.example.submissionexpert1.data.usecase.impl.movie.*
 import com.example.submissionexpert1.data.usecase.impl.user.AuthUseCaseImpl
-import com.example.submissionexpert1.domain.repository.movie.IMovieRepository
-import com.example.submissionexpert1.domain.repository.user.IAuthRepository
-import com.example.submissionexpert1.domain.usecase.movie.*
-import com.example.submissionexpert1.domain.usecase.user.IAuthUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,44 +13,44 @@ object UseCaseModule {
 
   @Provides
   fun provideGetPopularMoviesUseCase(
-    movieRepository : IMovieRepository
-  ) : IGetPopularMoviesUseCase {
+    movieRepository : com.example.domain.repository.movie.IMovieRepository
+  ) : com.example.domain.usecase.movie.IGetPopularMoviesUseCase {
     return GetPopularMoviesUseCaseImpl(movieRepository)
   }
 
   @Provides
   fun provideAuthUseCase(
-    authRepository : IAuthRepository
-  ) : IAuthUseCase {
+    authRepository : com.example.domain.repository.user.IAuthRepository
+  ) : com.example.domain.usecase.user.IAuthUseCase {
     return AuthUseCaseImpl(authRepository)
   }
 
   @Provides
   fun provideToggleFavoriteMovieUseCase(
-    movieRepository : IMovieRepository
-  ) : IToggleFavoriteMovieUseCase {
+    movieRepository : com.example.domain.repository.movie.IMovieRepository
+  ) : com.example.domain.usecase.movie.IToggleFavoriteMovieUseCase {
     return ToggleFavoriteMovieUseCaseImpl(movieRepository)
 
   }
 
   @Provides
   fun provideGetPopularMoviesFavoriteUseCase(
-    movieRepository : IMovieRepository
-  ) : IGetPopularMoviesFavoriteUseCase {
+    movieRepository : com.example.domain.repository.movie.IMovieRepository
+  ) : com.example.domain.usecase.movie.IGetPopularMoviesFavoriteUseCase {
     return GetPopularMoviesFavoriteUseCaseImpl(movieRepository)
   }
 
   @Provides
   fun provideGetMovieUseCase(
-    movieRepository : IMovieRepository
-  ) : IGetMovieUseCase {
+    movieRepository : com.example.domain.repository.movie.IMovieRepository
+  ) : com.example.domain.usecase.movie.IGetMovieUseCase {
     return GetMovieUseCaseImpl(movieRepository)
   }
 
   @Provides
   fun provideGetMoviesWithQueryUseCase(
-    movieRepository : IMovieRepository
-  ) : IGetMoviesWithQueryUseCase {
+    movieRepository : com.example.domain.repository.movie.IMovieRepository
+  ) : com.example.domain.usecase.movie.IGetMoviesWithQueryUseCase {
     return GetMoviesWithQueryUseCaseImpl(movieRepository)
   }
 

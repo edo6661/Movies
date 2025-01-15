@@ -2,16 +2,11 @@ package com.example.submissionexpert1.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cori.constants.ErrorMessages
 import com.example.submissionexpert1.application.di.IODispatcher
 import com.example.submissionexpert1.application.di.MainDispatcher
-import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.db.EntertainmentDb
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
-import com.example.submissionexpert1.domain.common.Result
-import com.example.submissionexpert1.domain.common.state.ErrorState
-import com.example.submissionexpert1.domain.model.PaginationMovie
-import com.example.submissionexpert1.domain.usecase.movie.IGetPopularMoviesUseCase
-import com.example.submissionexpert1.domain.usecase.movie.IToggleFavoriteMovieUseCase
 import com.example.submissionexpert1.presentation.utils.avoidSameMovieId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -23,8 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-  private val getPopularMovieUseCase : IGetPopularMoviesUseCase,
-  private val toggleFavoriteMovieUseCase : IToggleFavoriteMovieUseCase,
+  private val getPopularMovieUseCase : com.example.domain.usecase.movie.IGetPopularMoviesUseCase,
+  private val toggleFavoriteMovieUseCase : com.example.domain.usecase.movie.IToggleFavoriteMovieUseCase,
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
   @MainDispatcher private val mainDispatcher : CoroutineDispatcher,
   private val userPreferences : UserPreferences,
@@ -81,7 +76,7 @@ class HomeViewModel @Inject constructor(
       val result = toggleFavoriteMovieUseCase(movieId)
       withContext(mainDispatcher) {
         when (result) {
-          is Result.Success -> {
+          is com.example.domain.common.Result.Success -> {
             _uiState.update {
               it.copy(
                 isLoadingToggleFavorite = false,
@@ -93,7 +88,7 @@ class HomeViewModel @Inject constructor(
           }
 
 
-          is Result.Error   -> {
+          is com.example.domain.common.Result.Error   -> {
             _uiState.update {
               it.copy(
                 alert = result.message,
@@ -144,14 +139,14 @@ class HomeViewModel @Inject constructor(
         when (result) {
 
 
-          is Result.Success -> {
+          is com.example.domain.common.Result.Success -> {
 
 
             handleSuccessOnLoad(result)
 
           }
 
-          is Result.Error   -> {
+          is com.example.domain.common.Result.Error   -> {
             handleError(result.message)
           }
         }
@@ -231,7 +226,7 @@ class HomeViewModel @Inject constructor(
   }
 
   private suspend fun handleSuccessOnLoad(
-    result : Result.Success<PaginationMovie>
+    result : com.example.domain.common.Result.Success<com.example.domain.model.PaginationMovie>
   ) {
 
     val data =
@@ -262,7 +257,7 @@ class HomeViewModel @Inject constructor(
     message : String
   ) {
     when {
-      message == ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE || message == ErrorMessages.CANT_FETCH_MORE -> {
+      message == com.example.cori.constants.ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE || message == com.example.cori.constants.ErrorMessages.CANT_FETCH_MORE -> {
         _uiState.update {
           it.copy(
             alert = message,
@@ -279,11 +274,11 @@ class HomeViewModel @Inject constructor(
         }
       }
 
-      else                                                                                                   -> {
+      else                                                                                                                                                         -> {
         _uiState.update {
           it.copy(
             isLoading = false,
-            error = ErrorState(message = message),
+            error = com.example.domain.common.state.ErrorState(message = message),
             isRefreshing = false,
             isLoadingMore = false,
             page = 1,
@@ -303,7 +298,7 @@ class HomeViewModel @Inject constructor(
         isLoading = false,
         isRefreshing = false,
         isLoadingMore = false,
-        error = ErrorState(message = message),
+        error = com.example.domain.common.state.ErrorState(message = message),
         page = 1,
 
         )
@@ -317,15 +312,15 @@ data class HomeState(
   val isRefreshing : Boolean = false,
   val isLoadingMore : Boolean = false,
   val page : Int = 1,
-  val error : ErrorState? = null,
+  val error : com.example.domain.common.state.ErrorState? = null,
   val alert : String? = null,
   val isLoadingToggleFavorite : Boolean = false,
   val userId : Long? = null
 )
 
 data class HomeMovieState(
-  val data : PaginationMovie? = null,
-  val dataBeforeRefresh : PaginationMovie? = null,
+  val data : com.example.domain.model.PaginationMovie? = null,
+  val dataBeforeRefresh : com.example.domain.model.PaginationMovie? = null,
 )
 
 

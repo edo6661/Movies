@@ -62,6 +62,8 @@ android {
 }
 
 dependencies {
+  implementation(project(":domain"))
+  implementation(project(":cori"))
 
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -100,11 +102,6 @@ dependencies {
   kapt("androidx.room:room-compiler:$room_version")
 
 
-  // icons
-  implementation("androidx.compose.material:material-icons-core")
-  implementation("androidx.compose.material:material-icons-extended")
-
-
   // serialization
   implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
   // retrofit
@@ -114,13 +111,16 @@ dependencies {
   implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
   // data store
   implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+
+  // icons
+  implementation("androidx.compose.material:material-icons-core")
+  implementation("androidx.compose.material:material-icons-extended")
+
   // lottie
   implementation("com.airbnb.android:lottie-compose:6.4.0")
   // swipe refresh
   implementation("com.google.accompanist:accompanist-swiperefresh:0.26.2-beta")
-
-  //  hash
-  implementation("org.mindrot:jbcrypt:0.4")
 
 
 }

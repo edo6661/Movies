@@ -26,12 +26,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.rememberAsyncImagePainter
+import com.example.cori.constants.Prefix
+import com.example.cori.utils.safeUiString
 import com.example.submissionexpert1.R
-import com.example.submissionexpert1.core.constants.Prefix
-import com.example.submissionexpert1.core.utils.safeUiString
-import com.example.submissionexpert1.domain.model.Genre
-import com.example.submissionexpert1.domain.model.Movie
-import com.example.submissionexpert1.domain.model.MovieWithGenres
 import com.example.submissionexpert1.presentation.common.Size
 import com.example.submissionexpert1.presentation.ui.animation.TabsSpec
 import com.example.submissionexpert1.presentation.ui.shared.MainButton
@@ -86,7 +83,7 @@ fun DetailScreen(
 
       state.movie != null -> {
         DetailContent(
-          movie = state.movie as MovieWithGenres,
+          movie = state.movie as com.example.domain.model.MovieWithGenres,
           onToggleFavorite = { id -> onEvent(DetailEvent.OnToggleFavorite(id)) },
           userId = state.userId,
           navigateToLogin = navigateToLogin,
@@ -102,7 +99,7 @@ fun DetailScreen(
 
 @Composable
 fun DetailContent(
-  movie : MovieWithGenres,
+  movie : com.example.domain.model.MovieWithGenres,
   onToggleFavorite : (Int) -> Unit,
   userId : Long? = null,
   navigateToLogin : () -> Unit,
@@ -151,7 +148,7 @@ fun DetailContent(
 
 @Composable
 private fun TopBar(
-  movie : Movie,
+  movie : com.example.domain.model.Movie,
   onToggleFavorite : (Int) -> Unit,
   userId : Long? = null,
   navigateToLogin : () -> Unit,
@@ -181,7 +178,7 @@ private fun TopBar(
     )
 
     MainText(
-      text = safeUiString(movie.title),
+      text = com.example.cori.utils.safeUiString(movie.title),
       textSize = Size.Large,
       textAlign = TextAlign.Center,
       modifier = Modifier
@@ -217,7 +214,7 @@ private fun TopBar(
 
 @Composable
 private fun TopSection(
-  movie : Movie,
+  movie : com.example.domain.model.Movie,
   onToggleFavorite : (Int) -> Unit,
   userId : Long? = null,
   navigateToLogin : () -> Unit
@@ -228,7 +225,7 @@ private fun TopSection(
 
     Image(
       painter = rememberAsyncImagePainter(
-        model = Prefix.PREFIX_IMAGE_URL + movie.backdropPath,
+        model = com.example.cori.constants.Prefix.PREFIX_IMAGE_URL + movie.backdropPath,
         error = painterResource(id = R.drawable.error_image),
         placeholder = painterResource(id = R.drawable.placeholder)
       ),
@@ -258,7 +255,7 @@ private fun TopSection(
     ) {
       Image(
         rememberAsyncImagePainter(
-          model = Prefix.PREFIX_IMAGE_URL + movie.posterPath,
+          model = com.example.cori.constants.Prefix.PREFIX_IMAGE_URL + movie.posterPath,
           error = painterResource(id = R.drawable.error_image),
           placeholder = painterResource(id = R.drawable.placeholder)
         ),
@@ -274,7 +271,7 @@ private fun TopSection(
         contentScale = ContentScale.Crop
       )
       MainText(
-        text = safeUiString(movie.title),
+        text = com.example.cori.utils.safeUiString(movie.title),
         modifier = Modifier.padding(
           top = 80.dp
         ),
@@ -294,7 +291,7 @@ private fun TopSection(
 
 @Composable
 private fun MiddleSection(
-  movie : Movie
+  movie : com.example.domain.model.Movie
 ) {
 
   val paddingTopDodgePoster = 64
@@ -317,7 +314,7 @@ private fun MiddleSection(
       IconMiddleValue(
         icon = Icons.Default.Star,
         key = "Popularity",
-        value = safeUiString(movie.popularity?.toInt().toString()),
+        value = com.example.cori.utils.safeUiString(movie.popularity?.toInt().toString()),
       )
       IconMiddleValue(
         icon = Icons.Default.NoPhotography,
@@ -327,7 +324,7 @@ private fun MiddleSection(
       IconMiddleValue(
         icon = Icons.Default.DateRange,
         key = "Release Date",
-        value = safeUiString(movie.releaseDate?.substring(0, 4)),
+        value = com.example.cori.utils.safeUiString(movie.releaseDate?.substring(0, 4)),
         latest = true
       )
 
@@ -401,7 +398,7 @@ private fun BottomAction(
 
 @Composable
 private fun BottomSection(
-  movie : MovieWithGenres,
+  movie : com.example.domain.model.MovieWithGenres,
   currentTab : Int,
   onTabSelected : (Int) -> Unit,
   onToggleShowAllOverview : () -> Unit,
@@ -420,7 +417,7 @@ private fun BottomSection(
     )
     ContentBottomTab(
       currentTab = currentTab,
-      overview = safeUiString(movie.movie.overview),
+      overview = com.example.cori.utils.safeUiString(movie.movie.overview),
       genres = movie.genres,
       onToggleShowAllOverview = onToggleShowAllOverview,
       showAllOverview = showAllOverview
@@ -435,7 +432,7 @@ private fun BottomSection(
 private fun ContentBottomTab(
   currentTab : Int,
   overview : String,
-  genres : List<Genre>,
+  genres : List<com.example.domain.model.Genre>,
   onToggleShowAllOverview : () -> Unit,
   showAllOverview : Boolean
 ) {

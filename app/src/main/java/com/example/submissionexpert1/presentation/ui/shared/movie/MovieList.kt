@@ -9,10 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.cori.constants.ErrorMessages
 import com.example.submissionexpert1.R
-import com.example.submissionexpert1.core.constants.ErrorMessages
-import com.example.submissionexpert1.domain.common.state.ErrorState
-import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.presentation.ui.state.alert.BottomAlert
 import com.example.submissionexpert1.presentation.ui.state.empty.MainEmpty
 import com.example.submissionexpert1.presentation.ui.state.error.MainError
@@ -23,14 +21,14 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieList(
-  movies : List<Movie>,
+  movies : List<com.example.domain.model.Movie>,
   listState : LazyListState,
   onNavigateDetail : (String) -> Unit,
   alert : String?,
   isLoading : Boolean,
   isRefreshing : Boolean,
   isLoadingMore : Boolean,
-  error : ErrorState?,
+  error : com.example.domain.common.state.ErrorState?,
   onDismissedAlert : () -> Unit,
   onLoad : () -> Unit,
   onRefresh : () -> Unit,
@@ -64,7 +62,7 @@ fun MovieList(
       onDismiss = { onDismissedAlert() },
       visible = alert != null,
       modifier = Modifier
-        
+
         .align(Alignment.BottomCenter)
     )
 
@@ -73,13 +71,13 @@ fun MovieList(
 
 @Composable
 fun MovieListContent(
-  movies : List<Movie>,
+  movies : List<com.example.domain.model.Movie>,
   listState : LazyListState,
   onNavigateDetail : (String) -> Unit,
   isLoading : Boolean,
   isRefreshing : Boolean,
   isLoadingMore : Boolean,
-  error : ErrorState?,
+  error : com.example.domain.common.state.ErrorState?,
   onRefresh : () -> Unit,
   onLoad : () -> Unit,
   isLoadingToggleFavorite : Boolean,
@@ -102,7 +100,7 @@ fun MovieListContent(
 
       ! error?.message.isNullOrEmpty() && ! isRefreshing                                                    -> {
         MainError(
-          message = error?.message ?: ErrorMessages.UNKNOWN_ERROR,
+          message = error?.message ?: com.example.cori.constants.ErrorMessages.UNKNOWN_ERROR,
           onRetry = { onLoad() }
         )
       }

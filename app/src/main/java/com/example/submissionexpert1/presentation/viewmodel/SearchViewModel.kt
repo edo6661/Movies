@@ -2,15 +2,10 @@ package com.example.submissionexpert1.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cori.constants.ErrorMessages
 import com.example.submissionexpert1.application.di.IODispatcher
 import com.example.submissionexpert1.application.di.MainDispatcher
-import com.example.submissionexpert1.core.constants.ErrorMessages
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
-import com.example.submissionexpert1.domain.common.Result
-import com.example.submissionexpert1.domain.common.state.ErrorState
-import com.example.submissionexpert1.domain.model.PaginationMovie
-import com.example.submissionexpert1.domain.usecase.movie.IGetMoviesWithQueryUseCase
-import com.example.submissionexpert1.domain.usecase.movie.IToggleFavoriteMovieUseCase
 import com.example.submissionexpert1.presentation.utils.avoidSameMovieId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
@@ -20,8 +15,8 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-  private val getMoviesWithQuery : IGetMoviesWithQueryUseCase,
-  private val toggleFavoriteMovieUseCase : IToggleFavoriteMovieUseCase,
+  private val getMoviesWithQuery : com.example.domain.usecase.movie.IGetMoviesWithQueryUseCase,
+  private val toggleFavoriteMovieUseCase : com.example.domain.usecase.movie.IToggleFavoriteMovieUseCase,
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
   @MainDispatcher private val mainDispatcher : CoroutineDispatcher,
   private val userPreferences : UserPreferences,
@@ -115,7 +110,7 @@ class SearchViewModel @Inject constructor(
       val result = toggleFavoriteMovieUseCase(movieId)
       withContext(mainDispatcher) {
         when (result) {
-          is Result.Success -> {
+          is com.example.domain.common.Result.Success -> {
             _uiState.update {
               it.copy(
                 isLoadingToggleFavorite = false,
@@ -127,7 +122,7 @@ class SearchViewModel @Inject constructor(
           }
 
 
-          is Result.Error   -> {
+          is com.example.domain.common.Result.Error   -> {
             _uiState.update {
               it.copy(
                 alert = result.message,
@@ -184,13 +179,13 @@ class SearchViewModel @Inject constructor(
           when (result) {
 
 
-            is Result.Success -> {
+            is com.example.domain.common.Result.Success -> {
               handleSuccessOnSearch(result)
 
             }
 
 
-            is Result.Error   -> {
+            is com.example.domain.common.Result.Error   -> {
               handleError(result.message)
             }
           }
@@ -272,7 +267,7 @@ class SearchViewModel @Inject constructor(
   }
 
   private suspend fun handleSuccessOnSearch(
-    result : Result.Success<PaginationMovie>
+    result : com.example.domain.common.Result.Success<com.example.domain.model.PaginationMovie>
   ) {
     val data =
       avoidSameMovieId(
@@ -328,10 +323,10 @@ class SearchViewModel @Inject constructor(
     message : String
   ) {
     when {
-      message == ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE || message == ErrorMessages.CANT_FETCH_MORE -> {
+      message == com.example.cori.constants.ErrorMessages.NO_INTERNET_CONNECTION_ONLY_CACHE || message == com.example.cori.constants.ErrorMessages.CANT_FETCH_MORE -> {
         _uiState.update {
           it.copy(
-            error = ErrorState(message = "No internet connection"),
+            error = com.example.domain.common.state.ErrorState(message = "No internet connection"),
             isLoading = false,
             isRefreshing = false,
             isLoadingMore = false,
@@ -345,11 +340,11 @@ class SearchViewModel @Inject constructor(
         }
       }
 
-      else                                                                                                   -> {
+      else                                                                                                                                                         -> {
         _uiState.update {
           it.copy(
             isLoading = false,
-            error = ErrorState(message = message),
+            error = com.example.domain.common.state.ErrorState(message = message),
             isRefreshing = false,
             isLoadingMore = false,
             page = 1,
@@ -369,7 +364,7 @@ class SearchViewModel @Inject constructor(
         isLoading = false,
         isRefreshing = false,
         isLoadingMore = false,
-        error = ErrorState(message = message),
+        error = com.example.domain.common.state.ErrorState(message = message),
         page = 1,
 
         )
@@ -383,7 +378,7 @@ data class SearchState(
   val isRefreshing : Boolean = false,
   val isLoadingMore : Boolean = false,
   val page : Int = 1,
-  val error : ErrorState? = null,
+  val error : com.example.domain.common.state.ErrorState? = null,
   val alert : String? = null,
   val isLoadingToggleFavorite : Boolean = false,
   val userId : Long? = null,
@@ -392,8 +387,8 @@ data class SearchState(
 )
 
 data class SearchMovieState(
-  val data : PaginationMovie? = null,
-  val dataBeforeRefresh : PaginationMovie? = null,
+  val data : com.example.domain.model.PaginationMovie? = null,
+  val dataBeforeRefresh : com.example.domain.model.PaginationMovie? = null,
 )
 
 

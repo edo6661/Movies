@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import com.example.submissionexpert1.domain.model.User
+import com.example.domain.model.User
 import com.example.submissionexpert1.presentation.ui.nav.BottomBar
 import com.example.submissionexpert1.presentation.ui.nav.TopBackNav
 import com.example.submissionexpert1.presentation.ui.nav.TopNav
@@ -16,7 +16,7 @@ fun MainScaffold(
   scaffoldConfig : ScaffoldConfig,
   isActive : (String) -> Boolean,
   currentRoute : String?,
-  user : User? = null,
+  user : com.example.domain.model.User? = null,
   content : @Composable (PaddingValues) -> Unit,
 ) {
   Scaffold(

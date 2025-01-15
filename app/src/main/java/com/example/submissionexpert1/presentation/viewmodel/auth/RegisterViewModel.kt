@@ -2,15 +2,12 @@ package com.example.submissionexpert1.presentation.viewmodel.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cori.extensions.validate3Char
+import com.example.cori.extensions.validateConfirmPassword
+import com.example.cori.extensions.validateEmail
+import com.example.cori.utils.hashPassword
 import com.example.submissionexpert1.application.di.IODispatcher
 import com.example.submissionexpert1.application.di.MainDispatcher
-import com.example.submissionexpert1.core.extensions.validate3Char
-import com.example.submissionexpert1.core.extensions.validateConfirmPassword
-import com.example.submissionexpert1.core.extensions.validateEmail
-import com.example.submissionexpert1.core.utils.hashPassword
-import com.example.submissionexpert1.domain.common.Result
-import com.example.submissionexpert1.domain.model.User
-import com.example.submissionexpert1.domain.usecase.user.IAuthUseCase
 import com.example.submissionexpert1.presentation.common.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -24,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-  private val useCase : IAuthUseCase,
+  private val useCase : com.example.domain.usecase.user.IAuthUseCase,
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
   @MainDispatcher private val mainDispatcher : CoroutineDispatcher
 
@@ -105,11 +102,11 @@ class RegisterViewModel @Inject constructor(
   }
 
   private fun performRegistration() {
-    val hashedPassword = hashPassword(_state.value.password)
+    val hashedPassword = com.example.cori.utils.hashPassword(_state.value.password)
     updateState { copy(isLoading = true) }
     viewModelScope.launch(ioDispatcher) {
       useCase.register(
-        User(
+        com.example.domain.model.User(
           firstName = _state.value.firstName,
           lastName = _state.value.lastName,
           email = _state.value.email,
@@ -123,12 +120,12 @@ class RegisterViewModel @Inject constructor(
           withContext(mainDispatcher) {
 
             when (result) {
-              is Result.Success -> {
+              is com.example.domain.common.Result.Success -> {
 
                 updateState { copy(isLoading = false, message = Message.Success(result.data)) }
               }
 
-              is Result.Error   -> {
+              is com.example.domain.common.Result.Error   -> {
                 if (result.message == "Email Already Exist") {
                   updateState { copy(isLoading = false, emailError = "Email Already Exist") }
 

@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.submissionexpert1.domain.model.User
+import com.example.domain.model.User
 import com.example.submissionexpert1.presentation.common.Size
 import com.example.submissionexpert1.presentation.navigation.navigateSingleTop
 import com.example.submissionexpert1.presentation.ui.shared.MainText
@@ -23,7 +23,7 @@ import com.example.submissionexpert1.presentation.ui.shared.MainText
 fun BottomBar(
   isActive : (String) -> Boolean,
   navController : NavHostController,
-  user : User? = null,
+  user : com.example.domain.model.User? = null,
 ) {
   Column(
 

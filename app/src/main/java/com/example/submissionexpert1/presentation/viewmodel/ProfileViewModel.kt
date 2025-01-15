@@ -2,14 +2,11 @@ package com.example.submissionexpert1.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cori.constants.Auth
 import com.example.submissionexpert1.application.di.IODispatcher
 import com.example.submissionexpert1.application.di.MainDispatcher
-import com.example.submissionexpert1.core.constants.Auth
 import com.example.submissionexpert1.data.source.local.preferences.ThemePreferences
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
-import com.example.submissionexpert1.domain.common.Result
-import com.example.submissionexpert1.domain.model.User
-import com.example.submissionexpert1.domain.usecase.user.IAuthUseCase
 import com.example.submissionexpert1.presentation.common.Message
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,12 +16,11 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
-
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
   private val themePreferences : ThemePreferences,
   private val userPreferences : UserPreferences,
-  private val useCase : IAuthUseCase,
+  private val useCase : com.example.domain.usecase.user.IAuthUseCase,
   @IODispatcher private val ioDispatcher : CoroutineDispatcher,
   @MainDispatcher private val mainDispatcher : CoroutineDispatcher
 ) : ViewModel() {
@@ -102,8 +98,6 @@ class ProfileViewModel @Inject constructor(
   }
 
 
-
-
   private fun updateUser() {
     val user = _uiState.value.user
     if (! validateForm(user !!)) return
@@ -119,7 +113,7 @@ class ProfileViewModel @Inject constructor(
         }
         .collect { result ->
           when (result) {
-            is Result.Success -> {
+            is com.example.domain.common.Result.Success -> {
               withContext(mainDispatcher) {
                 _uiState.value = _uiState.value.copy(
                   isLoading = false,
@@ -128,17 +122,17 @@ class ProfileViewModel @Inject constructor(
               }
             }
 
-            is Result.Error   -> {
+            is com.example.domain.common.Result.Error   -> {
               withContext(mainDispatcher) {
                 when (result.message) {
-                  Auth.EMAIL_ALREADY_EXIST -> {
+                  com.example.cori.constants.Auth.EMAIL_ALREADY_EXIST -> {
                     _uiState.value = _uiState.value.copy(
                       isLoading = false,
                       emailError = result.message
                     )
                   }
 
-                  Auth.PASSWORD_INVALID    -> {
+                  com.example.cori.constants.Auth.PASSWORD_INVALID    -> {
                     _uiState.value = _uiState.value.copy(
                       isLoading = false,
                       passwordError = result.message,
@@ -146,7 +140,7 @@ class ProfileViewModel @Inject constructor(
                     )
                   }
 
-                  else                     -> {
+                  else                                                -> {
                     _uiState.value = _uiState.value.copy(
                       isLoading = false,
                       message = Message.Error(result.message)
@@ -174,7 +168,7 @@ class ProfileViewModel @Inject constructor(
     )
   }
 
-  private fun validateForm(user : User) : Boolean {
+  private fun validateForm(user : com.example.domain.model.User) : Boolean {
     resetError()
 
     var isValid = true
@@ -232,7 +226,7 @@ sealed class ProfileEvent {
 }
 
 data class ProfileState(
-  val user : User? = null,
+  val user : com.example.domain.model.User? = null,
   val newPassword : String = "",
   val firstNameError : String? = null,
   val lastNameError : String? = null,

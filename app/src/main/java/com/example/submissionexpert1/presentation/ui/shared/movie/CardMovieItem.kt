@@ -26,10 +26,9 @@ import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.example.cori.constants.Prefix
+import com.example.cori.utils.safeUiString
 import com.example.submissionexpert1.R
-import com.example.submissionexpert1.core.constants.Prefix
-import com.example.submissionexpert1.core.utils.safeUiString
-import com.example.submissionexpert1.domain.model.Movie
 import com.example.submissionexpert1.presentation.common.Size
 import com.example.submissionexpert1.presentation.ui.shared.MainText
 import com.example.submissionexpert1.presentation.ui.theme.Orange
@@ -38,7 +37,7 @@ import com.example.submissionexpert1.presentation.ui.theme.Orange
 @Composable
 fun CardMovieItem(
   modifier : Modifier = Modifier,
-  movie : Movie,
+  movie : com.example.domain.model.Movie,
   onClick : () -> Unit,
   isLoadingToggleFavorite : Boolean,
   onToggleFavorite : (Int) -> Unit,
@@ -74,7 +73,7 @@ fun CardMovieItem(
 
       AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
-          .data(Prefix.PREFIX_IMAGE_URL + movie.posterPath)
+          .data(com.example.cori.constants.Prefix.PREFIX_IMAGE_URL + movie.posterPath)
           .crossfade(true)
           .diskCachePolicy(CachePolicy.ENABLED)
           .diskCacheKey(movie.posterPath)
@@ -107,7 +106,7 @@ fun CardMovieItem(
           )
       ) {
         MainText(
-          text = safeUiString(movie.title),
+          text = com.example.cori.utils.safeUiString(movie.title),
           textSize = Size.Large,
           isEllipsis = true,
           maxLines = 3,
@@ -124,12 +123,12 @@ fun CardMovieItem(
             ),
             Pair(
               Icons.Default.DateRange,
-              safeUiString(movie.releaseDate?.take(4))
+              com.example.cori.utils.safeUiString(movie.releaseDate?.take(4))
 
             ),
             Pair(
               Icons.Default.HowToVote,
-              safeUiString(movie.voteCount.toString()),
+              com.example.cori.utils.safeUiString(movie.voteCount.toString()),
             ),
           )
           keyValues.forEach { (key, value) ->

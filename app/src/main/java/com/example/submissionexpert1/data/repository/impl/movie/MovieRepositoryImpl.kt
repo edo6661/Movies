@@ -1,6 +1,11 @@
 package com.example.submissionexpert1.data.repository.impl.movie
 
-import com.example.submissionexpert1.core.constants.ErrorMessages
+import com.example.cori.constants.ErrorMessages
+import com.example.domain.common.Result
+import com.example.domain.event.FavoriteChangeEvent
+import com.example.domain.model.MovieWithGenres
+import com.example.domain.model.PaginationMovie
+import com.example.domain.repository.movie.IMovieRepository
 import com.example.submissionexpert1.data.api.ApiService
 import com.example.submissionexpert1.data.db.dao.MovieDao
 import com.example.submissionexpert1.data.db.dao.PaginationDao
@@ -15,12 +20,9 @@ import com.example.submissionexpert1.data.helper.mapper.toEntity
 import com.example.submissionexpert1.data.repository.BaseRepository
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
 import com.example.submissionexpert1.data.source.remote.response.PaginationMovieResponse
-import com.example.submissionexpert1.domain.common.Result
-import com.example.submissionexpert1.domain.model.MovieWithGenres
-import com.example.submissionexpert1.domain.model.PaginationMovie
-import com.example.submissionexpert1.domain.repository.movie.IMovieRepository
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
+
 
 class MovieRepositoryImpl @Inject constructor(
   private val apiService : ApiService,
@@ -86,7 +88,8 @@ class MovieRepositoryImpl @Inject constructor(
     result : Result.Error
   ) : Flow<Result<PaginationMovie>> = flow {
     val cachedData = getCachedPopularMovies(page.toInt())
-    val isDataNotNullAndFirstPage = cachedData !is Result.Error && page.toInt() == 1
+    val isDataNotNullAndFirstPage =
+      cachedData !is Result.Error && page.toInt() == 1
     emit(cachedData)
     if (isDataNotNullAndFirstPage) {
       emit(Result.Error(result.message))
@@ -97,7 +100,10 @@ class MovieRepositoryImpl @Inject constructor(
   private suspend fun getCachedPopularMovies(page : Int) : Result<PaginationMovie> {
     val userId = when (val resultUserId = getUserId()) {
       is Result.Success -> resultUserId.data
-      is Result.Error   -> return Result.Error(resultUserId.message)
+      is Result.Error   -> return Result.Error(
+        resultUserId.message
+      )
+
       null              -> null
     }
     val result = safeDatabaseCall {
@@ -119,7 +125,8 @@ class MovieRepositoryImpl @Inject constructor(
           })
           Result.Success(it)
           // ! ini case nya padahal data cache nya itu null tapi kok error nya no internet connection? karena dia nge handle UnknownHostException, jadi cuman nerusin aja
-        } ?: Result.Error(ErrorMessages.NO_INTERNET_CONNECTION)
+        }
+        ?: Result.Error(ErrorMessages.NO_INTERNET_CONNECTION)
       }
 
       is Result.Error   -> Result.Error(result.message)
@@ -165,7 +172,8 @@ class MovieRepositoryImpl @Inject constructor(
       is Result.Success -> {
         result.data?.let {
           emit(Result.Success(it))
-        } ?: emit(Result.Error(ErrorMessages.CANT_FETCH_MORE))
+        }
+        ?: emit(Result.Error(ErrorMessages.CANT_FETCH_MORE))
       }
 
       is Result.Error   -> {
@@ -175,7 +183,10 @@ class MovieRepositoryImpl @Inject constructor(
     }
   }
 
-  override fun getMoviesWithQuery(page : String, query : String) : Flow<Result<PaginationMovie>> =
+  override fun getMoviesWithQuery(
+    page : String,
+    query : String
+  ) : Flow<Result<PaginationMovie>> =
     flow {
       val apiResult = safeApiCall {
         apiService.getMoviesWithQuery(
@@ -208,64 +219,65 @@ class MovieRepositoryImpl @Inject constructor(
 
     }
 
-  override fun getMovie(id : Int) : Flow<Result<MovieWithGenres>> = flow {
-    val userId = when (val resultUserId = getUserId()) {
-      is Result.Success -> resultUserId.data
+  override fun getMovie(id : Int) : Flow<Result<MovieWithGenres>> =
+    flow {
+      val userId = when (val resultUserId = getUserId()) {
+        is Result.Success -> resultUserId.data
 
-      is Result.Error   -> {
-        emit(Result.Error(resultUserId.message))
-        return@flow
+        is Result.Error   -> {
+          emit(Result.Error(resultUserId.message))
+          return@flow
+        }
+
+
+        null              -> {
+          null
+        }
       }
 
 
-      null              -> {
-        null
+      val isMovieFavorite = favoriteMovieDao.isMovieFavorite(
+        userId = userId ?: 0,
+        movieId = id
+      )
+      val result = safeDatabaseCall {
+        movieGenreDao.getMovieWithGenresById(id)
+          .firstOrNull()
+          ?.toDomain()
+
       }
-    }
 
-
-    val isMovieFavorite = favoriteMovieDao.isMovieFavorite(
-      userId = userId ?: 0,
-      movieId = id
-    )
-    val result = safeDatabaseCall {
-      movieGenreDao.getMovieWithGenresById(id)
-        .firstOrNull()
-        ?.toDomain()
-
-    }
-
-    when (result) {
-      is Result.Success -> {
-        result.data?.let {
-          it.movie.genreIds?.map { genreId ->
-            insertGenreMovieCrossRef(
-              MovieGenreCrossRef(
-                movieId = it.movie.id,
-                genreId = genreId
+      when (result) {
+        is Result.Success -> {
+          result.data?.let {
+            it.movie.genreIds?.map { genreId ->
+              insertGenreMovieCrossRef(
+                MovieGenreCrossRef(
+                  movieId = it.movie.id,
+                  genreId = genreId
+                )
               )
-            )
-          } ?: emptyList()
-          emit(
-            Result.Success(
-              it.copy(
-                movie = it.movie.copy(
-                  isFavorite = isMovieFavorite
+            } ?: emptyList()
+            emit(
+              Result.Success(
+                it.copy(
+                  movie = it.movie.copy(
+                    isFavorite = isMovieFavorite
+                  )
                 )
               )
             )
+          } ?: emit(
+            Result.Error("Data tidak ada di database local")
           )
-        } ?: emit(
-          Result.Error("Data tidak ada di database local")
-        )
-      }
+        }
 
-      is Result.Error   -> {
-        emit(Result.Error(result.message))
-      }
+        is Result.Error   -> {
+          emit(Result.Error(result.message))
+        }
 
+      }
     }
-  }
 
 
   override suspend fun toggleFavoriteMovie(movieId : Int) : Result<String> {
@@ -322,6 +334,3 @@ class MovieRepositoryImpl @Inject constructor(
 
 }
 
-sealed class FavoriteChangeEvent {
-  data class Toggled(val movieId : Int) : FavoriteChangeEvent()
-}

@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.submissionexpert1.application.di.IODispatcher
 import com.example.submissionexpert1.application.di.MainDispatcher
 import com.example.submissionexpert1.data.source.local.preferences.UserPreferences
-import com.example.submissionexpert1.domain.model.User
+import com.example.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,7 +54,7 @@ class MainViewModel @Inject constructor(
 }
 
 data class MainState(
-  val user : User? = null,
+  val user : com.example.domain.model.User? = null,
 )
 
 sealed class MainEvent {
