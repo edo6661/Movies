@@ -31,9 +31,12 @@ fun SettingsScreen(
   modifier : Modifier,
   navigateToProfile : () -> Unit,
   navigateToTheme : () -> Unit,
-  vm: SettingViewModel = hiltViewModel(),
-  onNavigateLogout: () -> Unit
+  vm : SettingViewModel = hiltViewModel(),
+  onNavigateLogout : () -> Unit
+
 ) {
+  val user = vm.user
+
   val onLogout = {
     vm.onEvent(SettingEvent.Logout)
     onNavigateLogout()
@@ -43,44 +46,47 @@ fun SettingsScreen(
 
     ) {
     ActionSetting(
-      action = navigateToProfile,
-      text = "Profile",
-      icon = Icons.Default.Person,
-      subtitle = "Manage your personal information"
-    )
-    HorizontalDivider(
-      color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-    )
-
-    ActionSetting(
       action = navigateToTheme,
       text = "Theme",
       icon = Icons.Default.ColorLens,
       subtitle = "Customize app appearance"
     )
-    HorizontalDivider(
-      color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-    )
+    if(user != null) {
+      HorizontalDivider(
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+      )
+      ActionSetting(
+        action = navigateToProfile,
+        text = "Profile",
+        icon = Icons.Default.Person,
+        subtitle = "Manage your personal information"
+      )
+
+      HorizontalDivider(
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+      )
 
 
-    ActionSetting(
-      action = onLogout,
-      text = "Logout",
-      icon = Icons.AutoMirrored.Default.Logout,
-      subtitle = "Sign out from your account"
-    )
+      ActionSetting(
+        action = onLogout,
+        text = "Logout",
+        icon = Icons.AutoMirrored.Default.Logout,
+        subtitle = "Sign out from your account"
+      )
+    }
 
 
   }
 
 }
+
 @Composable
 private fun ActionSetting(
-  modifier: Modifier = Modifier,
-  action: () -> Unit,
-  text: String,
-  icon: ImageVector,
-  subtitle: String? = null,
+  modifier : Modifier = Modifier,
+  action : () -> Unit,
+  text : String,
+  icon : ImageVector,
+  subtitle : String? = null,
 ) {
   Surface(
     modifier = modifier
