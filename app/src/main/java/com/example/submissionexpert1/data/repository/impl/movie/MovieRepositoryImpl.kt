@@ -1,5 +1,6 @@
 package com.example.submissionexpert1.data.repository.impl.movie
 
+import android.util.Log
 import com.example.cori.constants.ErrorMessages
 import com.example.domain.common.Result
 import com.example.domain.event.FavoriteChangeEvent
@@ -171,6 +172,7 @@ class MovieRepositoryImpl @Inject constructor(
     when (result) {
       is Result.Success -> {
         result.data?.let {
+          Log.d("MovieRepositoryImpl", "getPopularMoviesFavorite: ${it}")
           emit(Result.Success(it))
         }
         ?: emit(Result.Error(ErrorMessages.CANT_FETCH_MORE))

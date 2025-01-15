@@ -23,8 +23,8 @@ interface FavoriteMoviePaginationDao {
           ELSE 0 
       END AS isFavorite
   FROM pagination as p
-  INNER JOIN pagination_movies as pm ON p.page = pm.page
-  INNER JOIN movies as m ON pm.movieId = m.movieId
+    INNER JOIN pagination_favorite_movies as pfm ON p.page = pfm.page
+  INNER JOIN movies as m ON pfm.movieId = m.movieId
   AND EXISTS(
       SELECT 1 
       FROM pagination_favorite_movies as pfm

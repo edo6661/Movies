@@ -1,5 +1,6 @@
 package com.example.submissionexpert1.presentation.implementation
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -22,7 +23,9 @@ fun FavoriteScreen(
 
   ) {
   val uiState by viewModel.uiState.collectAsState()
+
   val movieState by viewModel.movieState.collectAsState()
+  Log.d("FavoriteScreen", "FavoriteScreen: ${movieState}")
   val onEvent = { event : FavoriteEvent -> viewModel.onEvent(event) }
   val movies = if (uiState.isRefreshing) {
     movieState.dataBeforeRefresh?.results ?: emptyList()
