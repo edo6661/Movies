@@ -19,7 +19,7 @@ An Android app that shows movies from The Movie Database (TMDB) API. Built with 
 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
 
 #### Home Screen
-<img src="https://firebasestorage.googleapis.com/v0/b/accesstoken-ecommerce-01.appspot.com/o/Movies%2FFavorite_Screen.png?alt=media&token=a2847ff1-58c0-44a3-8698-0a56d77650e8" width="200" alt="Home Screen"/>
+<img src="https://firebasestorage.googleapis.com/v0/b/accesstoken-ecommerce-01.appspot.com/o/Movies%2FHome_Screen_Blue.png?alt=media&token=4b308523-a59a-4a1b-b365-b243e87019c6" width="200" alt="Home Screen"/>
 
 #### Detail Screen
 <img src="https://firebasestorage.googleapis.com/v0/b/accesstoken-ecommerce-01.appspot.com/o/Movies%2FDetail_Screen.png?alt=media&token=86edb53c-daf1-46af-a860-447ddf66797d" width="200" alt="Detail Screen"/>
